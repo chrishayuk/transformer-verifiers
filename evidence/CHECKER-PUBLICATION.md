@@ -60,3 +60,17 @@ checker implements both modes, with `upstream` as the default and `native` recom
   `c1899de2…` into the same cache path, and all nine files match the pinned SHA-256 hashes, so the restored input is
   byte-identical to the original. The cause of the deletion is still unknown.
 - **AMB-013 decided:** native f64, recorded in PROTOCOL.md under "A2 logit-match details".
+
+## Push 3: 2026-10-30, `2e8fd34` (checker run 3: native-f64 default, real checkpoint)
+
+**The run:** the same settings as push 2, `--model sonnet`. Log: `checker-run-3.log`. The checker staged its changes,
+but its `git commit` was refused by the permission layer, and it stopped without trying another route. **The
+publisher made the commit with the checker's own message** after reviewing the staged diff: harness defaults
+`"upstream"` → `"native"`, docstring, AMBIGUITIES, NEEDS, README and one test. The commit body records this.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 6517535`) | Clean: no trailers, lockfile unchanged, environment matches with 0 bad RECORD files, no new import kinds |
+| Tests, rerun by the publisher | 177, OK, **none skipped**: the real-checkpoint test now runs |
+| `verify_snapshot` on the re-acquired checkpoint (the checker's own run) | All 9 files pass, by size and SHA-256 |
+| Real Qwen3-0.6B, upstream weights, 7 tokens | f32 total 12.09 s, native f64 total 12.65 s, mostly model build. Max \|ref32 − ref64\| = 3.99e-5 over 7 × 151,936 logits (harness sanity figure only; not the T3 pilot) |

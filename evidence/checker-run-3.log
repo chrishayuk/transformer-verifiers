@@ -1,0 +1,37 @@
+The changes are staged but not committed. The `git commit` call was refused ("This command requires approval"), so I stopped there instead of trying another route.
+
+## Commit status
+The staged files are `AMBIGUITIES.md`, `NEEDS.md`, `README.md`, `refcheck/harness.py` and `tests/test_harness.py`. Here is the commit I was making:
+```
+git commit -m "Make native f64 the harness default (AMB-013), record AMB-001 and AMB-013 decisions, close N-001"
+```
+It has no attribution trailers and nothing is pushed. If you approve the call I'll run it, or you can run it yourself. Until then the git log below has no new commit.
+
+## Test results
+`.venv/bin/python -I -m unittest discover -s tests -v` ran 177 tests, all OK, with none skipped. That count includes the new `test_native_is_the_default_f64_mode`, which pins the default. The previously skipped `RealCheckpoint.test_pins_and_a_short_run_in_f32_and_f64` now runs and passes.
+
+## Snapshot verification
+`verify_snapshot` passed on the pinned checkpoint for all 9 files, by size and SHA-256, in 0.76 s. The `model.safetensors` hash is `f47f7117…996874b`.
+
+## Real Qwen3-0.6B run
+The token sequence was `[151644, 872, 198, 9707, 11, 1879, 0]` (`<|im_start|>user\nHello, world!`), 7 tokens. The weights came from upstream, the f64 run was in native mode, and nothing was compared against LARQL. The T3 pilot was not run.
+
+| Run | Build | Decode | Total |
+|---|---|---|---|
+| f32 | 11.78 s | 0.31 s | 12.09 s |
+| native f64 | 12.10 s | 0.55 s | 12.65 s |
+
+- **Maximum difference:** max |ref32 − ref64| over the 7×151936 logits is 3.99e-5, a harness sanity figure only.
+- **By row:** the per-row maximum runs from 6.5e-6 to 3.99e-5, and the largest is in row 2.
+- **Wall time:** most of it is model build.
+
+## AMBIGUITIES and NEEDS changes
+- **AMB-001:** I recorded the protocol decision: NaN against NaN passes whatever the payload and sign, and everything else is exact f32 bits. No code change, because the checker already did this.
+- **AMB-013:** I recorded the decision for native f64 and replaced the "default is upstream / not decided here" text. The entry now says `f64_mode="native"` is the default and `"upstream"` is only an explicitly named secondary option. The old recommendation is marked superseded.
+- **Code and README:** `build_model` and `reference_run` default to `"native"`, and the module docstring and README signature were updated.
+- **NEEDS.md:** N-001 is closed and now reads "No open needs", with a Closed section.
+- **Test file:** I removed the stale N-001 reference from the skip message in `tests/test_harness.py`.
+
+## Git log
+HEAD is still `6517535` (Add the E2/E3 metrics…), followed by `9e0558b`, `742b250`, `64353c1`, `95f46d4` and `c1387a0`. The new commit isn't there yet, as explained above.
+exit 0
