@@ -48,3 +48,14 @@ The defect was reproduced by running exec from outside the code, not only by rea
 
 Both runs print "served entirely from stored bytes". Filed upstream as chrishayuk/larql#665. The fix is kept separate
 from LARQL-VERIFY-001. The workaround is part of the pinned baseline, and the defect stays open.
+
+**What the reproduction does and does not establish:**
+- **Representation:** the container stores the head as BF16. That is unchanged and correct per the spec.
+- **Execution planning:** without the pin, LARQL plans a Q8 image of the head (`FusedQ8`, 0.17 GB) instead of the
+  stored BF16 (`FusedBf16`, 0.31 GB), while reporting "served entirely from stored bytes". **This is shown.**
+- **Numerical output:** whether the resulting logits differ was **not measured**. No logits were dumped. #665
+  establishes a difference in execution planning and memory use, and a misleading report, but not an incorrect
+  numerical result.
+
+#665 is kept as an independently investigated defect. It is **not** used as a hidden Stage A fault: the checker
+developer's requirements already describe it, and the workaround is part of the baseline.

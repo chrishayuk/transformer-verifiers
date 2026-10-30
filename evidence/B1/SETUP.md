@@ -81,3 +81,21 @@ owner chose to **make the repository public** and **not to use branch protection
 - **Tamper tests to run after a freeze tag exists:** the nine tests listed above, against the tagged verifier. Test 6
   (alter the workflow so a corrupted manifest passes) is expected to succeed in skipping CI on `main`, because the
   branch is unprotected. It must still be shown that the tagged verifier, run independently, reports TAMPERED.
+
+## Open B1 acceptance issue: protecting a frozen version is not the same as approving it
+
+Raised by the freeze owner on 2026-10-30. The immutable `freeze/*` tags stop an existing freeze from being replaced.
+They do **not** stop someone with write access from creating a *new* freeze tag that points at unreviewed criteria,
+because `main` is unprotected and CODEOWNERS is advisory.
+
+**Required before the freeze review can accept B1:**
+- The verifier must accept only a freeze whose exact commit SHA appears in an **approval record controlled
+  independently of anyone who can push to this repository**. Accepting any tag that matches `freeze/*` is not
+  enough.
+- The approval record names the protocol, the commit SHA, the approver and the date. It is kept somewhere the
+  research agents and this repository's writers cannot alter.
+- Tamper test 10, added to the list: create a new `freeze/<P>-x` tag, or a tag for an unapproved commit, and show
+  the verifier rejects it.
+
+**Not yet built.** Where the approval record lives depends on who the independent approver is, which is still
+undecided.
