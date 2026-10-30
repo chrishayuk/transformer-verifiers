@@ -1,0 +1,66 @@
+Deliverables 1, 2 and 3 are done and committed. The full suite is 94 tests, all passing, run with `.venv/bin/python -I -m unittest discover -s tests`. I did not start deliverables 4–6.
+
+## What each deliverable does
+
+**1. Q8_0 decoder (`refcheck/q8_0.py`).**
+- It is written from ggml's `block_q8_0` and `dequantize_row_q8_0` at `facdc44a` (hashes in `SHA256SUMS` checked). It decodes `f32(q) × f32(d)` from 34-byte blocks.
+- It does its own integer f16→f32 conversion rather than using numpy's float16, so it doesn't rely on what it is cross-checked against.
+- **Tests (16):**
+  - The T1 decode cases are checked against exact rational arithmetic: codes 127, −128 and 0, scales ±0, subnormals, smallest normal, 65504, negative, ±inf and NaN, plus byte order, int8 sign, and block and row order.
+  - All 65,536 f16 bit patterns are checked against `struct`'s IEEE binary16 handling.
+  - It matches gguf-py 0.18.0 bit for bit on every f16 scale × every int8 code, on 20,000 random blocks, and through gguf-py's public `dequantize`.
+
+**2. Container reader (`refcheck/container.py`).**
+- It reads the profile from SPEC.md revision 2 (hash `3c4feb5e…` checked), for framing only.
+- It rejects what SPEC §14 says a reader must refuse, and also checks both SHA-256 digests of every segment.
+- It selects representations per §7, with no silent fallback.
+- It builds the name → HF key map and decodes BF16 (exact) and Q8_0 (via deliverable 1).
+- Softer findings (SHOULD-level checks, mismatched binding counts) go to `Container.warnings`.
+- **Tests (55)** run against a hand-assembled tiny container that shares no code with the writer. There is one test per rejection rule.
+
+**3. Synthetic container writer (`refcheck/synth.py`).**
+- It writes Qwen3-shaped containers (tiny, 12 layers by default) from SPEC §4–§10, independently of the reader.
+- It includes a ggml-reference Q8_0 encoder, checked byte for byte against gguf-py including forced rounding ties (`roundf` vs numpy), because it needs realistic blocks.
+- It has fault-injection hooks and a catalogue of 81 variants: 72 the reader must reject with the expected reason, and 9 valid controls it must accept.
+- **Tests (23):**
+  - Round trip: 311-style key set, representation selection, byte-order table order `0,1,10,11,2,…`, exact BF16 decode, and Q8_0 decode bit-identical to gguf-py.
+  - Also tied vs untied head, packs for embedding and head, hand-built blocks through the container, determinism, and every fault.
+- Two controls show what the reader cannot see: a payload edit with the digests recomputed, and a transposed Q8_0 shape that needs the same byte count (`[128,64]` vs `[64,128]`). Only E1 against upstream can catch these.
+
+## Ambiguities logged (`AMBIGUITIES.md`)
+
+| ID | Scope | Summary | Chosen reading |
+|---|---|---|---|
+| AMB-001 | core | NaN result bit patterns (0×inf) are CPU-dependent: 0x7FC00000 here (arm64), 0xFFC00000 on x86. Exact-bit comparison would make the verdict depend on the host. | Compare as "is NaN". Compare bits for everything else. |
+| AMB-002 | core | For a NaN scale, which codes are NaN? | All of them, since ggml's `qs[j]*d` gives that. |
+| AMB-003 | core | §14 rule 5: must each representation the graph lists have its own index entry? | Yes. Otherwise §7 silently falls back to BF16. |
+| AMB-004 | optional | SHOULD-level checks: severity? | Warning, never a rejection. |
+| AMB-005 | core | Reader doesn't enforce the 5-representation / 311-tensor shape. | Coverage against upstream is left to E1. This is live until E1 exists. |
+| AMB-006 | optional | Strict JSON handling: duplicate keys, `NaN`, `4.0`, codec field types. | Strict. |
+| AMB-007 | core | An object with zero source bindings has no HF-key prefix. | Rejected. |
+| AMB-008 | core | The tied head is decoded from stored BF16, per §7. SPEC §12(d) says LARQL re-quantises it at load, and ggml/LARQL semantics for that are not modelled. | Stored BF16. An E2 logit discrepancy would be traced here first. |
+| AMB-009 | core | Row orientation and endianness aren't declared in the container (the spec's F1/F2). | Blocks along the last dimension, row-major, little-endian f16. ggml and safetensors both support this. |
+
+## NEEDS.md
+
+Nothing. Everything needed for deliverables 1–3 was available.
+
+## Notes
+
+- **Sandbox:** the system temp dir is writable but not readable, so test scratch space is the gitignored `.tmp/`. A shell here-doc also failed, so I used the edit tools instead.
+- **Git noise:** git prints `xcrun` / `xcodebuild` cache errors on every command. They are harmless; the commits succeeded.
+- **Cleanup:** I left a few sloppy expressions in test and writer code mid-way. I removed them before committing and found no leftovers afterwards.
+
+## Git log
+
+```
+64353c1 Add the synthetic container writer, the fault catalogue and reader round-trip tests
+95f46d4 Add the container reader and its tests
+c1387a0 Add the Q8_0 decoder, cross-checked bit for bit against gguf-py
+3d4f7f6 Add the Phase 1 brief for the reference-checker agent
+1da252f Ignore the session-local temp directory
+5d34dc7 Start the independent reference checker: pinned dependency lockfile
+```
+
+Nothing was pushed. The README covers how to run each piece and what it was tested against.
+exit 0
