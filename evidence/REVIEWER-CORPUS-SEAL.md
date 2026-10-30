@@ -20,3 +20,24 @@ container, the reviewer observed that the unmutated container already exceeds T2
 protocol predicts this for LARQL's truncating encoder (Tolerance rules, "T2 is expected to be exceeded"). T2 was fixed
 before this observation and does not change. The observation is not Stage A evidence, and it was not given to the
 checker.
+
+## Scoring run 1 (2026-10-30): aggregates only
+
+The full results are in the reviewer repository (`scoring/run-1/`, commit `2c3e289` and the transcription after it).
+They stay sealed from the checker.
+
+- **Checker:** `2e8fd34`.
+- **Corpus:** `8603fb7`, unchanged (zero diff in the case directories).
+- **Rules:** fixed in a commit made before the run.
+- **Scope:** A0, E1, synthetic containers and metrics. The 30 real-container mutations are held until after the freeze.
+
+| | Pass | Fail | Error |
+|---|---|---|---|
+| Unambiguous cases | 153 | 1 | 0 |
+
+- **The one failure** is a corpus classification defect, not a checker defect. The checker took a defensible reading
+  of an unspecified rule, and still refused the wrong model.
+- **Ambiguous cases** (26 entries) were scored separately, and the readings the checker took are recorded.
+- **Nothing was disclosed to the checker, so no case is burned.** The misclassified case is to be reclassified as
+  ambiguous in the next corpus revision, which must be sealed again before it is used.
+- **This is Phase 1 information, not Stage A evidence.**
