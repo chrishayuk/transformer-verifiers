@@ -173,6 +173,22 @@ Rejecting every corruption shows the checker is *sensitive* to faults. It does n
 - The reviewer constructs small Q8_0 blocks by hand and works out the expected decoded values independently (by hand
   or exact arithmetic, not by running any decoder).
 - Decode values are compared as f32 **bit patterns**, so +0 and −0 differ.
+- **NaN comparison (decision AMB-001, 2026-10-30, recorded before any hidden A0 case is scored and not to be revised
+  in response to their results).** This clarifies T1; it does not relax it.
+
+  | Result | Acceptance |
+  |---|---|
+  | Finite, ±0, ±inf | Exact f32 bit-pattern equality, sign included |
+  | Expected NaN, actual NaN | Pass, whatever the payload and sign |
+  | Expected NaN, actual non-NaN, or the reverse | Fail |
+
+  - **Why:** IEEE 754 does not fix the NaN payload or sign produced by invalid arithmetic such as 0 × ∞, so
+    requiring one pattern would test the CPU, not the decoder.
+  - **Applies only where the pinned Q8_0 arithmetic defines a NaN result.** The reviewer decides which inputs those
+    are, independently and without consulting the checker. A NaN produced by a malformed container, an unsupported
+    representation or an unexpected computation is never accepted for being a NaN.
+  - **NaNs are not canonicalised before other values are compared.** Every non-NaN output is compared on its original
+    bits.
 - **Decode cases, all required:**
   - **Codes:** q = 127, q = −128 (valid in the format, though a conforming encoder never emits it), and q = 0.
   - **Scale d:** +0 and −0; the smallest and largest f16 subnormal; the smallest f16 normal; 65504; a negative d (legal
