@@ -1,0 +1,79 @@
+{
+  "permissions": {
+    "blockReadsOutsideWorkingDirectories": true,
+    "additionalDirectories": [
+      "/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001",
+      "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
+      "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B"
+    ],
+    "deny": [
+      "Edit(//Users/christopherhay/chris-source/transformer-verifiers/protocols/**)",
+      "Edit(//Users/christopherhay/chris-source/transformer-verifiers/inputs/**)",
+      "Edit(//Users/christopherhay/chris-source/transformer-verifiers/isolation/**)",
+      "Edit(//Users/christopherhay/.cache/huggingface/**)",
+      "Edit(//Users/christopherhay/chris-source/transformer-verifiers/checker/.claude/**)",
+      "WebFetch",
+      "WebSearch",
+      "Bash(gh *)",
+      "Bash(git push *)",
+      "Bash(git remote *)"
+    ],
+    "disableBypassPermissionsMode": "disable"
+  },
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": true,
+    "network": {
+      "allowedDomains": [],
+      "strictAllowlist": true
+    },
+    "filesystem": {
+      "denyRead": [
+        "/Users/christopherhay",
+        "/private/tmp",
+        "/private/var/folders",
+        "/Volumes"
+      ],
+      "allowRead": [
+        "/Users/christopherhay/chris-source/transformer-verifiers/checker",
+        "/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001",
+        "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
+        "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B",
+        "/Users/christopherhay/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none",
+        "/Users/christopherhay/.gitconfig",
+        "/private/tmp/claude-501/-Users-christopherhay-chris-source-transformer-verifiers-checker"
+      ],
+      "denyWrite": [
+        "/Users/christopherhay/chris-source/transformer-verifiers/protocols",
+        "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
+        "/Users/christopherhay/chris-source/transformer-verifiers/isolation",
+        "/Users/christopherhay/.cache/huggingface"
+      ]
+    },
+    "credentials": {
+      "files": [
+        {
+          "path": "/Users/christopherhay/.config/gh",
+          "mode": "deny"
+        }
+      ],
+      "envVars": [
+        {
+          "name": "GH_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "GITHUB_TOKEN",
+          "mode": "deny"
+        },
+        {
+          "name": "HF_TOKEN",
+          "mode": "deny"
+        }
+      ]
+    }
+  },
+  "disableClaudeAiConnectors": true
+}
