@@ -99,3 +99,10 @@ because `main` is unprotected and CODEOWNERS is advisory.
 
 **Not yet built.** Where the approval record lives depends on who the independent approver is, which is still
 undecided.
+
+**Decision (freeze owner, 2026-10-30):** use a separate approval repository. A draft is at
+`~/chris-source/transformer-verifiers-approvals-draft/`. It contains an SSH-signed approval record binding the
+protocol to its exact commit, plus a verifier that runs from the approval repository and never runs code from the
+checked repository. It passed 7 of 7 local cases with throwaway keys. **Not adopted yet:** the owner creates the
+signing key (with a passphrase, never available to agents), creates the repository, and records the key's
+fingerprint offline. The drafting agent does not control any of it.
