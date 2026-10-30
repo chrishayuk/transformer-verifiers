@@ -1,0 +1,6 @@
+representation: Q8_0  source: stored  objects from a compiled pack: 1/4
+engine: vindex3-production-larql-compute
+layers: 28  seq: 3  hidden: 1024
+logits: 151936, argmax 13 (+15.3444)
+runtime compile: 0 tensor(s)  — served entirely from stored bytes
+projection plans: FusedBf16 1 calls 0.31 GB, FusedKQuant 420 calls 1.40 GB

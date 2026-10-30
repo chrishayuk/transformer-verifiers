@@ -80,3 +80,9 @@ The settings file was re-tested at sha256 `a4cc2006…`.
   - GitHub over the network
   - editing `isolation/checker-settings.json`
 - **Hashes unchanged after the test:** SPEC.md and the settings file.
+
+## Settings change after part 3
+
+`checker-settings.json` gained `"attribution": {"commit": "", "pr": ""}`, the user's no-trailer preference, and is
+now sha256 `d05ce78f…`. Attribution does not affect isolation. The run started before this change (checker run 1)
+used `a4cc2006…`.

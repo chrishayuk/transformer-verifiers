@@ -35,3 +35,16 @@ auditor, whose report is `AUDIT.md`. This file records what was built. It does n
 - Running LARQL's exec for E2 and E3 is a post-freeze step. It is done by an operator outside the checker session,
   because the checker cannot read or run LARQL. The operator hands the checker only the logit dumps and the recorded
   environment.
+
+## LM-head reproduction (2026-10-30)
+
+The defect was reproduced by running exec from outside the code, not only by reading it. The runs used
+`--tokens 9707,11,1879` and no `--logit-dump`, so no logits from the subject were produced.
+
+| Run | `projection plans:` | Log |
+|---|---|---|
+| Unpinned | `FusedQ8 1 calls 0.17 GB, FusedKQuant 420 calls 1.40 GB` | `repro-lmhead-unpinned.log` |
+| `LARQL_CPU_MAX_FORMAT=bf16` | `FusedBf16 1 calls 0.31 GB, FusedKQuant 420 calls 1.40 GB` | `repro-lmhead-pinned.log` |
+
+Both runs print "served entirely from stored bytes". Filed upstream as chrishayuk/larql#665. The fix is kept separate
+from LARQL-VERIFY-001. The workaround is part of the pinned baseline, and the defect stays open.
