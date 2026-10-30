@@ -1,0 +1,118 @@
+{
+ "dtype_counts": {
+  "target.decoder_stack@BF16": {
+   "BF16": 308
+  },
+  "target.decoder_stack@Q8_0": {
+   "BF16": 112,
+   "Q8_0": 196
+  },
+  "target.embedding@BF16": {
+   "BF16": 1
+  },
+  "target.final_norm@BF16": {
+   "BF16": 1
+  },
+  "target.output_head@BF16": {
+   "BF16": 1
+  }
+ },
+ "summary": {
+  "8.versioning": {
+   "pass_": true,
+   "checks": 59,
+   "failed": 0
+  },
+  "1.framing": {
+   "pass_": true,
+   "checks": 99,
+   "failed": 0
+  },
+  "2.identify": {
+   "pass_": true,
+   "checks": 2256,
+   "failed": 0
+  },
+  "3.mapping": {
+   "pass_": true,
+   "checks": 1869,
+   "failed": 0
+  },
+  "4.bf16": {
+   "pass_": true,
+   "checks": 423,
+   "failed": 0,
+   "counts": {
+    "target.decoder_stack@BF16": 308,
+    "target.decoder_stack@Q8_0": 112,
+    "target.embedding@BF16": 1,
+    "target.final_norm@BF16": 1,
+    "target.output_head@BF16": 1
+   }
+  },
+  "5.q8_layout": {
+   "pass_": true,
+   "checks": 196,
+   "failed": 0,
+   "min_stated_corr": 0.9999665845759835,
+   "n": 196,
+   "all_alternatives_below": 0.5
+  },
+  "6.integrity": {
+   "pass_": true,
+   "checks": 211,
+   "failed": 0,
+   "candidate_seals": {
+    "n": 196,
+    "ok": 196,
+    "q8_tensors": 196
+   },
+   "upstream_embed_sha256": "8f29acf519434862d95613b2b4f6b9d14933a5e4d16baebf8ac0b33b410acfb6",
+   "upstream_lm_head_sha256": "8f29acf519434862d95613b2b4f6b9d14933a5e4d16baebf8ac0b33b410acfb6"
+  },
+  "7.tied": {
+   "pass_": true,
+   "checks": 8,
+   "failed": 0
+  }
+ },
+ "header_sizes": {
+  "target.decoder_stack@BF16": {
+   "H": 31448,
+   "P": 31456,
+   "J": 31440,
+   "pad": 8,
+   "size": 880964320
+  },
+  "target.decoder_stack@Q8_0": {
+   "H": 31416,
+   "P": 31424,
+   "J": 31408,
+   "pad": 8,
+   "size": 468087488
+  },
+  "target.embedding@BF16": {
+   "H": 152,
+   "P": 160,
+   "J": 147,
+   "pad": 5,
+   "size": 311165088
+  },
+  "target.final_norm@BF16": {
+   "H": 136,
+   "P": 144,
+   "J": 136,
+   "pad": 0,
+   "size": 2192
+  },
+  "target.output_head@BF16": {
+   "H": 152,
+   "P": 160,
+   "J": 149,
+   "pad": 3,
+   "size": 311165088
+  }
+ },
+ "extra_top_level_keys": [],
+ "failures": []
+}
