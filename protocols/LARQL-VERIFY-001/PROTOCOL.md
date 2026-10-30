@@ -133,7 +133,8 @@ with tied embeddings, `rms_norm_eps` 1e-6, `rope_theta` 1e6, no RoPE scaling and
 | `LICENSE` | 11343 | `832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e` |
 | `README.md` | 13965 | `1ab64a26fcb3b461423b89a433a8c858f1bf8d4086f979cbb3ff878d47cf20e9` |
 | Backend | CPU, `vindex3 exec --backend production-q8 --representation-source stored --logit-dump`. Metal is out of scope |
-| Environment | `LARQL_CPU_MAX_FORMAT=bf16`; `LARQL_KQUANT_EXEC`, `LARQL_CPU_ARITHMETIC` and `LARQL_CPU_WORKERS` pinned to values recorded at freeze. Every other `LARQL_*` variable must be unset. The harness records the full `LARQL_*` environment of every run, and a run with an unexpected variable is invalid |
+| Environment | Every LARQL command runs under `env -i`, with only `PATH=/usr/bin:/bin`, `HOME`, `LARQL_CPU_MAX_FORMAT=bf16`, `LARQL_CPU_WORKERS=12` and `RAYON_NUM_THREADS=12`. `LARQL_KQUANT_EXEC` and `LARQL_CPU_ARITHMETIC` stay **unset** (direct Q8_0 GEMV, f32 activations). The harness records the full environment of every run, and a run with any other `LARQL_*` variable is invalid |
+| Run acceptance | A run is valid only if LARQL's `projection plans:` output lists no kernel other than `FusedKQuant` and `FusedBf16`. Without `LARQL_CPU_MAX_FORMAT=bf16`, the BF16 LM head is silently re-quantised to Q8 at load, even under `--representation-source stored`, which still reports serving only stored bytes (L1 audit, `evidence/L1/AUDIT.md`) |
 
 ## Stage A: independent reconstruction and equivalence checker
 

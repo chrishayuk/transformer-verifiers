@@ -1,0 +1,27 @@
+== 2026-10-30T21:33:46Z encode
+capabilities: tokenizer.json, tokenizer_config.json, generation_config.json
+encoded 4 representation(s), 1.50 GB (1.40 GiB) payload → /Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b.vindex3
+exit 0
+== 2026-10-30T21:33:53Z represent
+== represent Q8_0 (archival container) ==
+  in     : /Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b.vindex3
+  out    : /Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b-q8_0.vindex3
+
+── compiled ──
+  object                                   source     compiled    ratio   tensors
+  --------------------------------------------------------------------------------
+  target.decoder_stack                   840.0 MB     446.4 MB    1.88x  196 +112 
+  --------------------------------------------------------------------------------
+  TOTAL                                  840.0 MB     446.4 MB    1.88x
+  target.embedding                       296.8 MB         BF16   preserved whole [embedding x1]
+  target.final_norm                        2.0 KB         BF16   preserved whole [small-vector x1]
+  target.output_head                     296.8 MB         BF16   preserved whole [output-head x1]
+
+  preserved at source precision (conservative default):
+    small-vector     112 tensor(s)
+
+  4 segment(s) carried unchanged; canonical bytes are untouched.
+  wall time: 8.4s
+
+→ /Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b-q8_0.vindex3
+exit 0
