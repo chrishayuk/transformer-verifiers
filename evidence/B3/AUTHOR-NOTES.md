@@ -127,3 +127,15 @@ Met: per-tensor representation type is in each tensor's `dtype`; Q8_0 block geom
 - `represent` copies capability files and `moe_manifest.json`, but not `auxiliary_references.json` or an attestation table (`represent/pipeline.rs:526-538`). A source container that had either would yield an output whose `index.json` names a file that is not there. That does not apply to this subject, which has neither.
 - `candidate.json` embeds the source container's absolute path (`producer.rs:84`), so its bytes are machine-dependent. The rest of the container is deterministic given the inputs, except for the identity strings in U1.
 - Tensor offsets within a Q8_0 pack are only 2-byte aligned (34-byte blocks after BF16 vectors). Only the payload start is 16-byte aligned.
+
+## Revision 2 (applied after the third-party check)
+
+The third-party check (`evidence/B3/CHECK.md`) of SPEC.md revision 1 (SHA-256 `47c2a304bffdc21bb17017aed248ee74f5827099c2d8b962a766dec888964ef0`) returned ADMIT WITH CORRECTIONS. All 8 spec-only checks passed on the fresh container `/Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b-q8_0.vindex3`. I read that container read-only. As its author, I applied exactly the five requested corrections:
+
+1. **O2.** Provenance now points to the fresh container; the §9 values are marked observed, and its digests are recorded in §9.2. U1 is closed: `model` and `artifact` are `c1899de289a04d12100db370d81485cdf75e47ca`, which replaces the `"Qwen3-0.6B"` example. U2 is closed: all computed values held. U3 is closed: `encoder` is `kquant-larql-native` rev 1 with no `source`. U4 to U7 are unchanged, because the container does not settle them. U7 appears only in these notes.
+2. **O1.** §8.4 now names ggml `facdc44a67da17df4433adcc468b424f48e9ded2`, `src/ggml-common.h:251-256` (f16 `d`, then `int8_t qs[32]`), as the normative `block_q8_0` reference. It still describes no arithmetic.
+3. **A1.** §6 now defines `source_bindings[].tensors` and `.bytes` as the source tensor count and byte total, with a MAY cross-check. I added a new source, S109 (`graph/build/tables.rs:185-190`).
+4. **A2.** §12(b) now says the padding length also differs (5 versus 3 spaces) and that the parsed headers are otherwise equal.
+5. **A3.** §4.3 now notes that the observed offsets are 16-aligned, incidentally, and keeps "MUST NOT assume more than 2-byte alignment" normative.
+
+No normative layout statement changed. The F2 text in SPEC §15 was left as it was, as instructed, even though O1 now gives readers the pinned block definition. One earlier remark in these notes was too pessimistic: "Tensor offsets within a Q8_0 pack are only 2-byte aligned". It holds as the guarantee, but the observed offsets in this subject are 16-aligned. SPEC.md revision 2 SHA-256: `3c4feb5e01f2c262e06e1f8579754921089cda46038f17c63cfd42f9d0c5fe50`.

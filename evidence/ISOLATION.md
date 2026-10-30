@@ -66,3 +66,17 @@ mechanism: a separate Claude Code session with sandboxing.
 - **B3 is not admitted yet.** The B3 container specification will be added to the allow-list only after its
   third-party check.
 - **Changes after these tests.** Any change to the isolation files after these tests requires rerunning them.
+
+## Part 3: after admitting the B3 specification
+
+The settings file was re-tested at sha256 `a4cc2006…`.
+
+- **SPEC.md readable:** both through the shell (hash `3c4feb5e…` matches) and through the Read tool.
+- **SPEC.md not writable:** blocked through the shell (`denyWrite`) and through the Edit tool (permission deny).
+- **Still blocked:**
+  - `evidence/B3/AUTHOR-NOTES.md` (shell) and `evidence/B3/CHECK.md` (Read tool)
+  - the fresh container under `~/chris-models/l1-2536bb79`
+  - both LARQL trees, and `larql/CAPABILITIES.md`
+  - GitHub over the network
+  - editing `isolation/checker-settings.json`
+- **Hashes unchanged after the test:** SPEC.md and the settings file.

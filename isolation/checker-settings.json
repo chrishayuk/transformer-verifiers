@@ -4,9 +4,11 @@
     "additionalDirectories": [
       "/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001",
       "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
-      "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B"
+      "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B",
+      "/Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container"
     ],
     "deny": [
+      "Edit(//Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container/**)",
       "Edit(//Users/christopherhay/chris-source/transformer-verifiers/protocols/**)",
       "Edit(//Users/christopherhay/chris-source/transformer-verifiers/inputs/**)",
       "Edit(//Users/christopherhay/chris-source/transformer-verifiers/isolation/**)",
@@ -43,13 +45,15 @@
         "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B",
         "/Users/christopherhay/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none",
         "/Users/christopherhay/.gitconfig",
-        "/private/tmp/claude-501/-Users-christopherhay-chris-source-transformer-verifiers-checker"
+        "/private/tmp/claude-501/-Users-christopherhay-chris-source-transformer-verifiers-checker",
+        "/Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container"
       ],
       "denyWrite": [
         "/Users/christopherhay/chris-source/transformer-verifiers/protocols",
         "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
         "/Users/christopherhay/chris-source/transformer-verifiers/isolation",
-        "/Users/christopherhay/.cache/huggingface"
+        "/Users/christopherhay/.cache/huggingface",
+        "/Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container"
       ]
     },
     "credentials": {

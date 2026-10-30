@@ -65,3 +65,60 @@ I then read `evidence/B3/AUTHOR-NOTES.md` and LARQL at `/Users/christopherhay/ch
 3. **A1:** define `source_bindings[].tensors` and `.bytes` (source tensor count and source byte total; optional cross-check).
 4. **A2:** §12(b): say the padding length also differs, and that the parsed headers are equal apart from `representation`.
 5. **A3** (optional): §4.3: note that the observed offsets are 16-aligned in this profile, incidentally, while keeping the 2-byte assumption normative.
+
+## Revision 2 re-check (2026-10-30)
+
+Role unchanged (third-party checker). SPEC.md was not edited.
+
+### 1. Hashes
+
+- Revision 2, the working copy `specs/vindex3-container/SPEC.md`: SHA-256 `3c4feb5e01f2c262e06e1f8579754921089cda46038f17c63cfd42f9d0c5fe50`. **Matches** the author's report.
+- Revision 1, `git show a4bf47b:specs/vindex3-container/SPEC.md`: `47c2a304…964ef0`. **Matches** the revision I checked above.
+
+### 2. Diff revision 1 → revision 2: classification
+
+There are 16 hunks. Each one belongs to a correction or a declared addition:
+
+| Hunk (rev 2 location) | Change | Class |
+|---|---|---|
+| Header table, new `Revision` row | Revision 2, cites CHECK.md | Declared addition |
+| Header table, new `Observed container` row | Path; local snapshot; default build; hashes of `index.json`, `system_graph.json`, the Q8_0 segment | Declared addition (content is O2) |
+| §0 conventions | Drops "to be built fresh later"; replaces the **(computed)** convention with **(observed)** | O2 |
+| §1.1 step 1 | `<ARTIFACT>` was the local snapshot directory, so the stem is the snapshot hash; U1 closed | O2 |
+| §1.2 encoder-recipe row | Observed `kquant-larql-native` rev 1 with no `source`; U3 closed | O2 |
+| §4.3 offsets bullet | Adds the observation that all offsets are 16-aligned, incidentally; "MUST NOT assume more than 2-byte alignment" | A3 |
+| §5.2 `model` row | Example `"Qwen3-0.6B"` replaced by the observed snapshot hash | O2 |
+| §6 `source_bindings` row | Defines `artifact`, `tensor_prefix`, `tensors`, `bytes`; optional cross-check; observed values; cites S109 | A1 (+ O2 for the observed `artifact`) |
+| §8.4 block contents | Pins ggml `facdc44a…` `src/ggml-common.h:251-256`: f16 `d` at bytes 0-1, `int8 qs[32]` at bytes 2-33 | O1 |
+| §9.2 title and table | (expected)/(illustration)/(computed) → (observed); new digest table replaces "hashes UNDETERMINED" | O2 |
+| §9.4 (two places) | (computed) → (observed) | O2 |
+| §12(b) | Padding length differs too (5 vs 3); parsed headers otherwise equal | A2 |
+| §16 U1-U3 | Marked CLOSED with the observed values | O2 |
+| Appendix A, S109 | `VX/graph/build/tables.rs:185-190` | Declared addition |
+| New "Revision history" section | Rev 1 hash and the rev 2 change list | Editorial. Not declared as a separate item, but it only restates the change list |
+
+**Normative layout statements: unchanged.** No hunk touches §3, §4.1, §4.2, §4.4, §5.3, §5.4, §7, §8.1-§8.3, the row/block-placement bullets of §8.4, §10, §13 or §14. The rules that are left unchanged include the framing, the padding formula, byte-wise sort order, contiguity, the Q8_0 row and block placement, the name-mapping rule, and every rejection rule. The only new normative sentence is in §4.3 ("MUST NOT assume more than 2-byte alignment"). It restates the rule already in that bullet ("no alignment guarantee beyond what the lengths imply", "may be any even number") and is the A3 wording I suggested.
+
+**Changes that are neither a correction nor a declared addition:** none of substance. The "Revision history" section is undeclared but only restates the change list. One editorial leftover follows from O2 and is not a new change:
+
+- **E1.** §0 no longer defines the **(computed)** marker, but §8.2 still says "**(computed, by the safetensors convention)**". §0 also now says "every value revision 1 marked (computed) … is now marked (observed)", and that is not true of this one marker. Its content is correct: the 423 BF16 tensors are byte-identical to upstream, and the row placement holds. *Suggested fix:* mark it (observed), or reinstate the (computed) convention. This does not affect admission.
+
+### 3. Corrections checked against the container
+
+- **§9.2 digests:** all 10 values (5 `payload_sha256` + 5 `segment_sha256`) match `index.json` exactly. The Phase A rerun independently re-hashes them all.
+- **§9.2/§9.4/H/P/file sizes:** 880,932,864 / 468,056,064 / 311,164,928 / 2,048 / 311,164,928; H = 31,416, P = 31,424, file 468,087,488. All match.
+- **Header row hashes:** `index.json` `7f3ba8e5…`, `system_graph.json` `05fcec4c…`, Q8_0 segment `f7f68e99…` match `evidence/L1/container-q8_0.sha256`.
+- **§5.2 / §6 / U1:** `index.json.model`, `components[0].source_artifact` and all four `source_bindings[].artifact` = `c1899de289a04d12100db370d81485cdf75e47ca`. Correct.
+- **§6 A1:** `tensors`/`bytes` = 308/880,932,864, 1/311,164,928, 1/2,048, 1/311,164,928. Correct. S109 (`tables.rs:185-190`) sets them from `group.tensors`/`group.bytes`. Correct.
+- **§1.2 / U3:** `encoder` = `{"algorithm":"kquant-larql-native","revision":1}`, no `source`. Correct. "Default build" is inferred from this field via S14/S15, which is reasonable.
+- **§4.3 A3:** I checked every tensor in all 5 segments: all 619 offsets ≡ 0 mod 16. Revision 1 confirmed this only for Q8_0, so "every tensor offset" is now confirmed in full.
+- **§8.4 O1:** `inputs/ggml-facdc44a67da17df4433adcc468b424f48e9ded2/src/ggml-common.h:251-256` is `#define QK8_0 32` / `ggml_half d; int8_t qs[QK8_0];` / `static_assert(… == sizeof(ggml_half) + QK8_0 …)`. The commit hash and line range are right. Byte positions 0-1 and 2-33 follow from the struct and are confirmed by the Phase A decode (minimum correlation 0.99997).
+- **§12(b) A2:** padding 5 vs 3 spaces; parsed headers equal apart from `representation`. Correct.
+
+### 4. Phase A rerun
+
+`evidence/B3/check/check_spec.py` was rerun unchanged (SHA-256 `2df036b4bed787408b702e20f879469596afcd0ac3ed3216e042b3fd2a2e466e`; the script does not read SPEC.md). Exit 0. All 8 checks PASS, with the same assertion counts as before (59 / 99 / 2256 / 1869 / 423 / 196 / 211 / 8) and 0 failures. Minimum Q8_0 stated-orientation correlation 0.99997. The summary is byte-identical to the first run. Output is in `check/rev2_stdout.json` and `check/rev2_results.json`.
+
+### 5. Verdict on revision 2
+
+**ADMIT.** Revision 2 applies all five corrections, and they are correct against the container. Every other change is one of the two declared additions or an editorial consequence of them. No normative layout statement changed, and the Phase A reader still passes in full. The leftover (computed) marker in §8.2 (E1) is cosmetic. It may be fixed at the next revision, and it is not a condition of admission.
