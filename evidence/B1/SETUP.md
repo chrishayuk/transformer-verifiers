@@ -50,3 +50,34 @@ shown passing.
 **Known limit:** for a `pull_request` event, GitHub runs the workflow file from the PR, so a PR can rewrite the
 workflow to skip verification. Code-owner review on `.github/**` and no bypass are what stop that, not the
 verifier. Test 6 must show that such a PR cannot merge.
+
+## Update 2026-10-30: the enforcement model chosen by the freeze owner
+
+GitHub does not offer rulesets or branch protection for private repositories on a free personal plan. The freeze
+owner chose to **make the repository public** and **not to use branch protection**.
+
+**Now enforced server-side:**
+- **Ruleset `freeze-tags`** (id 26246512, active, no bypass actors) on `refs/tags/freeze/*`. It blocks update,
+  deletion and non-fast-forward. Once created, a freeze tag cannot be moved or deleted, not even by the owner's admin
+  account without first changing the ruleset.
+- **Test:** an identical ruleset on a throwaway `rulesettest/*` pattern. Creating a tag was allowed; a forced move
+  was rejected (`GH013`); deletion was rejected (`GH013`); the tag stayed at `a2aa5af`. Afterwards, the test ruleset
+  and tag were removed.
+
+**Not enforced, by the owner's choice:**
+- `main` is unprotected. Anyone with push access can push anything, including edits to `tools/freeze_verify.py` and
+  `.github/workflows/freeze.yml`.
+- CODEOWNERS review is not required. The file remains, but is advisory.
+
+**What this means for the freeze:**
+- **The trust anchor is the immutable tag, not the branch.** A frozen protocol is whatever `freeze/<PROTOCOL>`
+  points at.
+- **Run the verifier from the tag.** Anyone can check any commit by taking the verifier from the tag
+  (`git show freeze/<P>:tools/freeze_verify.py`) and running it against that commit. CI does this on every push. An
+  edited workflow on `main` can skip CI, but cannot change what the tagged verifier reports.
+- **Who can change the tag rule.** An admin token can still edit or delete the ruleset itself. The boundary
+  therefore still depends on research agents never holding the owner's token. The checker session has none
+  (`../ISOLATION.md`).
+- **Tamper tests to run after a freeze tag exists:** the nine tests listed above, against the tagged verifier. Test 6
+  (alter the workflow so a corrupted manifest passes) is expected to succeed in skipping CI on `main`, because the
+  branch is unprotected. It must still be shown that the tagged verifier, run independently, reports TAMPERED.
