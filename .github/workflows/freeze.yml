@@ -1,0 +1,32 @@
+name: freeze
+
+# Required status check "freeze / verify" on the protected branch.
+# The verifier is taken from the protected freeze tag, not from the commit under test.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        protocol: [LARQL-VERIFY-001]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Verify freeze with the tagged verifier
+        run: |
+          tag="freeze/${{ matrix.protocol }}"
+          if git rev-parse --verify --quiet "refs/tags/$tag^{commit}" >/dev/null; then
+            git show "refs/tags/$tag:tools/freeze_verify.py" > "$RUNNER_TEMP/freeze_verify.py"
+          else
+            cp tools/freeze_verify.py "$RUNNER_TEMP/freeze_verify.py"
+          fi
+          python3 "$RUNNER_TEMP/freeze_verify.py" "${{ matrix.protocol }}"

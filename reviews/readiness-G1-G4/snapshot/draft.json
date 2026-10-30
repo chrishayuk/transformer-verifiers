@@ -1,0 +1,97 @@
+{
+  "programme": "LARQL-VERIFY-001",
+  "status": "DRAFT - not frozen; discovery disabled until every pre-freeze gate is closed. PROTOCOL.md is the readable version; if they disagree before freezing, PROTOCOL.md wins.",
+  "frozen": null,
+  "frozen_against": null,
+  "discovery_enabled": false,
+  "question": "Can we establish, independently of LARQL, whether a LARQL-encoded model faithfully reconstructs its upstream checkpoint: empirically (A), with proven bounds for selected operations (B), and with at least one machine-checked bound (C)?",
+  "baseline": {
+    "larql_sha": "TBD at freeze (audit was done at ff364ba6)",
+    "subjects": "TBD; proposed gemma3-4b-it plus one model from another family",
+    "encodings": "TBD; proposed one NVFP4 and one K-quant encoding from vindex3 represent",
+    "upstream": "pinned HF revision plus the SHA-256 of every tensor file",
+    "backend": "one declared backend (proposed CPU production); Metal out of scope",
+    "gap": "spec.verify.reconstruction and spec.verify.logit_match are declared but unsupported (crates/larql-factory/src/build/stages/verify.rs:20-24, commit d8a7d730)"
+  },
+  "stages": {
+    "A": {
+      "kind": "empirical",
+      "acceptance": {
+        "A0_analytic_positive_cases": "the checker's decode exactly equals expected values derived independently for hand-built tensors covering saturation, rounding ties, zero/minimum scales, subnormals, signed zero and non-finite values where the format defines them",
+        "A1_reconstruction": "the checker's spec-derived decode is bit-identical to LARQL's decode; per-tensor error within per-format tolerances declared before measurement (TBD)",
+        "A2_logit_match": "E1 weight reconstruction, E2 execution (same decoded weights, LARQL vs reference) and E3 end-to-end (LARQL vs original checkpoint), reported separately; E2/E3 are only valid when token IDs, config, positional encoding, masking, execution mode and accumulation dtype are matched and recorded",
+        "A3_reproduce_self_checks": "S5, IP1-IP3, codec bit-exactness and S6 reproduced from outside LARQL; any disagreement is a finding",
+        "A4_fault_rejection": "frozen fault-detection matrix: every claimed guarantee has at least one relevant corruption (must be rejected) and at least one valid control (must be accepted); the reviewer holds the hidden rows"
+      },
+      "falsified_if": "a behaviour-changing mutation is accepted; a decode mismatch is left untraced; a tolerance is changed after measurements have been seen"
+    },
+    "B": {
+      "kind": "mathematical",
+      "candidate_split": "LARQL-VERIFY-002",
+      "order": [
+        "dequantize+GEMV (one format)",
+        "RMSNorm",
+        "softmax over a bounded range",
+        "attention composition"
+      ],
+      "acceptance": "a written derivation or sound tool certificate of the bound over an explicit input domain (holding for any summation order, or with a named order as a testable assumption); adversarial review finds no gap; empirical drift never exceeds the bound (sanity check only)",
+      "falsified_if": "an input inside the domain exceeds the bound; the derivation relies on an assumption the kernel violates; the domain is narrowed after measurements have been seen"
+    },
+    "C": {
+      "kind": "machine-checked",
+      "candidate_split": "LARQL-VERIFY-003",
+      "acceptance": "Lean 4 checks the theorem with no sorry; a trust ledger lists every axiom, floating-point model assumption and implementation claim Lean does not check",
+      "not_claimed": "that LARQL's Rust or Metal code is verified"
+    }
+  },
+  "anti_cheat": "the agent cannot edit frozen files, corpora, tolerances, the mutation suite or the frozen checker (enforced by manifest); LARQL self-reports never decide a verdict; no result is reported with a stronger kind of guarantee than it has",
+  "secondary_observations_not_acceptance": [
+    "pack size and compression ratio",
+    "throughput and latency",
+    "how far measured error falls below the bound",
+    "comparisons between formats"
+  ],
+  "scope": {
+    "in": "reconstruction and logit match for declared subjects and encodings on one backend; error bounds for single operations; one Lean theorem",
+    "out": [
+      "CPU/Metal parity",
+      "head interventions outside CPU softmax decode",
+      "kernel equivalence proofs",
+      "graph-rewrite verification",
+      "linking proofs to Rust code",
+      "encoding discovery or search",
+      "architectural-invariant claims"
+    ]
+  },
+  "pre_freeze_gates": {
+    "G1_freeze_integrity": "open: manifest plus outside check, shown by tamper tests including attempts by the researcher",
+    "G2_independence": "open: roles, isolation, forbidden dependencies, hidden-fault procedure",
+    "G3_reaudit_at_freeze_sha": "open",
+    "G4_numerical_contract": "open: one checkpoint and one encoding, what is compared, tolerance rules before measurement, no Metal",
+    "G5_corpora_frozen": "open",
+    "G6_mutation_suite_frozen": "open",
+    "G7_stage_B_domain_written_down": "open",
+    "G8_independent_acceptance_review": "open",
+    "G9_decide_on_split": "open"
+  },
+  "verdicts": {
+    "checker_correctness": "decided by the fault-detection matrix and the reviewer's independently derived results; Stage A is accepted on this",
+    "model_acceptability": "reported for each encoding as an outcome; an encoding over tolerance is a correct finding, not a Stage A failure"
+  },
+  "roles": {
+    "reference_checker_agent": "builds from independent specs; has no access to LARQL source or hidden cases",
+    "larql_implementation_agent": "integrates accepted checks; no access to the reference checker's internals, the criteria or hidden cases",
+    "independent_reviewer": "generates hidden faults, verifies provenance, independently derives selected expected results; does not take either agent's self-reports as evidence"
+  },
+  "ambiguity_policy": "spec ambiguities are logged in AMBIGUITIES.md (passage, readings, chosen reading, reason) and never settled by inspecting LARQL; no LARQL-generated fixtures; shared dependencies only if declared as trusted",
+  "freeze_decision": {
+    "verdicts": [
+      "READY TO FREEZE",
+      "REVISE AND RE-REVIEW",
+      "BLOCKED"
+    ],
+    "reviewer_given": "the requirements, the readiness audit and repo read access",
+    "reviewer_not_given": "the drafting rationale or preferred outcome",
+    "stage_A_implementation": "not before READY TO FREEZE"
+  }
+}
