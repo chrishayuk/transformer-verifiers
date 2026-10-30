@@ -288,6 +288,13 @@ difference between implementations would look like quantization error.
 - Reference: the upstream model code in `transformers`, run in float32 and in float64, with the same KV-cached,
   one-token-at-a-time schedule. For E2 the reference is loaded with the checker's decoded weights; for E3 with the
   original upstream weights. Tokenizer, template and BOS handling are pinned.
+- **The f64 reference is a native f64 forward (decision AMB-013, 2026-10-30).** Every operation runs in float64,
+  including RMSNorm, the attention softmax and the RoPE tables.
+  - **Why:** upstream `transformers` Qwen3 forces float32 at those points, so an unpatched "f64" run is mostly f32
+    there. On a synthetic model it differs from a true f64 forward by 1.2e-7, against 3.7e-7 for the f32 run, which
+    would make `|ref32 − ref64|` a weak yardstick for T3.
+  - **The patch is part of the checker.** The code that forces f64 is frozen with the checker and reviewed. `ref64`
+    in T3 always means this native f64 run.
 - Metrics per position: maximum absolute logit difference, RMS logit difference, KL divergence and top-1 agreement.
   - **Same vocabulary.** Both sides' logit rows are indexed by the same token IDs in the same order, over the full
     vocabulary of the dump. A vocabulary-size mismatch makes the comparison invalid.

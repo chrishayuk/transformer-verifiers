@@ -54,3 +54,9 @@ RMSNorm, the attention softmax and the RoPE tables. An "f64" run built from the 
 mostly f32 at those points. Measured on a synthetic model, it differs from a true f64 forward by 1.2e-7, against
 3.7e-7 for the f32 run and 1.2e-15 for a native f64 forward. This weakens `|ref32 − ref64|` as the T3 yardstick. The
 checker implements both modes, with `upstream` as the default and `native` recommended.
+
+**Follow-up (2026-10-30, ~23:20):**
+- **N-001 resolved.** The freeze owner approved re-acquiring the checkpoint. It was re-downloaded at HF commit
+  `c1899de2…` into the same cache path, and all nine files match the pinned SHA-256 hashes, so the restored input is
+  byte-identical to the original. The cause of the deletion is still unknown.
+- **AMB-013 decided:** native f64, recorded in PROTOCOL.md under "A2 logit-match details".
