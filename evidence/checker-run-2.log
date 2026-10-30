@@ -1,0 +1,59 @@
+Deliverables 4, 5 and 6 are done and committed, but nothing ran against the real Qwen3-0.6B checkpoint. The pinned snapshot isn't at the path in the brief: the directory `models--Qwen--Qwen3-0.6B` doesn't exist, so I couldn't load the checkpoint, check its hashes or run E1 against it (`NEEDS.md` N-001). I tested everything on synthetic Qwen3-shaped models and containers instead. All 176 tests pass (`.venv/bin/python -I -W error -m unittest discover -s tests`), with 1 skipped (the real-checkpoint test, which runs when the files appear).
+
+## What each deliverable does
+
+**4. E1 (`refcheck/e1.py`)** computes the T2 bound per block and reports per-tensor reconstruction metrics:
+- The T2 bound is computed exactly, and covers every stored scale.
+- Per Q8_0 tensor it reports max absolute error, relative Frobenius error, and the elements and blocks exceeding T2.
+- It also counts blocks with a ±0 scale and blocks with a non-finite scale, and gives the block-level distribution (quantiles and a histogram of error over bound).
+- Unquantised tensors are compared as bit patterns.
+- A coverage check compares container keys and shapes with upstream (AMB-005).
+- `e1_report` runs this over a whole container and cross-checks the decode against gguf-py.
+- Tests: all 65,536 f16 scales checked against exact fractions, counting at the boundary, and the reference encoder staying within T2 down into the subnormal range. A truncating encoder is caught. A swapped tensor, a transposed shape and a resealed payload edit are all visible to E1.
+
+**5. Harness (`refcheck/harness.py`)** runs Qwen3 in f32 or f64, teacher-forced, KV-cached, one token at a time, batch size 1.
+- Weights come from upstream (with the nine pinned hashes checked) or from a container decoded by this checker. Every weight must be present, none extra, shapes exact, and each parameter is compared bit for bit after loading.
+- It writes raw logits plus a JSON sidecar. It records every comparability precondition the protocol lists. `check_comparable` and `check_candidate` return the reasons a comparison is invalid.
+- Tests: the native f64 run agrees with an independent numpy f64 forward pass written in the test file to 1.2e-15, and repeat runs are bit-identical. There are also tests of the weight loading, the E2 pipeline from a container, the raw byte layout, `verify_snapshot`, and each comparability rule with one mutation per field.
+
+**6. Metrics (`refcheck/metrics.py`)** computes max |Δ|, RMS, KL(reference ‖ candidate) through the max-subtracted f64 log-softmax, and top-1 with the lowest-token-ID tie-break on f32 values. A vocab, row-count or dtype mismatch is invalid rather than a large error. Tests use 100-digit decimal arithmetic, torch, and hand-worked values. They include logits thousands apart (where a naive softmax gives NaN), an underflowing reference probability, and ±float32-max logits.
+
+## New ambiguities (AMB-010 to AMB-017)
+
+- **AMB-013 is the one that matters.** Upstream Qwen3 forces float32 inside RMSNorm, the attention softmax and the RoPE tables. An unpatched "f64" run therefore deviates 1.2e-7 from a true f64 forward, against 3.7e-7 for the f32 run and 1.2e-15 for native f64. That makes `|ref32 − ref64|` a much weaker yardstick for T3. I implemented both modes (`f64_mode="upstream"` and `"native"`). The default is `upstream` (the literal protocol text); I recommend `native`. This needs a protocol-owner decision.
+- AMB-010 and AMB-011 cover how E1 handles zero and non-finite scales, and the definitions of the reported E1 quantities.
+- AMB-012 is how "the SHA-256 of the container" is defined; the spec gives only per-segment digests.
+- AMB-014 is the raw logit layout. The protocol gives no dtype, header or row count, so I chose and recorded one.
+- AMB-015 is tied embeddings: the head and embedding are loaded as separate parameters.
+- AMB-016 notes that reproducibility depends on thread count and BLAS.
+- AMB-017 covers rows with non-finite logits. The KL procedure also has an absolute noise floor of about 1e-15, so near-identical E2 runs can sit at that floor.
+
+One limit to keep in mind: T2 is a bound, not an identity check. A single code flipped by ±1 can stay inside it.
+
+## NEEDS.md
+
+N-001, the missing pinned checkpoint, as described above.
+
+## Git log
+
+```
+6517535 Add the E2/E3 metrics: KL, RMS, max abs difference and top-1, with decimal-arithmetic and large-difference tests
+9e0558b Add the reference harness: Qwen3 f32/f64 teacher-forced cached decode, raw logit writer, comparability records and checks
+742b250 Add the E1 machinery: per-tensor reconstruction metrics, the T2 bound and coverage, with unit tests
+64353c1 Add the synthetic container writer, the fault catalogue and reader round-trip tests
+```
+
+None of the new commits has a Co-Authored-By or any other attribution trailer, and I did not push.
+
+## Harness wall time
+
+I can't give a figure for Qwen3-0.6B, because I could not run it. These are for the synthetic 3-layer, 64-wide model with 8 tokens on this machine (16 CPUs, torch using 12 threads). They show the harness works and are not a measure of the real model.
+
+| Run | Build and load | Decode |
+|---|---|---|
+| f32 | 0.80 s (includes first-call warm-up) | 0.007 s |
+| f64 (unpatched) | 0.006 s | 0.007 s |
+| f64 (native) | 0.005 s | 0.006 s |
+
+I did not compare against any LARQL output and did not run the T3 pilot.
+exit 0
