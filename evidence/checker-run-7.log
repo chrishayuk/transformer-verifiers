@@ -1,0 +1,88 @@
+D7 reference-side check is implemented. The full suite runs 373 tests, all passing, none skipped. That's 211 before this run plus 88 in `test_config_compare.py` and 72 in `test_d7_reference.py`. I verified the protocol snapshot (`edd3933f…`) and SPEC revision 4 (`8f3f7c2b…`) by hash first. I read no LARQL source, container or logit dump, and I did not run E2, E3 or T3.
+
+## Changes, file by file
+
+**New files**
+- `refcheck/numconv.py`: converts a JSON decimal to binary32 or binary64 in one round-to-nearest-even step. A decimal just above a binary32 midpoint rounds correctly, where going through binary64 first does not.
+- `refcheck/config_compare.py`: the comparator.
+  - It takes the container's `index.json`, `system_graph.json` and tensor shapes, plus an authority.
+  - The authority is either `Authority.pinned()` (sha256-checked) or `synthetic_standin()` (provenance mandatory). A stand-in is refused when `subject=True`.
+  - It returns `comparable` or `invalid_comparison`, with one row per field and site, the unresolved assumptions, and the four known arithmetic differences stated but not judged.
+  - Rows cover the 16 D2 fields, the nine D7 class 2 derivations, the no-upstream-counterpart fields, keys that must be absent, unknown keys, and tensor shapes and inventory.
+  - Expected spans come from the reference's resolved `layer_types` and `sliding_window`.
+  - The head split is three separate fields, so equal products are still a mismatch.
+- `refcheck/f64_patch.py`: the AMB-013 patch moved into its own file so its sha256 can be pinned.
+- `refcheck/readback.py`: collects the reference's effective configuration and pairs it with the authority through the `MAPPING` table.
+- `refcheck/pins.py`: the eight pins, `pinned_runtime`, and the per-step `check_step`.
+- `refcheck/d7.py`: joins read-back and pins into one record.
+- `refcheck/gate.py`: `evaluate_gate` and `gated_compare`. An invalid gate returns no `metrics` key at all.
+- `tests/test_config_compare.py` and `tests/test_d7_reference.py`: the two new test files.
+
+**Modified files**
+- `refcheck/harness.py`:
+  - `reference_run(..., authority=)` runs the read-back and pins and puts the result in `record["d7"]`.
+  - A tied configuration now ties the parameters and refuses a head that differs from the embedding. This supersedes AMB-015 for tied configs.
+  - `decode_logits` asserts the cache and position ids at every step.
+- `refcheck/synth.py`: `execution_surface()` writes the SPEC revision 4 §17 surface into synthetic containers.
+- `tests/test_harness.py`: one test changed for the tie behaviour.
+- `AMBIGUITIES.md`: AMB-020 to AMB-025, plus a note on AMB-015.
+- `README.md`: new §7, and the stale N-001 and AMB-015 text corrected.
+
+## Read-back mapping table
+
+Of the 36 config keys:
+
+| Read-back key | Pairs with | Rule |
+|---|---|---|
+| 14 keys: `attention_bias`, `head_dim`, `hidden_act`, `hidden_size`, `intermediate_size`, `max_position_embeddings`, `max_window_layers`, `model_type`, `num_attention_heads`, `num_hidden_layers`, `num_key_value_heads`, `use_sliding_window`, `vocab_size`, `tie_word_embeddings` | same key | `equal` |
+| `rms_norm_eps` | same key | `equal`, authority text converted to binary64 |
+| `rope_parameters` | `rope_theta`; `rope_scaling` null ↔ `rope_type: default` | `derived`; any other key in the dict is unmapped |
+| `sliding_window` | `sliding_window` and `use_sliding_window` | `derived`; transformers 5.5.0 resolves it to null unless `use_sliding_window` |
+| `layer_types` | the authority's `layer_types`, else the library's rule on its numbers | `derived` |
+| `attention_dropout`, `use_cache`, `bos_token_id`, `eos_token_id`, `pad_token_id`, `initializer_range` | same key | `equal_or_default` |
+| `problem_type`, `is_encoder_decoder`, `chunk_size_feed_forward`, `output_attentions`, `output_hidden_states`, `return_dict` | none | `fixed`, compared with a stated constant |
+| `architectures`, `_name_or_path`, `transformers_version`, `id2label`, `label2id` | none | `ignored`, recorded with a reason |
+| `dtype` | none | `pin`, left to the dtype pin |
+
+Seven module-level entries sit alongside these: `attn_per_layer`, `spans`, `norm_eps`, `activation`, `rope_table`, `shapes` and `rope_convention`. The RoPE one runs the library's own `apply_rotary_pos_emb` on exact dyadic inputs and requires SPEC 17.5's formula bit for bit.
+
+The full 43-entry table, with a justification per entry, is `readback.MAPPING` and AMB-022. It needs the reviewer's eyes.
+
+## Verification
+
+- The comparator tests on synthetic containers include:
+  - a matching control;
+  - one mismatch per field class;
+  - the head split with equal products, also with every Q/K/V/O shape unchanged;
+  - mismatches that have no effect at position 0.
+- The read-back tests include an unmapped key and an unmapped `rope_parameters` key.
+- Each of the eight pins is tested failing its assertion.
+- Read-back and pins pass on the pinned checkpoint in both f32 and f64, with no decode.
+- The pinned `config.json` also yields `comparable` against a metadata-only description of the subject (28 layers, 29 sites, no weights).
+
+## Commits
+
+- `871b48b`: comparator, `numconv`, synthetic surface, and tests.
+- `310c174`: read-back, pins, gate, harness integration, records, and tests.
+
+Not pushed, and no attribution trailers. The working tree is clean. The `xcrun` and `xcodebuild` errors in git's output are sandbox noise, not commit failures.
+
+## New ambiguities
+
+- **AMB-020 (most important):** transformers 5.5.0 makes layers `i >= max_window_layers` sliding. SPEC §17.5 says LARQL's writer does the reverse. Neither is reached for the pinned subject, where the window is null. I follow the reference for the expected spans, as D7 says. I also treat any non-null authority window as unresolved, so such a comparison stays invalid until the owner decides which rule LARQL runs.
+- **AMB-021:** twelve places where SPEC 17 and D3 are silent on what an absent or unlisted value means. The likeliest to matter in hidden cases:
+  - absent per-layer `geometry` is unresolved, not inherited from `X`;
+  - authority keys outside the D2 list are unresolved;
+  - the `tie_word_embeddings: false` rule;
+  - `declared_span` handling.
+- **AMB-022:** the mapping table above, for review.
+- **AMB-023:** thread counts are recorded, not asserted. `f64_mode="upstream"` can never pass the patch pin; its runs are recorded invalid but still decode.
+- **AMB-024:** the f64 reference holds binary64 `1e-6` while the container holds the widened binary32 value. This is already stated in D3 and D7, and is logged only so it isn't read as a mismatch.
+- **AMB-025:** the weight-tie pin is checked on the decoded source weights and on the model's two tensors. The pinned `model.safetensors` stores `lm_head.weight` alongside the embedding, and they are the same bits.
+
+## Caveats
+
+- The stand-in authorities in my tests are my own fixtures, not the reviewer's (D3 question 17), and are not acceptance evidence.
+- The pinned patch sha256 is `9e69692885c7f90fb67a358fcaf53a8c39f13398a843b4c915b454b9511b8e7e`. Any later edit to `f64_patch.py` fails the pin until `FROZEN_F64_PATCH_SHA256` is deliberately re-frozen.
+- The tie-pin change means a tied configuration with a differing head now gets no logits at all, only an invalid record.
+exit 0

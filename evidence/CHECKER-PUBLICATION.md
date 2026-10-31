@@ -138,3 +138,34 @@ precedes their seal.
 
 **New point the checker recorded (in AMB-019, not decided):** a non-finite upstream element inside a block that is
 itself outside T2's domain is already outside T2 through its block, so it is not counted by class.
+
+## Checker run 7: 2026-10-31, `871b48b` and `310c174` (decision revision D7). Audited and pinned, NOT pushed
+
+**The run:** snapshot `723d5ff` (PROTOCOL.md `edd3933f…`) and SPEC revision 4 (`8f3f7c2b…`), both verified by hash
+by the checker. Settings `a8f65afa…`. Log: `checker-run-7.log`. It read no LARQL source, container or dump, and did
+not run E2, E3 or T3.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh faaf587`) | Clean: 2 new commits, no trailers, lockfile unchanged, environment matches (20,103 RECORD files, 0 bad) |
+| New imports | `torch` (locked, already used by the harness); stdlib `importlib` (the check that hub kernels are absent), `platform`, `decimal`, `fractions`, `contextlib` and others |
+| Scope | D7: `config_compare.py` (comparator, type-aware exact equality via `numconv.py`), `readback.py` (explicit `MAPPING`, 43 entries), `pins.py` (eight runtime pins), `f64_patch.py` (pinned at sha256 `9e696928…`), `gate.py` (no metrics key unless the gate passes), harness integration, synthetic §17 surface. Tests: 88 + 72 new |
+| Tests, rerun by the publisher with `-W error` | 373, OK (211 before) |
+
+**Pin.** `310c174` is the D7 checker. Corpus revision 4 is not sealed against it, because D8 (score-scale rounding)
+requires one more correction first. Revision 4 is to be sealed against the commit of that correction.
+
+**Known non-compliance with D8, found in the audit:** the expected score scale is computed as `float(head_dim) **
+-0.5`, the platform's `pow`. D8 requires the exact value rounded once. On this machine `pow` happens to give the
+correctly rounded value for head_dim 16–256, which the coordinating session checked at 80 digits, while `1/sqrt`
+misses on 6 of 10. So no outcome changes here, but the computation depends on the platform.
+
+**New ambiguities, for the protocol owner:**
+- **AMB-020:** the direction of sliding windows (the reference slides layers ≥ `max_window_layers`; SPEC §17.5 says
+  LARQL slides those below). Not reached for the subject. A non-null authority window is treated as unresolved.
+- **AMB-021:** twelve absent or unlisted value cases, for example absent per-layer geometry, which is treated as
+  unresolved.
+- **AMB-022:** the read-back mapping table, which needs review.
+- **AMB-023:** thread counts are recorded, not asserted.
+- **AMB-024:** the binary64 `1e-6` against `f64(f32(1e-6))` epsilon, already covered by D3 and D7.
+- **AMB-025:** where the weight-tie pin is checked.
