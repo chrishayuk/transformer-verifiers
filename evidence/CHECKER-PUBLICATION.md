@@ -216,3 +216,24 @@ pin.
   `contradiction`; an unmapped read-back key is `unresolved`; a stand-in on the subject is `unsupported`.
 - Unprobed key types surface as `checker_error`.
 - `rope_parameters: null` counts as declared.
+
+## Checker run 10: 2026-10-31, `596cfe8`, `cb5a82a` and `e232720` (D9 clarification 3). Audited and pinned, NOT pushed
+
+**The run:** snapshot `6f28db9` (PROTOCOL.md `2fac79c0…`, verified by the checker), settings `9bb1b621…`. Log:
+`checker-run-10.log`. Clarification 4 (schema v1.1, `b838914`) postdates this snapshot and was not in its inputs.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 147a24e`) | Clean: 3 commits, no trailers, lockfile unchanged, environment matches (0 bad RECORD files), no new imports |
+| Scope | Q27 geometry fallback (an absent object inherits; a present but incomplete one is `unresolved`); reason-field schema v1 (canonical `field`, a table copied in tests to catch drift, published in README); AMB-027 categories (a pin that cannot be evaluated is `checker_error`, a pin in real conflict is `contradiction`) |
+| Soundness of derived-finding pruning | Checked by the publisher. `prune_derived` removes only reasons; the status comes from the **unpruned** rows (`mism` includes the shape rows), so pruning cannot turn an invalid comparison into `comparable`. Every branch of `_shape_finding` assigns at least one primary field, so a `shape_inventory` finding always has its primary and is never pruned alone |
+| Tests, rerun by the publisher with `-W error` | 461, OK. The pinned predecessor `147a24e`, rerun from an extracted copy, has 427. The checker's report says "449 before", which is wrong; the change is 427 → 461 |
+
+**Pin.** `e232720` is the checker that corpus revision 6 is sealed and scored against.
+
+**New items, for the protocol owner:**
+- **AMB-028:** schema v1 has no identifier for framing and identity checks (index version, graph schema, family,
+  unreadable files) or for tensors not in the architecture. The checker reports these as `unknown_keys`, with the real
+  location in `site` or `key_path`. The status is right, and the field identity is approximate.
+- **AMB-029:** SPEC §17.2 states the geometry fallback per key, and the protocol applies it per object. The checker
+  follows the protocol. This is over-strict if the SPEC reading was meant, and never accepts wrongly.

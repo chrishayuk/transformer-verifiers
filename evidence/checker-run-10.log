@@ -1,0 +1,41 @@
+All three changes are implemented, tested and committed. The full suite is 461 tests, all passing (`.venv/bin/python -I -m unittest discover -s tests -v`; it was 449 before this run). The protocol snapshot's sha256 matched `2fac79c0…` before I started, and nothing is pushed.
+
+## Commits (no attribution trailers)
+- `596cfe8`: the Q27 geometry fallback and reason-field schema v1.
+- `cb5a82a`: the AMB-027 reference-side categories.
+- `e232720`: AMBIGUITIES.md and README.md.
+
+## Changes, file by file
+- **`refcheck/config_compare.py`**
+  - **Schema v1:** the table, a map from internal row names to canonical identifiers, and a step that drops a derived-only finding when no primary that lists it is present. A field outside the table raises, which the comparator reports as `checker_error`.
+  - **Q27:** a layer with no `geometry` object compares as the `X.attention` values at its own site. A present but incomplete geometry (a missing key, `{}`, or a non-object) gives `unresolved` for each missing value.
+  - **Shape defects:** a tensor-shape defect is now reported against the primary fields the shape is evidence for, because `shape_inventory` is only a derived finding in the table. This attribution is my judgement (AMB-028).
+- **`refcheck/pins.py`**
+  - **Pin evaluation:** each pin is evaluated on its own. A pin that fails its assertion is a conflict. A pin whose evaluation raises is `unevaluable`, with `ok: None` and the exception's type and message.
+- **`refcheck/d7.py`**
+  - **Unevaluable pins:** an unevaluable pin gives a `checker_error` record whose stage is `pin:<name>` and which claims no contradiction. A pin in real conflict stays `contradiction`.
+  - **Patch hash:** the patch hash is `None` when the file can't be read, so a record can still be produced when that file is the missing infrastructure.
+- **`refcheck/readback.py`**
+  - **`UnhandledKeyType`:** a read-back value of an unhandled type, or a mapping rule with no implementation, now raises it, which becomes a `checker_error`. The mapping-rule case used to be recorded as a difference.
+- **Tests**
+  - **New:** `tests/test_reason_schema.py` (18 tests) and `tests/test_pin_categories.py` (12 tests).
+  - **Updated:** `tests/test_config_compare.py`. Geometry tests were added or rewritten, and old assertions on pre-schema field names (`attention.score_scale`, bare authority key names) were updated. Total 137.
+- **Docs**
+  - **README.md:** the schema v1 table with how each identifier is reported, and the reference-side category table.
+  - **AMBIGUITIES.md:** AMB-021 and AMB-027 decided, Q34 recorded, and AMB-028 and AMB-029 added.
+
+## Field identifiers emitted, against the schema table
+- **Emitted:** the battery of single faults reached 30 or more of the 36 primary identifiers, and every field emitted was in the table. Each fault reported its own primary field, and anything beside it was one of that primary's listed derived findings. Derived findings never appear without a primary that lists them.
+- **How the table is checked:** `test_reason_schema.py` holds its own copy of the protocol table and compares it with the checker's, so a drift is caught. The five derived-only findings are `shape_inventory`, `gqa_grouping`, `qk_norm_eps`, `rope_pairing` and `rope_rotation_direction`.
+- **Not covered by the table:**
+  - **Framing and identity reasons:** container framing and identity checks (index version, graph schema, the single component, a missing `execution`, family, unreadable files) are reported as `unknown_keys`, with the real location in `site`.
+  - **Reference-side reasons:** gate and reference-side reasons keep their own names (`pin:<name>`, read-back keys, `authority`, `container_sha256`, `configuration_comparison`, `reference_read_back`, `logits`).
+  - **Internal row names:** `rows[].field`, `mismatched_fields` and the like keep the comparator's internal row names. They are the field-by-field record, not reasons.
+
+## New ambiguities
+- **AMB-028:** schema v1 has no identifier for the framing and identity checks or for tensor-only shape faults, so I used the nearest identifier. A hidden case on one of those could score the wrong field identity, with status and category right. The fix would be a new protocol clarification.
+- **AMB-029:** SPEC 17.2 states the geometry fallback per key, and the protocol applies it to the whole object. I followed the protocol. This is over-strict if the SPEC reading was intended, and it never accepts wrongly.
+- **Pin judgement call (recorded in AMB-027):** the code path decides "real conflict" versus "cannot be evaluated", not the pin itself. A pin whose observed value differs from the expected one is a conflict even if a harness bug caused it. Only an exception, or a read that can't be made, is unevaluable.
+
+I changed nothing else in the comparability gate. I read no LARQL source, no hidden cases and no real container.
+exit 0
