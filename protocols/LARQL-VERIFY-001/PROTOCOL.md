@@ -637,6 +637,93 @@ or the implementation change would compromise blind evaluation.
   - **For this subject:** the OQ2 scan (`evidence/OQ2/`) found no non-finite upstream value, so no result on the
     subject depends on this rule.
 
+### Decision revision D6 (2026-10-31): non-finite upstream tensors, A1 precision, metric aggregates
+
+Decided by the protocol owner. D1–D5, all earlier scoring and all sealed corpora are unchanged. Committed before
+corpus revision 3 is scored.
+
+- **Non-finite upstream tensors (any representation).** This applies to every tensor whose upstream values include
+  any NaN, +inf or −inf, whatever its stored representation.
+  - **Bit identity stays reportable:** `bit_identical` and `n_bit_mismatches`, with NaN payloads and infinity signs
+    compared bit for bit.
+  - **The full-tensor finite-real metrics are not comparable:** maximum absolute error, relative Frobenius error and
+    absolute Frobenius error are `null`. The reference norm is `null`, with the reason. The per-class counts of
+    non-finite upstream elements (`nan`, `+inf`, `−inf`) are reported. The numerical-metric status is
+    `non_comparable_nonfinite`.
+  - **Why not report zero:** identical NaNs subtract to NaN, and inf − inf is undefined. A distance in which identical
+    non-finite values are at distance zero would be a new convention, which a metric defined over finite reals does
+    not adopt silently. Representation identity can pass while the numerical error is not comparable.
+  - **Finite-subset diagnostics:** a finite-subset statistic may be reported only under a distinct `finite_subset_*`
+    name, never as the full-tensor metric.
+  - **Precedence:** for these tensors D6 replaces D5's "its error appears as non-finite in the floating-point
+    statistics". D5's element-level T2 classification and integer counts still apply.
+  - **Tensors with finite upstream values are not reopened.** A non-finite *decoded* value against a finite upstream
+    value (D1 OQ1 class 2 blocks) is still reported as non-finite, under D1.
+- **A1 precision (reviewer question 22).**
+  - The A1 reconstruction statistics (maximum absolute error, absolute and relative Frobenius error) are computed in
+    binary64, with no particular summation algorithm required.
+  - The absolute Frobenius error is published as `absolute_frobenius_error`. If the checker uses another name, the
+    scorer may map it from key names before scoring, without changing the checker or any hidden expected value.
+  - The D4 zero-reference-norm rule is unchanged.
+  - A comparison tolerance on these statistics stands only if the reviewer's independent error analysis establishes it
+    for the cases scored.
+- **Excluded high-range metric cases (reviewer question 20).** The five revision 2 metric cases with |z| > 128 stay
+  pending. A data-specific bound worked out after their exclusion does not qualify them retroactively. Future
+  high-dynamic-range cases may use bounds that are derived independently and preregistered.
+- **Metric aggregates (reviewer question 21).** The checker exposes an explicit public aggregate interface. Its
+  documentation states:
+  - which positions are included;
+  - how non-comparable positions are excluded;
+  - how an empty comparable set is represented.
+
+  Its correctness is established only on fresh hidden cases. The run 3 metric cases do not establish it.
+
+### Decision revision D7 (2026-10-31): D2 comparability for the pinned subject
+
+Decided by the protocol owner, on the independent field assessment (`evidence/D2-FIELD-ASSESSMENT.md`, revision 4
+follow-up: 29 fields directly declared, 9 derivable, 0 dependent on an assumption) and SPEC revision 4 (`8f3f7c2b…`).
+D1–D6 are unchanged.
+
+- **The nine class 2 derivations are accepted for this pinned Qwen3-0.6B profile:** `rope_scaling`, `sliding_window`,
+  `use_sliding_window`, `max_window_layers`, `tie_word_embeddings`, the QK-norm epsilon, GQA grouping, RoPE pairing
+  and RoPE rotation direction.
+  - The derivations of `use_sliding_window` and `max_window_layers` hold because the pinned `config.json` has
+    `sliding_window: null`. Under any non-null window they would need to be assessed again.
+  - The comparator builds the expected per-layer spans from the reference's resolved `layer_types` and
+    `sliding_window`, never from SPEC §17.5's account of LARQL.
+- **Read-back normalisation is allowed as an explicit mapping only.** The mapping pairs equivalent representations of
+  one configuration value, for example `rope_scaling: null` with transformers 5.5.0's
+  `{'rope_type': 'default', …}`, or `rope_theta` with its place in `rope_parameters`.
+  - It is frozen with the checker and reviewed.
+  - It is never a licence to ignore a real difference. A read-back value with no mapping, or one that differs after
+    mapping, makes the run invalid.
+  - The load dtype in the read-back is handled by the dtype pin below, not by the mapping.
+- **Reference runtime pins.** Each is set explicitly by the harness, asserted after construction, frozen with the
+  checker and recorded:
+  - eager attention, asserted after construction;
+  - explicit f32 and f64 modes, with torch's default dtype pinned;
+  - the AMB-013 RoPE patch, which rebuilds the RoPE inverse-frequency table in f64 for the f64 run, recorded by
+    sha256;
+  - weight tie verified: `lm_head.weight` and `embed_tokens.weight` share storage, and the decoded head equals the
+    decoded embedding;
+  - hub kernels absent: the `kernels` package must not be importable, and `use_kernels=False`;
+  - an explicit cache class (DynamicCache), starting empty, and explicit absolute position ids;
+  - evaluation mode, asserted;
+  - torch's numerical settings (float32 matmul precision, thread count, deterministic algorithms) recorded.
+- **Arithmetic assumptions stay separate.** A D2 comparability pass establishes configuration identity, not
+  floating-point equivalence. The known differences are stated with E2's arithmetic assumptions and evaluated by T3
+  under its preregistered rules:
+  - RoPE sine and cosine are formed in binary32 from a binary64 angle in LARQL, but in f32 throughout in the f32
+    reference;
+  - the RoPE inverse frequency is computed by different routes, `θ^(−2i/d)` against `1/θ^(2i/d)`;
+  - the score scale is binary32 in LARQL and binary64 in the f64 reference;
+  - the RMSNorm epsilon is `9.999999974752427e-7` in LARQL and `1e-6` in the f64 reference.
+- **What D7 authorises in Phase 1.** The reference-side comparability check is implemented under an immutable protocol
+  snapshot, and tested on fresh hidden D2 cases (synthetic containers and stand-in authorities, D3 question 17) and on
+  the upstream checkpoint. **E2 on LARQL's Qwen3 container or logit dumps is not run in Phase 1.** The Phase 1 rules
+  bar it until after the freeze, and the T3 pilot is part of the frozen procedure. The first real E2 comparison is a
+  Phase 3 result.
+
 ### Stage A falsified if
 
 Any of:

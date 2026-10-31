@@ -191,6 +191,14 @@
       "scope": "AMB-018 and AMB-019, clarifications of D1; full text in PROTOCOL.md 'Decision revision D5'; committed after checker run 5 (3337645) ended so it was not exposed mid-run",
       "AMB-018": "each upstream HF key has exactly one owning logical object across every representation the container declares; reject cross-object collisions even if never executed together, and duplicates within one representation; scope is the declared inventory only; multiple representations of one object, shared storage, identical content under distinct keys and declared reuse are not prohibited",
       "AMB-019": "a NaN/+inf/-inf upstream element inside an in-domain block is outside T2's domain at element level, counted per tensor by class, never within or exceeding; non-finite summaries as strings in the canonical report; integer counts normative; exclusion from T2 does not establish encoder or decoder correctness"
+    },
+    "D6": {
+      "date": "2026-10-31",
+      "scope": "non-finite upstream tensors (any representation): bit identity reportable, full-tensor finite-real metrics null with status non_comparable_nonfinite, finite_subset_* diagnostics only under distinct names, supersedes D5's non-finite statistics for those tensors; A1 statistics in binary64, absolute_frobenius_error field name (scorer may map); Q20 five high-range metric cases stay pending; Q21 explicit public aggregate interface, fresh hidden cases required; committed before corpus revision 3 is scored"
+    },
+    "D7": {
+      "date": "2026-10-31",
+      "scope": "nine class 2 derivations accepted for the pinned profile (sliding-window ones conditional on sliding_window null); expected spans from the reference's resolved layer_types; read-back normalisation as an explicit frozen mapping of equivalent representations only; reference runtime pins (eager, explicit f32/f64 and default dtype, hashed AMB-013 RoPE patch, weight-tie assertions, hub kernels absent, DynamicCache from empty with explicit positions, eval mode, torch numerics recorded); RoPE, score-scale and epsilon precision differences are E2 arithmetic assumptions evaluated by T3; Phase 1 builds and tests the comparability check on synthetic cases and the upstream checkpoint only; E2 on LARQL's container or dumps is a Phase 3 result"
     }
   }
 }
