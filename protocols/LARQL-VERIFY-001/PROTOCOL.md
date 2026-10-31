@@ -838,6 +838,39 @@ expanded. D1–D8, all scoring runs (run 5 included) and all sealed corpora are 
     - When several such keys occur, each gets its own reason with its own `key_path`.
     - Hidden cases test status, reason category, field identity and key path as separate properties.
 
+- **Clarification 2 (2026-10-31, before corpus revision 5 is sealed; reviewer questions 27–33).** This is appended to
+  D9. D9's text, clarification 1 and all earlier records are unchanged.
+  - **Missing layer geometry (question 27).**
+    - **An absent `geometry` object:** a layer with no `geometry` object inherits from `X.attention`, because SPEC
+      §17.2 defines that fallback explicitly. This is the explicit SPEC permission D9 allows, not an undocumented
+      default.
+    - **A present but incomplete `geometry` object:** it does **not** inherit the missing values. The SPEC does not
+      separately authorise that, so the missing values are `unresolved`.
+  - **Field granularity (questions 28, 29 and 33).** For every expected reason:
+    - the **primary** field must be reported;
+    - **derived** consequences may be reported but are not required;
+    - any **unrelated** field fails the case.
+
+    Examples:
+    - an authority with no `head_dim` requires the unresolved `score_scale`, and may also report `head_dim`;
+    - a RoPE kind mismatch requires the `kind` mismatch, and does not require `rope_theta`;
+    - a single-site KV-head mismatch requires `num_key_value_heads`, and may also report GQA grouping and shape
+      consequences.
+  - **Over-strict refusals (question 30) are a separate, visible outcome, `tolerated`.**
+    - **Valid in-scope controls** must produce `comparable`.
+    - **Unsupported configurations** must produce `invalid_comparison` for the correct reason.
+    - **A refusal of an optional control** that is over-strict for a value that changes nothing is recorded as
+      `tolerated`. It counts neither as a pass nor as acceptance evidence, and it is reported separately, so
+      conservative rejection cannot inflate the success rate. A comparator that refused everything would be useless,
+      not correct.
+    - **Any refusal of the pinned subject's valid configuration** blocks E2 readiness.
+  - **Reason field names (question 31).** For corpus revision 5, the reviewer's preregistered aliases are used. The
+    checker publishes a stable reason-field schema for later runs.
+  - **Unknown keys (question 32).** These are `unresolved`, as SPEC §17.1 states ("an unresolved comparability
+    assumption"). Must-be-absent keys are `contradiction`.
+  - **Scoring of revision 5.** Status, category, field identity and key-path accuracy are reported separately, beside
+    the complete-case pass count. A case with the right status but a wrong reason is not a complete pass.
+
 - **Evaluation.** The corrections are implemented in a separate isolated checker run under a new protocol snapshot,
   audited and pinned. The reviewer builds fresh hidden cases that target the D9 changes, and seals them before they
   are scored once. No earlier corpus is revised.
