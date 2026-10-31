@@ -67,7 +67,8 @@ Paths below abbreviate `transformers/` as `T/`. `mq3` = `T/models/qwen3/modeling
 | 33 | Attention span semantics | `span: "full"` ⇒ keys `0..p` (§17.5) | `T/masking_utils.py:74` `causal_mask_function` (`kv_idx <= q_idx`) | **1** | For completeness: the sliding overlay `T/masking_utils.py:96-97` (`kv_idx > q_idx - w`) gives keys `p-w+1..p`, the same as SPEC's `max(0, p+1-w)..p`. Not reached here |
 | 34 | GQA head grouping | Meaning stated in §17.2: query head `h` reads KV head `h ÷ (num_q_heads ÷ num_kv_heads)` | `mq3:184-193` `repeat_kv` (`expand` on a new axis after the KV-head axis, so query head `h` reads KV head `h // n_rep`) | **2** | **Derivation.** Not a field, a stated meaning; the reference implements the same mapping. LARQL: §17.8 (`helpers.rs:227-232`); no remainder check (N6), not reached with 16 ÷ 8 |
 | 35 | RoPE pairing | **No field.** SPEC §17.5 defines `kind: "rope"` as split-half: dimension `i` with `i + head_dim/2`, angle `p·θ^(-2i/d)` | `mq3:144` `emb = cat(freqs, freqs)` (dimension `i` and `i + d/2` share frequency `i`); `mq3:151-155` `rotate_half`; `mq3:177-181` | **2** | **Derivation.** The admitted SPEC's meaning of `"rope"` is split-half, which is the reference's pairing; LARQL hard-codes split-half (`ROPE_PAIRING_INTERLEAVED = false`, CHECK.md row 19). Q/K row order is that of the upstream tensors (E1), so no permutation enters |
-| 36 | **RoPE rotation direction (sign)** | **Not stated anywhere.** SPEC §17.5 says dimension `i` "rotates with" `i + d/2` by angle `p·θ^(-2i/d)`, but not the sign of the rotation | `mq3:153-155, :179-180`: `x'_i = x_i·cos − x_{i+d/2}·sin`, `x'_{i+d/2} = x_{i+d/2}·cos + x_i·sin` (rotation by `+angle`) | **3** | **Assumption:** LARQL's `rope_rotate` (`exec/kernels.rs:147-158`) rotates by `+angle` in the same sense. The opposite sense gives `qᵀR(s−p)k` instead of `qᵀR(p−s)k`, which is a different attention pattern at every position after the first, and has no effect at position 0 (the D2 "no effect at position 0" class). Neither SPEC rev 3 nor CHECK.md (row 19 confirms pairing, frequency and precision, not sign) establishes it. **Remedy:** a SPEC revision (spec author) that states the rotation formula above as the meaning of `kind: "rope"`, checked by a third party against `exec/kernels.rs:147-158` and admitted. A protocol decision cannot remove it without a source statement; matching outputs must not be used (D3) |
+| 36 | ~~**RoPE rotation direction (sign)**~~ **SUPERSEDED 2026-10-31 by row 36 (rev 4) below and §8** | **Not stated anywhere.** SPEC §17.5 says dimension `i` "rotates with" `i + d/2` by angle `p·θ^(-2i/d)`, but not the sign of the rotation | `mq3:153-155, :179-180`: `x'_i = x_i·cos − x_{i+d/2}·sin`, `x'_{i+d/2} = x_{i+d/2}·cos + x_i·sin` (rotation by `+angle`) | **3** | **Assumption:** LARQL's `rope_rotate` (`exec/kernels.rs:147-158`) rotates by `+angle` in the same sense. The opposite sense gives `qᵀR(s−p)k` instead of `qᵀR(p−s)k`, which is a different attention pattern at every position after the first, and has no effect at position 0 (the D2 "no effect at position 0" class). Neither SPEC rev 3 nor CHECK.md (row 19 confirms pairing, frequency and precision, not sign) establishes it. **Remedy:** a SPEC revision (spec author) that states the rotation formula above as the meaning of `kind: "rope"`, checked by a third party against `exec/kernels.rs:147-158` and admitted. A protocol decision cannot remove it without a source statement; matching outputs must not be used (D3) |
+| 36 (rev 4) | **RoPE rotation direction (sign)** | **No field of its own.** Meaning of the declared `C.attention[L].position.kind == "rope"` (all 28 layers), now stated normatively by SPEC revision 4 §17.5, "The rotation for `kind: "rope"`": `x'[i] = a·cos φ − b·sin φ`, `x'[i+d/2] = a·sin φ + b·cos φ`, `φ_i(p) = p·θ^(−2i/d)`, from the unrotated `a`, `b`; per head slice of Q and K; after the QK norm and any query scale; `p` 0-based (third-party confirmed, `evidence/B3/rev4/CHECK.md`) | `mq3:151-155` (`rotate_half`), `mq3:177-181` (`apply_rotary_pos_emb`), `mq3:130-131, :143-146` (angle), `mq3:263-268` (order), `mq3:397-400` (position) | **2** | **Derivation:** see §8. The admitted SPEC's meaning of `"rope"` and the pinned reference compute the same rotation term by term. Not class 1, because no container field states it: it is the admitted meaning of a declared enumeration value, like the pairing (row 35). Precision differences are E2 arithmetic (§8.3) |
 | 37 | Keys that MUST be absent | `linear_attention`, `kda*`, `mla`, `mamba2`, `conv_qkv`, `qkv_bias`, `output_gate`, `sinks`, `v_from_k`, `declared_span`, `C.perception` (§17.1, §17.4-§17.6) | Qwen3 has none of these operators | **1** | Verified on the graph: `C` has exactly `id, role, source_artifact, num_layers, hidden_size, attention, execution`; `X` has no key outside §17.2-§17.6; all 28 `C.attention[L]` are identical with keys `operator, span, position, geometry`. No unknown keys to report |
 | 38 | Context extent | `X.context_length` = 40960 (§17.2; not D2) | `mq3:91-92` (`max_seq_len_cached`; read only by dynamic RoPE types, `mru:121-128`) | **1** | No computational effect below 40960 on either side; LARQL does not read it (§17.8) |
 
@@ -105,7 +106,7 @@ None of the following changes the computation **for this config.json and this co
    - `rope_theta` absent: the reference uses 10000 (`mru:702, :715`); SPEC gives no LARQL default.
 4. **Score scale with `attention_multiplier` or `query_pre_attn_scalar`.** The LARQL writer would store a different `score_scale` (§17.4). Qwen3 always uses `head_dim**-0.5` (`mq3:232`) and ignores both keys. A comparator against the reference's value would catch it, as the field is declared.
 5. **Unknown or absent `hidden_act`.** The LARQL writer stores `"silu"` (§17.6). The reference uses class default `"silu"` when absent (`cq3:69`) but raises a `KeyError` on an unknown spelling (`T/activations.py` `ACT2FN`).
-6. **RoPE rotation direction (unverified, row 36).** The reference rotates by `+angle` (`mq3:153-155, :179-180`). LARQL's sense is not established by the SPEC or by CHECK.md. This is the only item that could affect the present comparison.
+6. ~~**RoPE rotation direction (unverified, row 36).** The reference rotates by `+angle` (`mq3:153-155, :179-180`). LARQL's sense is not established by the SPEC or by CHECK.md. This is the only item that could affect the present comparison.~~ **Superseded 2026-10-31 (§8):** SPEC revision 4 states LARQL's rotation, and it agrees with the reference term by term. No disagreement remains for this config.
 7. **Precision, not configuration** (to be stated with E2's arithmetic assumptions, as D3 did for the epsilon):
    - score scale: LARQL multiplies by `f32(scale)`; the f64 reference by binary64 `0.08838834764831845`;
    - epsilon: LARQL adds binary64 `9.999999974752427e-7`; the f64 reference adds `1e-6`;
@@ -130,7 +131,7 @@ Each of these is something the reference uses that config.json does not state, o
 
 ## 7. Summary
 
-**Counts (38 rows).**
+~~**Counts (38 rows).**~~ **Superseded 2026-10-31: current counts are in §8.4 (29 / 9 / 0).** Original table, kept for the record:
 
 | Class | D2 fields (16) | Other fields (22) | Total |
 |---|---|---|---|
@@ -140,10 +141,58 @@ Each of these is something the reference uses that config.json does not state, o
 
 **Blocks E2.**
 
-- **RoPE rotation direction (row 36), class 3.** Remedy: SPEC revision stating the rotation, third-party-checked against LARQL `exec/kernels.rs:147-158`, admitted.
+- ~~**RoPE rotation direction (row 36), class 3.** Remedy: SPEC revision stating the rotation, third-party-checked against LARQL `exec/kernels.rs:147-158`, admitted.~~ **Superseded 2026-10-31:** remedied by SPEC revision 4; now class 2 (§8). No class 3 field remains.
 - **Not class 3, but needed before E2 can produce a valid D2 verdict:** the read-back normalisation (§6, item 4) and the tie assertion (§6, item 8), frozen with the checker. Without item 4, D2's read-back rule makes every run invalid on `rope_scaling`/`rope_theta`.
 - Rows 12-16 are class 2 on this assessment. D3 left them "unresolved until the owner decides"; the owner still has to accept these derivations. Rows 14-15 are class 2 only because upstream `sliding_window` is null. With any non-null window they become class 3 under the current SPEC, because LARQL's and the reference's resolution rules differ (§5.1).
 
 **LARQL versus reference.** No disagreement for this config and container, apart from the unverified rotation direction. Under other configs: sliding-window resolution (opposite `max_window_layers` direction, different `layer_types` and default-window handling); absent `tie_word_embeddings`; `partial_rotary_factor` and unspecified RoPE types; absent `rope_theta`; `attention_multiplier`/`query_pre_attn_scalar`; unknown `hidden_act`. Known precision differences (score scale, epsilon, RoPE tables) are arithmetic and belong with E2's assumptions.
 
 **Runtime defaults to pin.** Attention implementation (default SDPA → pin eager); compute dtype (default "auto" → bfloat16 → pin f32/f64); RoPE table construction (f32 init and forward → AMB-013 patch hash); read-back normalisation of `rope_parameters`/`rope_scaling`/`rope_theta`/`layer_types`/`dtype`; expected spans from read-back `layer_types`; cache class; explicit position ids; weight-tie assertion; hub kernels disabled; eval mode; torch numerics settings.
+
+## 8. Revision 4 follow-up (2026-10-31)
+
+Same role, same source rules and prohibitions as above. Read for this section: `specs/vindex3-container/SPEC.md` revision 4, sha256 `8f3f7c2b50eac2cb3a9172599a7e4ce21792f62169559fa64764d6a3ade85a8f` (verified), §17.5 rotation paragraph and revision-history row 4; `evidence/B3/rev4/CHECK.md` (third-party ADMIT; it did not consult the reference); `mq3` as above. No checker code or records, no `evidence/decisions/`, no hidden cases, no LARQL source, no model run. Revision 4's history states it changes no other normative statement, so rows 1-35 and 37-38 stand as assessed against revision 3 (§-numbers unchanged).
+
+### 8.1 Comparison: SPEC rev 4 §17.5 versus `transformers` 5.5.0 Qwen3
+
+Reference, for one head slice `x` of length `d`, with `cos`/`sin` = `cat(freqs, freqs)` (`mq3:144-146`) so that columns `i` and `i + d/2` both carry `φ_i`, and `rotate_half(x) = cat(−x[d/2:], x[:d/2])` (`mq3:151-155`), `x_out = x·cos + rotate_half(x)·sin` (`mq3:179-180`):
+
+| Aspect | SPEC rev 4 §17.5 (LARQL) | Reference | Result |
+|---|---|---|---|
+| First-half output | `x'[i] = a·cos φ_i − b·sin φ_i` | `x[i]·cos φ_i + (−x[i+d/2])·sin φ_i` | **Same.** Sine subtracted, in the first half |
+| Second-half output | `x'[i+d/2] = a·sin φ_i + b·cos φ_i` | `x[i+d/2]·cos φ_i + x[i]·sin φ_i` | **Same.** Sine added, in the second half |
+| Direction | Rotation by `+φ`, `x[i]` first axis | Matrix `[[cos, −sin], [sin, cos]]` on `(x[i], x[i+d/2])` | **Same** |
+| Pairing | `i` with `i + d/2`, `i < d/2` | `rotate_half` splits at `d/2`; `cat(freqs, freqs)` gives both members frequency `i` | **Same** (split-half) |
+| Angle | `φ_i(p) = p·θ^(−2i/d)` | `inv_freq[i] = 1 / θ^(2i/d)` (`mq3:130-131`, `arange(0, d, 2)/d`), `freqs = inv_freq · p` (`mq3:143`), `attention_scaling = 1.0` (`mq3:127, :145-146`) | **Same function** (the evaluation route differs; §8.3) |
+| Unrotated inputs | Both outputs from the unrotated `a`, `b` | Functional: `q * cos` and `rotate_half(q) * sin` both read the input tensor `q`; the result is a new tensor (`mq3:179-180`) | **Same** |
+| Per-head application | Q split into `num_q_heads` slices of `d`, K into `num_kv_heads`; each rotated independently | `view(..., -1, head_dim).transpose(1, 2)` gives `[batch, heads, seq, d]` (`mq3:261-264`); `cos`/`sin` unsqueezed on the head axis (`mq3:177-178`) and broadcast; rotation acts on the last axis only. K is rotated with its 8 KV heads, before the cache update and before `repeat_kv` (`mq3:268-271`, `:206`) | **Same** |
+| Order versus QK norm | After the QK norm | `q_norm`/`k_norm` at `mq3:263-264`, RoPE at `mq3:268` | **Same** |
+| Order versus scales | After any query scale (§17.4); `query_scale` absent in this profile | No query scale in Qwen3. The score scale multiplies the dot products afterwards (`mq3:209`), as SPEC §17.4 defines `score_scale` | **Same** for this profile (no query scale on either side) |
+| Position index, KV-cached one-token decode | `p` = the token's 0-based position in the sequence (decode: the cache's current position, CHECK.md rev 4) | Default `position_ids = arange(seq_len) + past_key_values.get_seq_length()` (`mq3:397-400`): for a one-token step after `n` cached tokens, `p = n`, 0-based and absolute. One RoPE table per forward, shared by all layers (`mq3:421`) | **Same,** provided the cache starts empty and the harness passes (or lets default) 0-based absolute `position_ids` (§6, item 7) |
+| `p = 0` | Slice unchanged | `cos = 1`, `sin = 0` | **Same** |
+
+**Result: the revision 4 rotation and the reference rotation are the same function, term by term.** No sign, pairing, input, slicing, ordering or position discrepancy.
+
+### 8.2 New classification
+
+**Row 36 (RoPE rotation direction): class 2** (was 3). Derivation: the container declares `position.kind = "rope"` at all 28 layers (class 1). The admitted SPEC revision 4 fixes the meaning of `"rope"` as the rotation in §8.1, third-party confirmed against LARQL's executor. The pinned reference computes the same rotation for this `config.json` (`rope_type = "default"`, §1, row 12). So the rotation both sides execute is derivable from independently specified information, without inferring anything from outputs. It is not class 1 because no container field holds it.
+
+Caveat carried with the class: the SPEC paragraph is marked "(observed in code)", i.e. a statement about LARQL `2536bb79`'s executor. It holds for that executor, which is the subject.
+
+### 8.3 Precision (E2 arithmetic assumptions, not the class)
+
+- **LARQL** (SPEC rev 4, informative; CHECK.md rev 4): `θ^(−2i/d)` and `φ_i(p)` in binary64; `sin`, `cos` rounded to binary32; products and sums in binary32.
+- **ref32 (unpatched path):** `inv_freq = 1.0 / (θ ** (arange/d))` built in **float32** (`mq3:130-131`, `dtype=torch.float`; `θ` the Python int 1000000); positions converted to float32 (`mq3:139`); `φ = inv_freq @ p` in float32 with autocast disabled (`mq3:142-143`); `cos`/`sin` evaluated in float32 (`mq3:145-146`), then cast to the activation dtype (`mq3:148`). The angle itself carries float32 rounding: at `p` near 40960 an f32 angle has an ulp of about 0.004 rad, so ref32's `sin`/`cos` can differ from LARQL's (binary64 angle, rounded once) by far more than one binary32 ulp at long positions. Positions above 2^24 would not even be exact (not reached).
+- **ref64 (AMB-013 patch, per its PROTOCOL.md description):** tables in float64, products and sums in float64. LARQL's binary32 `sin`/`cos` and binary32 products differ from it by rounding.
+- **Evaluation route:** the reference computes `1 / θ^(2i/d)`, LARQL `θ^(−2i/d)` via `powf`; mathematically equal, rounding differs.
+- E2's arithmetic statement should name these, together with the score-scale and epsilon items in §5.7.
+
+### 8.4 Updated counts (38 rows)
+
+| Class | D2 fields (16) | Other fields (22) | Total |
+|---|---|---|---|
+| 1 Directly declared | 11 | 18 | **29** |
+| 2 Unambiguously derivable | 5 (`rope_scaling`, `sliding_window`, `use_sliding_window`, `max_window_layers`, `tie_word_embeddings`) | 4 (QK-norm epsilon, GQA grouping, RoPE pairing, RoPE rotation direction) | **9** |
+| 3 Dependent on an assumption | 0 | 0 | **0** |
+
+**No class 3 field remains.** What still stands before an E2 D2 verdict (unchanged from §7): owner acceptance of the class 2 derivations (D3 left rows 12-16 open for the owner); the frozen read-back normalisation (§6, item 4) and the tie assertion (§6, item 8); the other runtime pins in §6, including 0-based absolute `position_ids` from an empty cache. Rows 14-15 remain class 2 only while upstream `sliding_window` is null.
