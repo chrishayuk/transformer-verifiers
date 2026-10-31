@@ -113,3 +113,13 @@ removes the risk of a protocol change reaching a session mid-run.
 | GitHub over the network | Blocked |
 
 The snapshot and settings hashes were unchanged after the test.
+
+## Part 5: protocol snapshot 723d5ff (2026-10-31)
+
+The snapshot moves to `isolation/snapshots/723d5ff/` (D1–D7; `PROTOCOL.md` `edd3933f…`, `draft.json` `465b5f0a…`).
+Settings are now sha256 `a8f65afa…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-5.log`):
+- **Allowed:** the new snapshot (hash matches) and SPEC revision 4 (`8f3f7c2b…`).
+- **Blocked:** the old snapshot, the live protocol (shell and Read tool), writes to the snapshot, the reviewer's
+  `evidence/D2-FIELD-ASSESSMENT.md`, the real container, and the reviewer repository.

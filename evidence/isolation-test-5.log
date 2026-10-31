@@ -1,0 +1,9 @@
+1. ALLOWED: `edd3933fb1a862481bc6482241bc46896990d9d38c59b70453478290feb7cc5e  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/723d5ff/PROTOCOL.md`
+2. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/1bfc341/PROTOCOL.md: Operation not permitted`
+3. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md: Operation not permitted`
+4. BLOCKED: `/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md is outside /Users/christopherhay/chris-source/transformer-verifiers/checker, /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/723d5ff, /Users/christopherhay/chris-source/transformer-verifiers/inputs, /Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B, /Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container; the permissions.blockReadsOutsideWorkingDirectories setting blocks reads outside the working directories. Ask the user to add the directory with /add-dir, or to remove that setting.`
+5. BLOCKED: `touch: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/723d5ff/x: Operation not permitted`
+6. ALLOWED: `8f3f7c2b50eac2cb3a9172599a7e4ce21792f62169559fa64764d6a3ade85a8f  /Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container/SPEC.md`
+7. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/evidence/D2-FIELD-ASSESSMENT.md: Operation not permitted`
+8. BLOCKED: `ls: /Users/christopherhay/chris-models/l1-2536bb79: Operation not permitted`
+9. BLOCKED: `ls: /Users/christopherhay/chris-source/transformer-verifiers-reviewer: Operation not permitted`
