@@ -724,6 +724,43 @@ D1–D6 are unchanged.
   bar it until after the freeze, and the T3 pilot is part of the frozen procedure. The first real E2 comparison is a
   Phase 3 result.
 
+### Decision revision D8 (2026-10-31): stand-in authorities, score-scale rounding, sliding-window scope
+
+Decided by the protocol owner on reviewer questions 23 and 24. D1–D7 are unchanged. Committed after checker run 7
+ended, and before corpus revision 4 is sealed or scored.
+
+- **Reviewer question 23: synthetic stand-in authorities.**
+  - For a synthetic D2 case, the reviewer-supplied stand-in `config.json` is the authority, interpreted through the
+    pinned reference implementation.
+  - A computation-relevant property with no direct configuration key gets its expected value derived from the
+    reference's documented semantics, applied to the stand-in. For example, the attention score scale comes from the
+    stand-in's `head_dim`; it is not a separate input.
+  - An unresolved assumption produces `invalid_comparison`, with a structured reason naming each affected field and
+    what cannot be established. It is never comparable because outputs agree.
+  - The rule applies only to independently supplied synthetic authorities. The comparison on the subject always uses
+    the pinned upstream `config.json`.
+- **Reviewer question 24: score-scale rounding.** Two separate questions, two separate rules.
+  - **Does the container declare the intended score scale?** The expected value is the exact mathematical
+    `s = 1/√head_dim`, rounded once, correctly (round-to-nearest-even), to the type the admitted SPEC declares for the
+    field. It is never computed with the platform's `pow`, `sqrt` or division, so it does not depend on where it is
+    computed. The container value is compared with it exactly.
+  - **Does LARQL execute with the same effective scale as the reference?** That is an execution-precision question,
+    stated with E2's arithmetic assumptions and evaluated under T3. It is not settled by the configuration comparison.
+  - **No undocumented conversion between the two.** A one-ulp binary64 difference that disappears on rounding to
+    binary32 is still reported at the declared type. Its effect on execution is a separate, recorded matter.
+  - **Applied to the subject:**
+    - In exact arithmetic, `1/√128` = 0.0883883476483184405501…, and the correctly rounded binary64 value is
+      `0.08838834764831845`, checked at 60 decimal digits by the coordinating session.
+    - SPEC §17.4 records LARQL's stored value (`pow(128, −0.5)`) as exactly that, so the configuration comparison
+      matches.
+    - Computing the value by square root then division gives `0.08838834764831843`, one ulp low. That is the reason
+      the rule forbids computing the expected value by any platform route.
+    - Execution is separate: LARQL multiplies by the value rounded to binary32 (`0.0883883461356163`, §17.8), and
+      that difference belongs to E2's arithmetic assumptions.
+- **Sliding-window scope.** No case covers a non-null authority `sliding_window`. This campaign accepts that as an
+  explicit scope limitation: the pinned subject has `sliding_window: null`, and D7's window derivations are limited to
+  that case. Extending the protocol to windowed configurations needs a new assessment and new cases.
+
 ### Stage A falsified if
 
 Any of:

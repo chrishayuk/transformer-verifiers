@@ -199,6 +199,10 @@
     "D7": {
       "date": "2026-10-31",
       "scope": "nine class 2 derivations accepted for the pinned profile (sliding-window ones conditional on sliding_window null); expected spans from the reference's resolved layer_types; read-back normalisation as an explicit frozen mapping of equivalent representations only; reference runtime pins (eager, explicit f32/f64 and default dtype, hashed AMB-013 RoPE patch, weight-tie assertions, hub kernels absent, DynamicCache from empty with explicit positions, eval mode, torch numerics recorded); RoPE, score-scale and epsilon precision differences are E2 arithmetic assumptions evaluated by T3; Phase 1 builds and tests the comparability check on synthetic cases and the upstream checkpoint only; E2 on LARQL's container or dumps is a Phase 3 result"
+    },
+    "D8": {
+      "date": "2026-10-31",
+      "scope": "Q23 stand-in authorities interpreted through the pinned reference's documented semantics, unresolved gives invalid_comparison with structured per-field reasons, synthetic only; Q24 declared score scale compared against exact 1/sqrt(head_dim) rounded once to the SPEC-declared type, never via platform pow/sqrt/division, execution precision a separate E2/T3 question, no undocumented conversion; subject's stored 0.08838834764831845 is the correctly rounded value (60-digit check) and matches; non-null sliding_window an explicit scope limitation; committed after checker run 7"
     }
   }
 }
