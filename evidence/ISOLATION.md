@@ -143,3 +143,13 @@ The snapshot moves to `isolation/snapshots/db08851/` (D1–D9 plus the D9 clarif
 - **Allowed:** the new snapshot (hash matches).
 - **Blocked:** the old snapshot, the live protocol, writes to the snapshot, `evidence/AMB-022-MAPPING-AUDIT.md`, the
   reviewer repository, and the real container.
+
+## Part 8: protocol snapshot 6f28db9 (2026-10-31)
+
+The snapshot moves to `isolation/snapshots/6f28db9/` (D1–D9 with clarifications 1–3; `PROTOCOL.md` `2fac79c0…`,
+`draft.json` `5d2d13f8…`). Settings are now sha256 `9bb1b621…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-8.log`):
+- **Allowed:** the new snapshot (hash matches).
+- **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, and the real
+  container.
