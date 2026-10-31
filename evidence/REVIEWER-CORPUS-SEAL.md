@@ -330,7 +330,7 @@ finite controls)
   - **Distribution quantiles:** not scored, because the README does not define them. Minimum, maximum and mean are
     scored.
 
-## E2/E3 logit corpus: pilot and held-out seals (2026-10-31; not yet admitted)
+## E2/E3 logit corpus: pilot and held-out seals (2026-10-31; admitted with recorded limitations, see below)
 
 Built by an independent corpus author in the reviewer repository (`e2corpus/`). No model, LARQL or checker was run.
 The coordinating session has not read the held-out contents.
@@ -363,3 +363,45 @@ The coordinating session has not read the held-out contents.
   - the held-out handover;
   - natural-text contamination for E3;
   - licences.
+
+### E2/E3 corpus admission (2026-10-31)
+
+- **Who checked it:** an independent admission reviewer, not the corpus author. It read nothing under `checker/`
+  beyond the venv interpreter, and ran no model or LARQL. The coordinating session checked its tool log (32 calls):
+  clean.
+- **How it checked:**
+  - with its own verifier, on the git objects;
+  - by a byte-exact rebuild of all 98 generated files from re-extracted pools and the sealed salt;
+  - by its own reproduction of the keyed order and the positions;
+  - by a direct reading of the author's tool log.
+- **Its recommendation:** **ADMIT WITH RECORDED LIMITATIONS.** The report is `e2corpus/ADMISSION-REVIEW.md`, at
+  reviewer repository commit `4db9ab2`.
+- **The result:** under the owner's ruling of 2026-10-31 ("if these pass, admit the existing corpus by its exact
+  hashes"), the corpus is **admitted by the exact digests above**: pilot `342f3978…`, held-out `0f74bb76…`.
+- **All 8 checks passed:**
+  - the seals;
+  - the 46 sequences: they round-trip, carry no special tokens, and keep no BOS or EOS even with `add_special_tokens`;
+  - the tokenizer hashes;
+  - provenance;
+  - disjointness: 0 shared documents, the longest common run 22 against a bound under 32, 13-gram overlap 0.0721%
+    against a bound of 1%;
+  - positions: 9,420 native and 114 extended in the held-out set, 9,423 and 113 in the pilot;
+  - exposure;
+  - conformity with the owner's rulings.
+- **The recorded limitations, all minor:**
+  - **F1:** the disjointness bounds were fixed during construction, which only the tool log shows.
+  - **F2:** the held-out set was built three times with the same salt, after a structural fix seen only through
+    manifest metadata.
+  - **F3:** TinyStories is GPT-generated text, a caveat for E3.
+  - **F4:** `DESIGN.md`'s isolation statement leaves out reads of the reviewer README and open questions, git log
+    subjects, and a listing of `scoring/`.
+  - **F5:** the checker venv could not be inspected for start-up hooks.
+  - **F6:** synthetic documents are checked by rerunning their generator, not by a second implementation.
+  - **F7:** `DESIGN.md` and `SEAL.md` describe questions as open that are now ruled on. Both files are outside the seals.
+  - **F8:** the licence record has gaps: the WikiText version, share-alike terms, and the model licence.
+  - **F9:** the code pool depends on the local CPython install, so `code.jsonl` should be archived with the freeze
+    materials.
+- **Still to do before the freeze:**
+  - write the BOS policy out in words;
+  - define the handover procedure (question 48);
+  - complete the licence record.
