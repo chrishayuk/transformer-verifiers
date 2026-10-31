@@ -871,6 +871,57 @@ expanded. D1–D8, all scoring runs (run 5 included) and all sealed corpora are 
   - **Scoring of revision 5.** Status, category, field identity and key-path accuracy are reported separately, beside
     the complete-case pass count. A case with the right status but a wrong reason is not a complete pass.
 
+- **Clarification 3 (2026-10-31, after scoring run 6 and before checker run 10; reviewer question 34 and checker
+  ambiguity AMB-027).** This is appended to D9. D9's text, clarifications 1 and 2, and all earlier records are
+  unchanged. It authorises one final, narrow correction run for the comparability gate, covering question 27 (from
+  clarification 2), question 34 and AMB-027. After it, the gate is not extended unless an independent evaluation finds a
+  material soundness defect.
+  - **Reason-field schema v1 (question 34).** Every reason's `field` is one of the canonical identifiers below. The
+    checker may keep its own path in `site` or `key_path`, but `field` uses these spellings exactly.
+    - **How it was written:** the schema is derived from SPEC §17 and D7, not from the fields the checker happens to
+      emit. Each primary field may be accompanied only by its listed derived findings; any other additional field fails.
+    - **Caveat:** it was written after run 6's results were seen, so it is evaluated only on fresh hidden cases.
+
+    | Primary field (canonical) | Permitted derived findings | Basis |
+    |---|---|---|
+    | `hidden_size`, `intermediate_size`, `num_hidden_layers`, `vocab_size` | `shape_inventory` | SPEC §17.2 and §17.7 (shapes fix these) |
+    | `num_attention_heads`, `num_key_value_heads` | `gqa_grouping`, `shape_inventory` | §17.2, §17.4; D7 (GQA grouping is class 2) |
+    | `head_dim` | `score_scale`, `shape_inventory` | §17.4 (the score scale derives from `head_dim`); §17.7 (`q_norm`/`k_norm` length) |
+    | `score_scale` (unresolved when the authority has no `head_dim`, D9 clarification 2) | `head_dim`, `shape_inventory` | §17.4; D9 clarification 2, question 28 |
+    | `rms_norm_eps` | `qk_norm_eps` | §17.3 (`X.norm.pre.eps` also declares the QK-norm epsilon) |
+    | `rope_scaling` (a container `position.kind` mismatch) | `rope_theta`, `rope_pairing`, `rope_rotation_direction` | §17.5, §17.7 (`rope_theta` is compared "with `kind == "rope"`"; pairing and direction are the meaning of `kind`, D7) |
+    | `rope_theta` | none | §17.7 |
+    | `hidden_act`, `attention_bias`, `tie_word_embeddings` | none | §17.6, §17.7 |
+    | `qk_norm_scope`, `qk_norm_weight_offset`, `parameter_free_qk_norm`, `norm_kind`, `norm_weight_offset`, `norm_placement`, `ffn_type`, `gate_policy`, `residual_topology`, `attention_operator` | none | §17.3–§17.6, fields with no upstream counterpart (§17.7) |
+    | `keys_that_must_be_absent` (with `key_path`) | none | §17.1; D9 clarification 1 |
+    | `unknown_keys` (with `key_path`) | none | §17.1; D9 clarification 2 |
+    | Unsupported (D9, clarification 1): `rope_parameters`, `rope_scaling` (authority non-null), `sliding_window`, `layer_types` (sliding layer with null window) | none | D9 |
+    | Unresolved scale overrides: `attention_multiplier`, `query_pre_attn_scalar` | none | D9 |
+
+    - The checker publishes this table, versioned, in its README, along with how each identifier is reported.
+    - Later corpora preregister against this protocol table, never against checker output.
+    - A schema change is a new protocol clarification.
+  - **Reference-side categories (AMB-027).**
+
+    | Situation | Category |
+    |---|---|
+    | Authority and reference read-back disagree | `contradiction` |
+    | A required runtime pin fails because of a real conflict with the declared execution contract | `contradiction` |
+    | The weight-tie assertion fails | `contradiction` |
+    | A required field cannot be independently established; an unmapped read-back key | `unresolved` |
+    | A synthetic stand-in used as the real subject | `unsupported` |
+    | An unexpected exception, an unhandled key type, or a pin failure caused by a software exception or missing infrastructure | `checker_error` |
+
+    - A pin failure counts as a `contradiction` only when it shows a real conflict with the declared contract. A pin
+      that cannot be evaluated is a `checker_error`, never evidence of incompatible configurations.
+    - `rope_parameters: null` counts as declared under D9's conservative rule. Absence and a declared null are not
+      interchangeable.
+  - **Question 27 implementation.** The checker implements clarification 2's fallback: a layer with no `geometry` object
+    inherits from `X.attention`, and a present but incomplete `geometry` object is `unresolved`.
+  - **Evaluation.** Fresh hidden cases replace the exposed field-identity classes from run 6 (score-scale spelling,
+    derived shape findings, RoPE derived findings), and test question 27. They are sealed against the pinned checker
+    and scored once.
+
 - **Evaluation.** The corrections are implemented in a separate isolated checker run under a new protocol snapshot,
   audited and pinned. The reviewer builds fresh hidden cases that target the D9 changes, and seals them before they
   are scored once. No earlier corpus is revised.
