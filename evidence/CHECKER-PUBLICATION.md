@@ -169,3 +169,24 @@ misses on 6 of 10. So no outcome changes here, but the computation depends on th
 - **AMB-023:** thread counts are recorded, not asserted.
 - **AMB-024:** the binary64 `1e-6` against `f64(f32(1e-6))` epsilon, already covered by D3 and D7.
 - **AMB-025:** where the weight-tie pin is checked.
+
+## Checker run 8: 2026-10-31, `ab38748` (decision revision D8). Audited and pinned, NOT pushed
+
+**The run:** snapshot `19ab645` (PROTOCOL.md `1e79ae8b…`, verified by the checker), settings `25fa1d9a…`. Log:
+`checker-run-8.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 310c174`) | Clean: 1 commit, no trailers, lockfile unchanged, environment matches (0 bad RECORD files), no new imports |
+| Scope | Q24: `numconv.inv_sqrt_binary64` computes the exact `1/√h` with integer arithmetic only (no `pow`, `sqrt` or float division; checked by an AST test and by a test that makes those functions raise). Q23: structured `unresolved_reasons` (field, site, what cannot be established). The sliding-window scope text. Also outside the brief: `synth.py` fixtures now write the exact scale, so no fixture depends on the platform's `pow`. Accepted, because it removes a platform dependence and changes no verdict |
+| Tests, rerun by the publisher with `-W error` | 392, OK (373 before) |
+| AMB-025 failure path | Exercised. `test_a_refused_construction_gives_no_logits_and_no_metrics` gives a tied config a differing head: construction is refused, the gate returns `invalid_comparison`, and there is no `metrics` key. Separate pin tests cover shared storage and differing heads |
+
+**Pin.** `ab38748` is the checker that corpus revision 4 (the 33 D2 cases) is sealed against and scored against.
+
+**New items (AMB-026), for the protocol owner:**
+- **A stand-in with no `head_dim`:** the scale is unresolved rather than taken from the class default.
+- **A stand-in with `attention_multiplier` or `query_pre_attn_scalar`:** the scale stays unresolved.
+- **`readback.py:393`:** compares the reference's own `scaling` attribute with `float(hd) ** -0.5`. That is the
+  pinned transformers' own computation on the reference side, not the container's declared value, so D8 does not
+  cover it. It was left unchanged.
