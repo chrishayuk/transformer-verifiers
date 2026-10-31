@@ -257,3 +257,31 @@ case is now `comparable` (the question 27 fallback), and some derived fields are
   meaning no scaling, a disabled window with everything else matching, a scale override with the same value) were
   refused for the expected reason and category.
 - **This is Phase 1 information, not Stage A evidence.**
+
+## Corpus revision 6: seal (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Commit | `093dcc9a83183b53e62b9c72d9fd8422f192931e` (seal record in `55b1259`) |
+| Tree | `4a550d5c1f9ce6e74f1cdcc9ef3d8560c3bc5f5a` |
+| Files | 2924 |
+| Digest | `a417b304e2c3e7fc9e0836112d6f85ca77a66ffc6658d5abe2a190108cacd176`, reproduced by the coordinating session |
+| Content | 20 fresh cases preregistered against reason-field schema v1.1 (the protocol table, not checker output): replacements for run 6's exposed field-identity classes, the question 27 geometry cases, 5 negative field-identity checks, and controls. 16 `invalid_comparison`, 4 `comparable` |
+| Checker | `e232720`, pinned before this seal |
+
+## Scoring run 7 (2026-10-31): corpus revision 6, aggregates only
+
+- **Checker:** `e232720`. **Corpus:** `093dcc9`. **Decision revisions:** D9 with clarifications 1–4.
+- **Rules:** fields matched exactly and case-sensitively; categories for derived findings preregistered per case.
+- **Order of commits:** rules and adapter (`5df9386`), then the field mapping (`56f3953`), then the run (`d40fc29`). One
+  pass.
+
+| P1 status | P2 category | P3 field identity | P4 key path | Complete passes | Negative field checks | Tolerated | checker_error |
+|---|---|---|---|---|---|---|---|
+| 20/20 | 20/20 | 20/20 | 4/4 (16 n/a) | **20/20** | 5/5 | 0 | 0 |
+
+- **Every case passed every property,** including the five cases where a non-permitted extra field was the tempting
+  wrong answer.
+- **Question 27:** the fallback behaved as expected in all four of its cases.
+- **Exclusions:** none.
+- **This is Phase 1 information, not Stage A evidence.**
