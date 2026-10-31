@@ -1,0 +1,4661 @@
+{
+ "summary": {
+  "inputs": {
+   "system_graph.json": "05fcec4c45167c2f8f424c35b8c39acb06cc92716f11e0ffbec341e110d66f57",
+   "index.json": "7f3ba8e5da50276e501e7694c46c0a3c9c9d7530596656376cc9597f05fec490",
+   "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd"
+  },
+  "assertions": 608,
+  "pass": 608,
+  "fail": 0,
+  "by_group": {
+   "inputs": {
+    "pass": 3,
+    "fail": 0
+   },
+   "17.1": {
+    "pass": 3,
+    "fail": 0
+   },
+   "17.2": {
+    "pass": 158,
+    "fail": 0
+   },
+   "17.4": {
+    "pass": 34,
+    "fail": 0
+   },
+   "17.3": {
+    "pass": 36,
+    "fail": 0
+   },
+   "17.5": {
+    "pass": 313,
+    "fail": 0
+   },
+   "17.6": {
+    "pass": 36,
+    "fail": 0
+   },
+   "17.7": {
+    "pass": 19,
+    "fail": 0
+   },
+   "coverage": {
+    "pass": 3,
+    "fail": 0
+   },
+   "17.1-C2": {
+    "pass": 3,
+    "fail": 0
+   }
+  },
+  "failures": [],
+  "present_keys_X": [
+   "context_length",
+   "attention",
+   "attention.num_q_heads",
+   "attention.num_kv_heads",
+   "attention.head_dim",
+   "attention.score_scale",
+   "attention.qk_norm_scope",
+   "attention.qk_norm_weight_offset",
+   "attention.parameter_free_qk_norm",
+   "attention.parameter_free_qk_norm.q",
+   "attention.parameter_free_qk_norm.k",
+   "attention.parameter_free_qk_norm.v",
+   "attention.attention_bias",
+   "ffn",
+   "ffn.intermediate_size",
+   "ffn.activation",
+   "ffn.ffn_type",
+   "ffn.gate_policy",
+   "ffn.gate_policy.kind",
+   "norm",
+   "norm.pre",
+   "norm.pre.kind",
+   "norm.pre.eps",
+   "norm.pre.weight_offset",
+   "norm.final_norm",
+   "norm.final_norm.kind",
+   "norm.final_norm.eps",
+   "norm.final_norm.weight_offset",
+   "norm.placement",
+   "head",
+   "head.vocab_size",
+   "head.head_reuses_embedding",
+   "residual_topology",
+   "residual_topology.kind"
+  ],
+  "present_keys_attention_L": [
+   "geometry",
+   "geometry.head_dim",
+   "geometry.num_kv_heads",
+   "operator",
+   "position",
+   "position.kind",
+   "position.theta",
+   "span"
+  ]
+ },
+ "results": [
+  {
+   "group": "inputs",
+   "assertion": "system_graph.json sha256",
+   "pass": true,
+   "observed": "05fcec4c45167c2f8f424c35b8c39acb06cc92716f11e0ffbec341e110d66f57",
+   "expected": null
+  },
+  {
+   "group": "inputs",
+   "assertion": "index.json sha256",
+   "pass": true,
+   "observed": "7f3ba8e5da50276e501e7694c46c0a3c9c9d7530596656376cc9597f05fec490",
+   "expected": null
+  },
+  {
+   "group": "inputs",
+   "assertion": "config.json sha256",
+   "pass": true,
+   "observed": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+   "expected": null
+  },
+  {
+   "group": "17.1",
+   "assertion": "index.json.system_graph names system_graph.json",
+   "pass": true,
+   "observed": "system_graph.json",
+   "expected": null
+  },
+  {
+   "group": "17.1",
+   "assertion": "exactly one component",
+   "pass": true,
+   "observed": 1,
+   "expected": null
+  },
+  {
+   "group": "17.1",
+   "assertion": "exactly one component with id 'target'",
+   "pass": true,
+   "observed": 1,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.num_layers present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.num_layers JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.num_layers observed value",
+   "pass": true,
+   "observed": 28,
+   "expected": 28
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.hidden_size present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.hidden_size JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.hidden_size observed value",
+   "pass": true,
+   "observed": 1024,
+   "expected": 1024
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention is array",
+   "pass": true,
+   "observed": "array",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "len(C.attention) == C.num_layers == 28",
+   "pass": true,
+   "observed": 28,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X present (object)",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.num_q_heads present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.num_q_heads JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.num_q_heads observed value",
+   "pass": true,
+   "observed": 16,
+   "expected": 16
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.num_kv_heads present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.num_kv_heads JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.num_kv_heads observed value",
+   "pass": true,
+   "observed": 8,
+   "expected": 8
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.head_dim present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.head_dim JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.attention.head_dim observed value",
+   "pass": true,
+   "observed": 128,
+   "expected": 128
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[0].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[0].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[0].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[0].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[1].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[1].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[1].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[1].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[2].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[2].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[2].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[2].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[3].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[3].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[3].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[3].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[4].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[4].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[4].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[4].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[5].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[5].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[5].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[5].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[6].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[6].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[6].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[6].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[7].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[7].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[7].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[7].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[8].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[8].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[8].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[8].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[9].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[9].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[9].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[9].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[10].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[10].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[10].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[10].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[11].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[11].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[11].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[11].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[12].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[12].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[12].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[12].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[13].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[13].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[13].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[13].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[14].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[14].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[14].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[14].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[15].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[15].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[15].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[15].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[16].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[16].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[16].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[16].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[17].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[17].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[17].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[17].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[18].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[18].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[18].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[18].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[19].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[19].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[19].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[19].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[20].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[20].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[20].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[20].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[21].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[21].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[21].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[21].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[22].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[22].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[22].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[22].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[23].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[23].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[23].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[23].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[24].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[24].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[24].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[24].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[25].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[25].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[25].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[25].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[26].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[26].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[26].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[26].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[27].geometry present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[27].geometry.head_dim == 128 (integer)",
+   "pass": true,
+   "observed": 128,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[27].geometry.num_kv_heads == 8 (integer)",
+   "pass": true,
+   "observed": 8,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "C.attention[27].geometry keys == {head_dim, num_kv_heads}",
+   "pass": true,
+   "observed": [
+    "head_dim",
+    "num_kv_heads"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.ffn.intermediate_size present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.ffn.intermediate_size JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.ffn.intermediate_size observed value",
+   "pass": true,
+   "observed": 3072,
+   "expected": 3072
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.ffn.intermediate_size_by_layer absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.head.vocab_size present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.head.vocab_size JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.head.vocab_size observed value",
+   "pass": true,
+   "observed": 151936,
+   "expected": 151936
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.context_length present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.context_length JSON type integer",
+   "pass": true,
+   "observed": "integer",
+   "expected": "integer"
+  },
+  {
+   "group": "17.2",
+   "assertion": "X.context_length observed value",
+   "pass": true,
+   "observed": 40960,
+   "expected": 40960
+  },
+  {
+   "group": "17.2",
+   "assertion": "num_layers == upstream num_hidden_layers",
+   "pass": true,
+   "observed": 28,
+   "expected": 28
+  },
+  {
+   "group": "17.2",
+   "assertion": "hidden_size == upstream hidden_size",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "num_q_heads == upstream num_attention_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "X head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "intermediate_size == upstream intermediate_size",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "vocab_size == upstream vocab_size",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "context_length == upstream max_position_embeddings",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "index.json.hidden_size == C.hidden_size",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "index.json.num_layers == C.num_layers",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "index.json.family == upstream model_type",
+   "pass": true,
+   "observed": "qwen3",
+   "expected": "qwen3"
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.decoder_stack@BF16: layer indices are 0..num_layers-1",
+   "pass": true,
+   "observed": [
+    0,
+    27,
+    28
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.decoder_stack@BF16: all 28x11 per-layer shapes match \u00a717.2 formulas",
+   "pass": true,
+   "observed": {
+    "mismatches": [],
+    "tensor_count": 308
+   },
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "target.decoder_stack@BF16: no bias tensors in decoder stack",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "target.decoder_stack@BF16: q_norm and k_norm present at all 28 layers",
+   "pass": true,
+   "observed": 28,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.decoder_stack@Q8_0: layer indices are 0..num_layers-1",
+   "pass": true,
+   "observed": [
+    0,
+    27,
+    28
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.decoder_stack@Q8_0: all 28x11 per-layer shapes match \u00a717.2 formulas",
+   "pass": true,
+   "observed": {
+    "mismatches": [],
+    "tensor_count": 308
+   },
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "target.decoder_stack@Q8_0: no bias tensors in decoder stack",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "target.decoder_stack@Q8_0: q_norm and k_norm present at all 28 layers",
+   "pass": true,
+   "observed": 28,
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.embedding@BF16 shape == [vocab_size, hidden_size]",
+   "pass": true,
+   "observed": [
+    151936,
+    1024
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.output_head@BF16 shape == [vocab_size, hidden_size]",
+   "pass": true,
+   "observed": [
+    151936,
+    1024
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.2",
+   "assertion": "target.final_norm shape == [hidden_size]",
+   "pass": true,
+   "observed": [
+    1024
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre keys == {kind, eps, weight_offset}",
+   "pass": true,
+   "observed": [
+    "eps",
+    "kind",
+    "weight_offset"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.kind present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.kind JSON type string",
+   "pass": true,
+   "observed": "string",
+   "expected": "string"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.kind in enumeration",
+   "pass": true,
+   "observed": "rms_norm",
+   "expected": [
+    "rms_norm",
+    "layer_norm"
+   ]
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.kind observed value",
+   "pass": true,
+   "observed": "rms_norm",
+   "expected": "rms_norm"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.eps present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.eps JSON type number",
+   "pass": true,
+   "observed": "number",
+   "expected": "number"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.eps observed value",
+   "pass": true,
+   "observed": 9.999999974752427e-07,
+   "expected": 9.999999974752427e-07
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.eps == f64(f32(upstream rms_norm_eps))",
+   "pass": true,
+   "observed": 9.999999974752427e-07,
+   "expected": 9.999999974752427e-07
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.eps != upstream rms_norm_eps (binary64)",
+   "pass": true,
+   "observed": 9.999999974752427e-07,
+   "expected": 1e-06
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.weight_offset present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.weight_offset JSON type number",
+   "pass": true,
+   "observed": "number",
+   "expected": "number"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.weight_offset is exactly a binary32 value",
+   "pass": true,
+   "observed": 0.0,
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.pre.weight_offset observed value",
+   "pass": true,
+   "observed": 0.0,
+   "expected": 0.0
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm keys == {kind, eps, weight_offset}",
+   "pass": true,
+   "observed": [
+    "eps",
+    "kind",
+    "weight_offset"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.kind present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.kind JSON type string",
+   "pass": true,
+   "observed": "string",
+   "expected": "string"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.kind in enumeration",
+   "pass": true,
+   "observed": "rms_norm",
+   "expected": [
+    "rms_norm",
+    "layer_norm"
+   ]
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.kind observed value",
+   "pass": true,
+   "observed": "rms_norm",
+   "expected": "rms_norm"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.eps present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.eps JSON type number",
+   "pass": true,
+   "observed": "number",
+   "expected": "number"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.eps observed value",
+   "pass": true,
+   "observed": 9.999999974752427e-07,
+   "expected": 9.999999974752427e-07
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.eps == f64(f32(upstream rms_norm_eps))",
+   "pass": true,
+   "observed": 9.999999974752427e-07,
+   "expected": 9.999999974752427e-07
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.eps != upstream rms_norm_eps (binary64)",
+   "pass": true,
+   "observed": 9.999999974752427e-07,
+   "expected": 1e-06
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.weight_offset present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.weight_offset JSON type number",
+   "pass": true,
+   "observed": "number",
+   "expected": "number"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.weight_offset is exactly a binary32 value",
+   "pass": true,
+   "observed": 0.0,
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.final_norm.weight_offset observed value",
+   "pass": true,
+   "observed": 0.0,
+   "expected": 0.0
+  },
+  {
+   "group": "17.3",
+   "assertion": "spec's stated eps value equals f64(f32(1e-6))",
+   "pass": true,
+   "observed": "9.999999974752427e-07",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "raw text: eps written as 9.999999974752427e-7 (serde shortest form) at both sites",
+   "pass": true,
+   "observed": 2,
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.post absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.placement present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.placement JSON type string",
+   "pass": true,
+   "observed": "string",
+   "expected": "string"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.placement in enumeration",
+   "pass": true,
+   "observed": "pre_only",
+   "expected": [
+    "pre_only",
+    "pre_post",
+    "post_only",
+    "pre_mixer"
+   ]
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm.placement observed value",
+   "pass": true,
+   "observed": "pre_only",
+   "expected": "pre_only"
+  },
+  {
+   "group": "17.3",
+   "assertion": "X.norm keys subset of {pre, post, final_norm, placement}",
+   "pass": true,
+   "observed": [
+    "final_norm",
+    "placement",
+    "pre"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.score_scale present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.score_scale JSON type number",
+   "pass": true,
+   "observed": "number",
+   "expected": "number"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.score_scale observed value",
+   "pass": true,
+   "observed": 0.08838834764831845,
+   "expected": 0.08838834764831845
+  },
+  {
+   "group": "17.4",
+   "assertion": "score_scale == head_dim ** -0.5 (binary64 pow)",
+   "pass": true,
+   "observed": 0.08838834764831845,
+   "expected": 0.08838834764831845
+  },
+  {
+   "group": "17.4",
+   "assertion": "1/sqrt(128) == 0.08838834764831843",
+   "pass": true,
+   "observed": "0.08838834764831843",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "score_scale is 1 ulp above 1/sqrt(128)",
+   "pass": true,
+   "observed": "0.08838834764831845",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "f32(score_scale) == f32(1/sqrt(128)) == 0.0883883461356163",
+   "pass": true,
+   "observed": "0.0883883461356163",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "upstream declares neither attention_multiplier nor query_pre_attn_scalar",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.query_scale absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.logit_softcapping absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.attention_bias present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.attention_bias JSON type boolean",
+   "pass": true,
+   "observed": "boolean",
+   "expected": "boolean"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.attention_bias observed value",
+   "pass": true,
+   "observed": false,
+   "expected": false
+  },
+  {
+   "group": "17.4",
+   "assertion": "attention_bias == upstream attention_bias",
+   "pass": true,
+   "observed": false,
+   "expected": false
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qkv_bias absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_scope present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_scope JSON type string",
+   "pass": true,
+   "observed": "string",
+   "expected": "string"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_scope in enumeration",
+   "pass": true,
+   "observed": "per_head",
+   "expected": [
+    "per_head",
+    "full_projection"
+   ]
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_scope observed value",
+   "pass": true,
+   "observed": "per_head",
+   "expected": "per_head"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_weight_offset present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_weight_offset JSON type number",
+   "pass": true,
+   "observed": "number",
+   "expected": "number"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_weight_offset is exactly a binary32 value",
+   "pass": true,
+   "observed": 0.0,
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.qk_norm_weight_offset observed value",
+   "pass": true,
+   "observed": 0.0,
+   "expected": 0.0
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.parameter_free_qk_norm present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.parameter_free_qk_norm JSON type object",
+   "pass": true,
+   "observed": "object",
+   "expected": "object"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.parameter_free_qk_norm observed value",
+   "pass": true,
+   "observed": {
+    "q": false,
+    "k": false,
+    "v": false
+   },
+   "expected": {
+    "q": false,
+    "k": false,
+    "v": false
+   }
+  },
+  {
+   "group": "17.4",
+   "assertion": "parameter_free_qk_norm keys subset of {q,k,v}, all boolean",
+   "pass": true,
+   "observed": {
+    "q": false,
+    "k": false,
+    "v": false
+   },
+   "expected": null
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.output_gate absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.4",
+   "assertion": "X.attention.sinks absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[0] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[1] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[2] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[3] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[4] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[5] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[6] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[7] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[8] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[9] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[10] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[11] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[12] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[13] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[14] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[15] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[16] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[17] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[18] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[19] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[20] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[21] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[22] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[23] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[24] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[25] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[26] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].operator == 'softmax'",
+   "pass": true,
+   "observed": "softmax",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].span == 'full'",
+   "pass": true,
+   "observed": "full",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].window absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].position keys == {kind, theta}",
+   "pass": true,
+   "observed": [
+    "kind",
+    "theta"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].position.kind == 'rope'",
+   "pass": true,
+   "observed": "rope",
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].position.theta == upstream rope_theta (binary64, number)",
+   "pass": true,
+   "observed": 1000000.0,
+   "expected": 1000000
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].v_from_k absent or false",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].declared_span absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].geometry.head_dim == upstream head_dim",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27].geometry.num_kv_heads == upstream num_key_value_heads",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "[27] keys subset of listed AttentionLayerPolicy keys",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "raw text: 28 occurrences of '\"theta\": 1000000.0'",
+   "pass": true,
+   "observed": 28,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "upstream: use_sliding_window false and sliding_window null -> rule 1 -> not sliding",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "upstream: no layer_types declared (declared_span absent consistent)",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "upstream rope_scaling null -> kind 'rope'",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.5",
+   "assertion": "upstream: no partial_rotary_factor / rope_parameters",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.ffn_type present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.ffn_type JSON type string",
+   "pass": true,
+   "observed": "string",
+   "expected": "string"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.ffn_type in enumeration",
+   "pass": true,
+   "observed": "gated",
+   "expected": [
+    "gated",
+    "standard"
+   ]
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.ffn_type observed value",
+   "pass": true,
+   "observed": "gated",
+   "expected": "gated"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.activation present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.activation JSON type string",
+   "pass": true,
+   "observed": "string",
+   "expected": "string"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.activation in enumeration",
+   "pass": true,
+   "observed": "silu",
+   "expected": [
+    "silu",
+    "gelu",
+    "gelu_tanh",
+    "relu"
+   ]
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.activation observed value",
+   "pass": true,
+   "observed": "silu",
+   "expected": "silu"
+  },
+  {
+   "group": "17.6",
+   "assertion": "activation == map(upstream hidden_act)",
+   "pass": true,
+   "observed": "silu",
+   "expected": "silu"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.gate_policy present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.gate_policy JSON type object",
+   "pass": true,
+   "observed": "object",
+   "expected": "object"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.gate_policy observed value",
+   "pass": true,
+   "observed": {
+    "kind": "gated"
+   },
+   "expected": {
+    "kind": "gated"
+   }
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.ffn.moe absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.head_reuses_embedding present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.head_reuses_embedding JSON type boolean",
+   "pass": true,
+   "observed": "boolean",
+   "expected": "boolean"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.head_reuses_embedding observed value",
+   "pass": true,
+   "observed": true,
+   "expected": true
+  },
+  {
+   "group": "17.6",
+   "assertion": "head_reuses_embedding consistent with upstream tie_word_embeddings (true unless exactly false)",
+   "pass": true,
+   "observed": true,
+   "expected": true
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.embed_scale absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.output_multiplier absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.final_logit_softcapping absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.head.embedding_norm absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.residual_topology present",
+   "pass": true,
+   "observed": "present",
+   "expected": null
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.residual_topology JSON type object",
+   "pass": true,
+   "observed": "object",
+   "expected": "object"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.residual_topology observed value",
+   "pass": true,
+   "observed": {
+    "kind": "single_stream"
+   },
+   "expected": {
+    "kind": "single_stream"
+   }
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.residual_scale absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.residual_in_fp32 absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.linear_attention absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.kda absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.kda_gate_lower_bound absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.kda_gate_form absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.kda_use_full_rank_gate absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.mla absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.mamba2 absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.6",
+   "assertion": "X.conv_qkv absent",
+   "pass": true,
+   "observed": null,
+   "expected": "absent"
+  },
+  {
+   "group": "17.7",
+   "assertion": "tie: output_head@BF16 payload_sha256 == embedding@BF16 payload_sha256",
+   "pass": true,
+   "observed": "8f29acf519434862d95613b2b4f6b9d14933a5e4d16baebf8ac0b33b410acfb6",
+   "expected": "8f29acf519434862d95613b2b4f6b9d14933a5e4d16baebf8ac0b33b410acfb6"
+  },
+  {
+   "group": "17.7",
+   "assertion": "both target.embedding and target.output_head objects present",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "coverage",
+   "assertion": "every key present under X (recursive) is listed in \u00a717",
+   "pass": true,
+   "observed": {
+    "present": [
+     "context_length",
+     "attention",
+     "attention.num_q_heads",
+     "attention.num_kv_heads",
+     "attention.head_dim",
+     "attention.score_scale",
+     "attention.qk_norm_scope",
+     "attention.qk_norm_weight_offset",
+     "attention.parameter_free_qk_norm",
+     "attention.parameter_free_qk_norm.q",
+     "attention.parameter_free_qk_norm.k",
+     "attention.parameter_free_qk_norm.v",
+     "attention.attention_bias",
+     "ffn",
+     "ffn.intermediate_size",
+     "ffn.activation",
+     "ffn.ffn_type",
+     "ffn.gate_policy",
+     "ffn.gate_policy.kind",
+     "norm",
+     "norm.pre",
+     "norm.pre.kind",
+     "norm.pre.eps",
+     "norm.pre.weight_offset",
+     "norm.final_norm",
+     "norm.final_norm.kind",
+     "norm.final_norm.eps",
+     "norm.final_norm.weight_offset",
+     "norm.placement",
+     "head",
+     "head.vocab_size",
+     "head.head_reuses_embedding",
+     "residual_topology",
+     "residual_topology.kind"
+    ],
+    "unlisted": []
+   },
+   "expected": null
+  },
+  {
+   "group": "coverage",
+   "assertion": "every key present under any C.attention[L] (recursive) is listed in \u00a717",
+   "pass": true,
+   "observed": {
+    "present": [
+     "geometry",
+     "geometry.head_dim",
+     "geometry.num_kv_heads",
+     "operator",
+     "position",
+     "position.kind",
+     "position.theta",
+     "span"
+    ],
+    "unlisted": []
+   },
+   "expected": null
+  },
+  {
+   "group": "coverage",
+   "assertion": "C keys (informative): id, role, source_artifact, num_layers, hidden_size, attention, execution",
+   "pass": true,
+   "observed": [
+    "attention",
+    "execution",
+    "hidden_size",
+    "id",
+    "num_layers",
+    "role",
+    "source_artifact"
+   ],
+   "expected": null
+  },
+  {
+   "group": "17.1-C2",
+   "assertion": "no key directly on C outside the seven listed",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.1-C2",
+   "assertion": "C.perception absent",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.1-C2",
+   "assertion": "C.role == 'primary_text'",
+   "pass": true,
+   "observed": "primary_text",
+   "expected": null
+  },
+  {
+   "group": "17.7",
+   "assertion": "D2 lists 16 fields, all present as keys in upstream config.json",
+   "pass": true,
+   "observed": [],
+   "expected": null
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for hidden_size == config.json",
+   "pass": true,
+   "observed": 1024,
+   "expected": 1024
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for intermediate_size == config.json",
+   "pass": true,
+   "observed": 3072,
+   "expected": 3072
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for num_hidden_layers == config.json",
+   "pass": true,
+   "observed": 28,
+   "expected": 28
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for num_attention_heads == config.json",
+   "pass": true,
+   "observed": 16,
+   "expected": 16
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for num_key_value_heads == config.json",
+   "pass": true,
+   "observed": 8,
+   "expected": 8
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for head_dim == config.json",
+   "pass": true,
+   "observed": 128,
+   "expected": 128
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for vocab_size == config.json",
+   "pass": true,
+   "observed": 151936,
+   "expected": 151936
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for hidden_act == config.json",
+   "pass": true,
+   "observed": "silu",
+   "expected": "silu"
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for attention_bias == config.json",
+   "pass": true,
+   "observed": false,
+   "expected": false
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for rms_norm_eps == config.json",
+   "pass": true,
+   "observed": 1e-06,
+   "expected": 1e-06
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for rope_theta == config.json",
+   "pass": true,
+   "observed": 1000000,
+   "expected": 1000000
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for rope_scaling == config.json",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for sliding_window == config.json",
+   "pass": true,
+   "observed": null,
+   "expected": null
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for use_sliding_window == config.json",
+   "pass": true,
+   "observed": false,
+   "expected": false
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for max_window_layers == config.json",
+   "pass": true,
+   "observed": 28,
+   "expected": 28
+  },
+  {
+   "group": "17.7",
+   "assertion": "\u00a717.7 'Upstream value' column for tie_word_embeddings == config.json",
+   "pass": true,
+   "observed": true,
+   "expected": true
+  }
+ ]
+}

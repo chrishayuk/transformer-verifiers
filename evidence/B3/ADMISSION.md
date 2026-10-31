@@ -64,3 +64,19 @@ for the execution-path audit, not a format rule.
   The definition is at `VX/opplan/exec/cpu/physical/projection.rs:436`.
 - **Scoring:** corpus revision 2 and the pinned checker `cd49069` were built against revision 2. Revision 3 changes no
   revision 2 normative statement, so neither is affected.
+
+## Revision 4 (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Admitted document | `specs/vindex3-container/SPEC.md`, revision 4, sha256 `8f3f7c2b50eac2cb3a9172599a7e4ce21792f62169559fa64764d6a3ade85a8f`. It replaces revision 3 (`6350e07c…`) |
+| Why | The independent D2 field classification (`evidence/D2-FIELD-ASSESSMENT.md`) found that the RoPE rotation direction was the only computation-relevant item in class 3, with no specified source |
+| Change | One normative addition to §17.5: LARQL's rotation for `kind: "rope"`, `x'[i] = a·cos φ − b·sin φ`, `x'[i+d/2] = a·sin φ + b·cos φ`, with `φ = p·θ^(−2i/d)`, per head slice, after the QK norm and the query scale, at the absolute position. Also the "(observed in code)" marker, the B1 citation fix, S155 and S156 |
+| Third-party check | `evidence/B3/rev4/CHECK.md` (sha256 `c6cbbfb7…`): **ADMIT**. The diff is exactly six hunks, 25 lines. The formula is confirmed at `kernels.rs:153-156`, and the S156 citations are confirmed. No refutation. The rev 3 script still gives 608/608. The checker did not consult any reference implementation |
+| Admitted on | 2026-10-31, with no checker session running. Settings unchanged (`6f293a60…`) |
+
+**Advisory D1, not a condition of admission:** the sentence "other rotary kinds use the same sign convention" should
+cite `kernels.rs:165-177` and `:249-267`, and be marked informative.
+
+**Not established by admission:** that the reference rotates the same way. Comparing the formula with the reference
+is a separate reviewer task.
