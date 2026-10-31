@@ -1,0 +1,90 @@
+Both gaps are closed and committed (not pushed). I checked the protocol snapshot's hash first and it matches (`99a391a6…265c`). The suite went from **476 tests to 514**, all passing (`.venv/bin/python -I -m unittest discover -s tests -v`).
+
+## Changes, file by file
+- **`refcheck/harness.py`**: the f64 guard. When `build_model` builds a native-f64 model, it marks the model and adds a hook that runs before every forward call. `decode_logits` also checks the patch up front. Outside `native_dtype_patches(True)`, any forward call raises `F64PatchGuardError` before computing anything, whether it goes through `decode_logits` or calls the model directly. The error is a subclass of `PinError`, so `reference_run` passes it on rather than recording a checker error. New helpers: `native_patches_active()` (the same test pin 3 uses) and `require_native_patches(model)`. `f64_patch.py` is untouched, so its pinned hash still holds. The guard only refuses: inside the patch context the logits are bit-identical to `reference_run`.
+- **`refcheck/t3.py`** (new): the T3 evaluator.
+- **`tests/test_harness.py`**: 4 guard tests: decode outside the patch raises, a direct call raises, logits inside the patch are bit-identical, and f32 and upstream-mode models are not guarded.
+- **`tests/test_t3.py`** (new): 34 tests, synthetic triples only. The fixtures are real ref₃₂ and native ref₆₄ runs, both passing D7, on a synthetic container, plus synthetic candidates.
+- **`README.md`**: new section 8 for the evaluator, the guard added to section 5, and a status row.
+- **`AMBIGUITIES.md`**: new AMB-031.
+
+## The evaluator
+```python
+t3.evaluate_t3(candidate_logits, candidate_record, ref32_logits, ref32_record,
+               ref64_logits, ref64_record, positions, c, k,
+               bands=None, expected_container_sha256=None) -> dict   # never raises
+```
+Helpers: `t3.ulp32(x)` and `t3.decide_row(cand_row, ref32_row, ref64_row, c, k)`.
+
+- **Top-level fields:** `schema` (`t3-evaluation/1`), `experiment` (`E2`), `ulp32_definition`, `status`, `verdict`.
+- **`status`:**
+  - `evaluated`: adds `parameters`, `evaluated_positions`, `positions`, `summary`, `bands`, `classes`, `n_vocab`.
+  - `refused`: adds `reasons` (each `{code, message}`), with no summary or positions at all.
+  - `checker_error`: adds `error`.
+- **`verdict`:**
+  - `pass` needs at least one comparable position and every logit at every comparable position to pass.
+  - Otherwise `fail`, or `empty_comparable_set` when no position is comparable.
+  - Bands and classes can also be `no_evaluated_positions`.
+  - A refusal or checker error always has `verdict: null`.
+- **Per position:** `position`, `status` (`comparable` or `non_comparable`), `pass`, `n_logits_pass`, `n_logits_fail`, `failing_token_ids`, `worst_ratio`, `worst_token_id`, `n_logits_decided_rationally`.
+  - A non-comparable position has `reason` set to `non_finite` (with NaN, +inf and −inf counts for each of the three sides) or `ref64_above_binary32_range`.
+- **Summaries** (overall, each band, `classes.native` for positions ≤ 32,767 and `classes.extended` for ≥ 32,768):
+  - the verdict;
+  - evaluated, comparable and non-comparable position counts, with their indices;
+  - passing and failing position counts, and the failing positions;
+  - evaluated, passing and failing logit counts;
+  - the worst ratio, with its position and token id.
+
+## Refusal reasons
+| Code | What it catches |
+|---|---|
+| `missing_input` | a missing array or record |
+| `not_a_record` | a record that isn't a dict |
+| `wrong_dtype` | candidate not a binary32 numpy array |
+| `bad_shape`, `shape_mismatch` | not 2-D, or different row counts |
+| `vocab_mismatch` | different vocabularies, or an array that disagrees with its record |
+| `rows_do_not_match_token_ids` | row count differs from the record's token ids |
+| `token_ids_mismatch` | different token ids across the three records |
+| `token_ids_sha256_mismatch` | missing, wrong or disagreeing token-id hash |
+| `positions_invalid` | no list, empty, non-integer, duplicate or out of range |
+| `container_mismatch` | E2 container identity |
+| `configuration_mismatch` | ref₃₂ and ref₆₄ differ in configuration, authority, software versions or patch hash |
+| `candidate_reference_incomparable` | any other `check_comparable` reason (it is reused for the candidate-to-ref₃₂ conditions) |
+| `ref32_not_f32` | array or record not an f32 run |
+| `ref64_not_native_f64` | array not binary64, or record not native mode |
+| `d7_gate_not_passed` | no D7 record, or not `pass`, on either reference |
+| `bands_invalid` | malformed, overlapping, or an evaluated position in no band |
+| `tolerance_parameters_invalid` | c or k not a finite, non-negative number |
+
+All reasons are collected, not just the first.
+
+## How exactness is achieved
+A fast binary64 check decides a logit only when it is provably on one side of the inequality. The differences are computed within a relative error of 2⁻⁵³. The tolerance side is within (1 ± 2⁻⁵³)³, provided no nonzero term falls below 2⁻⁹⁰⁰ or overflows; ulp₃₂ is an exact power of two. So a relative gap of 2⁻²⁰ settles it, and so do exact zeros.
+
+Every other logit is decided with exact fractions on the exact binary32 and binary64 values. The proof is in `decide_row`'s docstring.
+
+Tests cover:
+- values at and one ulp beyond both the c term and the k term;
+- one binary64 ulp of ref₆₄ either side;
+- a case where plain binary64 evaluation says pass but the exact answer is fail;
+- a non-dyadic c (1/3);
+- the fast check against all-fraction decisions on 16,000 logits for each of seven (c, k) pairs.
+
+At the full 151,936-logit vocabulary it takes about 0.05 s per position, or 0.6 s if every logit goes the exact route.
+
+## Commits
+- `1ff315e`: the f64 guard
+- `1266d8d`: the T3 evaluator
+- `1f82e64`: README and AMBIGUITIES records
+
+## New ambiguity: AMB-031
+- **(a) The ulp₃₂ definition awaits owner confirmation.** It is implemented exactly as D12 proposes. Open question: whether "above the binary32 range" means |x| > FLT_MAX (my choice) or |x| ≥ 2¹²⁸.
+- **(b) Overall verdict with non-comparable positions.** Following your brief, they are excluded and listed but don't by themselves block a pass. A consumer reading only `verdict` could miss them; under OQ6 each still has to be traced.
+- **(c)–(i) Smaller choices:**
+  - the band format (an evaluated position in no band is refused);
+  - row index = absolute position, and D12's "unsupported or resource-limited" outcome is not modelled;
+  - which ref₃₂-to-ref₆₄ fields must match (thread counts are not compared);
+  - a token-id hash is required on the candidate record;
+  - how positions are validated;
+  - c and k are taken at their exact values (a float `0.1` is not 1/10);
+  - `worst_ratio` is a rounded diagnostic only, so a ratio shown as 1.0 can sit beside an exactly decided `fail`.

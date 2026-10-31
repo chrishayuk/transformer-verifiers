@@ -262,3 +262,33 @@ repository was unchanged). The run was relaunched with the brief on stdin.
 - (f) the per-block error distribution on a non-comparable tensor. It is left unchanged, so its top quantile can be
   inf while `max_abs_error` is null. D6 names only the full-tensor metrics. This is the one point that may need a
   ruling.
+
+## Checker run 12: 2026-10-31, `1ff315e`, `1266d8d` and `1f82e64` (D12: T3 evaluator, f64 guard). Audited and pinned, NOT pushed
+
+**The run:** snapshot `e056903` (PROTOCOL.md `99a391a6…`, verified by the checker), settings `33c9cf16…`. Brief:
+`evidence/checker-briefs/checker-run-12-brief.md`, committed before the run. Log: `checker-run-12.log`. D12
+clarification 1 (`bcd7613`, `ulp₃₂` confirmed) postdates the snapshot.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 4bc93d3`) | Clean: 3 commits, no trailers, lockfile unchanged, environment matches (0 bad RECORD files), no new imports |
+| Scope | Only the new `refcheck/t3.py`, the guard in `refcheck/harness.py`, their tests, README and AMBIGUITIES. `f64_patch.py` and the reference numerics are unchanged |
+| `ulp₃₂` against clarification 1 | Matches: 2⁻¹⁴⁹ for zero and the subnormal range, 2^(e−1−23) otherwise. The binade comes from `frexp`, which extracts the binary64 exponent exactly and is not a logarithm. It is computed from ref₆₄. A non-finite value, or \|x\| > FLT_MAX, makes the position non-comparable |
+| Exactness | A binary64 filter decides only provably clear cases. Every other logit is decided with exact fractions; the proof is in the docstring, and it is tested at boundaries and against 16,000 all-fraction decisions per (c, k) |
+| Exceptions | `evaluate_t3` maps an unexpected exception to `status: checker_error` with `verdict: null`, never a refusal or a verdict. The guard raises `F64PatchGuardError` (a `PinError`), which `reference_run` re-raises rather than recording. It fails loudly, never silently |
+| Tests, rerun by the publisher with `-W error` | 514, OK (476 at `4bc93d3`) |
+
+**Pin.** `1f82e64` is the checker that corpus revision 8 is sealed and scored against.
+
+**For the owner, before revision 8 is sealed:**
+- **AMB-031b, the overall verdict with non-comparable positions.** The checker returns `verdict: pass` when every
+  logit at every comparable position passes, even if some evaluated positions are non-comparable. It lists those
+  positions.
+  - **This rule came from the run 12 brief written by the coordinating session,** not from the protocol. The brief
+    said "a pass only if every evaluated logit at every comparable position passes and at least one position is
+    comparable".
+  - **D12 and D1 OQ6 say** a non-comparable position is "never a pass", and an untraced one falsifies Stage A. The
+    hidden corpus, derived from the protocol alone, expects an overall verdict that is not a pass in that situation.
+  - **The owner decides.** If it is "not a pass", the checker is corrected in a separate run.
+- **AMB-031a / reviewer question 51, "beyond the binary32 finite range".** The checker and the corpus author, working
+  independently, both read it as \|ref₆₄\| > FLT_MAX. Two hidden positions depend on the reading.
