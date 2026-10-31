@@ -218,3 +218,42 @@ rounded `1/√32`.
 - **The failures stand.** These cases are now exposed. Fresh cases and a fixed scoring adapter are needed for any
   re-test.
 - **This is Phase 1 information, not Stage A evidence.**
+
+## Corpus revision 5: seal (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Commit | `d28c344b766c9a7ab0f3d7ec4e78b17c49255896` (seal record in `bbc84af`) |
+| Tree | `5d9ea859ce283463e7968751de00b34ccfe066dc` |
+| Files | 2674 |
+| Digest | `cc888ba1496c2720accbde4de96ad59b337a4a452f94744398fe14fee766191b`, reproduced by the coordinating session |
+| Content | 24 fresh D9 cases: unsupported (7), unresolved (5), key identity (6), contradiction (2), controls (4), each with a stand-in authority. Status, category, field and key path are expected as separate properties |
+| Checker | `147a24e`, pinned before this seal |
+
+**Expectations re-derived under D9 clarification 2 before the seal,** with no checker output seen. The geometry-absent
+case is now `comparable` (the question 27 fallback), and some derived fields are now optional.
+
+## Scoring run 6 (2026-10-31): corpus revision 5, aggregates only
+
+- **Checker:** `147a24e`. **Corpus:** `d28c344`. **Decision revisions:** D9 with clarifications 1 and 2.
+- **Order of commits:** the eligibility list, rules and adapter (`13e2275`), then the field mapping (`a8b3e10`), then the
+  run (`9f5f58d`). One pass. The structured adapter reads `category`, `field` and `key_path` only, which fixes the run 5
+  path-text defect.
+
+| P1 status | P2 category | P3 field identity | P4 key path | Complete passes | Tolerated | checker_error |
+|---|---|---|---|---|---|---|
+| 23/23 | 23/23 | 19/23 | 6/6 key-identity cases (9 paths) | **19/23** | 0 | 0 |
+
+- **Excluded, pending:** 1. The geometry-absent case depends on clarification 2's question 27 fallback, which
+  postdates the checker's snapshot.
+- **The four failures are all on P3** and show no checker defect. Each comes from the reviewer's preregistered aliases
+  or optional-field lists:
+  - in three cases, the checker's field spelling `attention.score_scale` against the alias `score_scale`;
+  - in one of those, an unlisted derived reason (`shapes.inventory`);
+  - in the fourth, unlisted derived reasons (`rope_pairing`, `rope_rotation_direction`) on a RoPE kind mismatch.
+
+  The mechanical result stands.
+- **Right reason as well as right status:** the cases built for this purpose (for example a non-null `rope_scaling`
+  meaning no scaling, a disabled window with everything else matching, a scale override with the same value) were
+  refused for the expected reason and category.
+- **This is Phase 1 information, not Stage A evidence.**
