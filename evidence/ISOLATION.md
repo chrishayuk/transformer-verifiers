@@ -184,3 +184,15 @@ Settings are now sha256 `b78f15d4…`; the only change is the snapshot path.
 
   No tracked file in the reviewer repository changed.
 - **From now on,** the pinned checker for scoring is placed there only after the corpus is sealed.
+
+## Part 11: protocol snapshot e056903 (2026-10-31)
+
+The snapshot moves to `isolation/snapshots/e056903/` (D1–D10 and D12; D11 is a proposal and not in the protocol):
+`PROTOCOL.md` `99a391a6…`, `draft.json` `a3d417b8…`. Settings are now sha256 `33c9cf16…`; the only change is the
+snapshot path.
+
+**Re-test** (`isolation-test-11.log`):
+- **Allowed:** the new snapshot (hash matches).
+- **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository and the real
+  container.
+- **Blocked, new probes:** the reference-audit repository, and the unadmitted logit-dump specification.
