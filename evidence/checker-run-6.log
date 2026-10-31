@@ -1,0 +1,39 @@
+D5 is implemented and committed as `faaf587`, with no attribution trailer and nothing pushed. The full suite passes: 211 tests, 0 failures, 0 errors, 0 skipped (`.venv/bin/python -I -m unittest discover -s tests -v`).
+
+I verified the snapshot first: the sha256 of `PROTOCOL.md` matches `79795f18…c237`. I worked from its D5 section only, with no hidden cases. The suite count includes the new tests, but I didn't record the count before my changes.
+
+## Changes by file
+
+- **`refcheck/container.py`**
+  - `check_unique_ownership` now walks every representation in `index.json` and maps each stored tensor's key to its owning object.
+  - It rejects a key claimed by two different objects, whether or not they are ever executed together. It also rejects two stored tensors with the same key inside one representation.
+  - Several representations of one object sharing a key, shared storage, identical content under distinct keys and declared reuse are all accepted.
+- **`refcheck/e1.py`**
+  - In an in-domain block, an element whose upstream value is NaN, +inf or −inf is now outside T2 at element level. It is counted per tensor in `nonfinite_upstream_in_t2_domain` (`nan`, `inf`, `-inf`), plus `n_nonfinite_upstream_in_t2_domain`.
+  - It is never within T2 and never exceeding it, so `n_elements_in_t2_domain` = within + exceeding + non-finite upstream.
+  - These elements have no ratio and are left out of `worst_ratio` and `block_error_over_bound`. The histogram gains a `nonfinite_upstream_in_t2_domain` bin so it still partitions all elements.
+  - Their error stays NaN or inf in `max_abs_error`, `err_frobenius` and `rel_frobenius`. `canonical_json` writes those as strings.
+  - `e1_report` totals the counts.
+  - I did not touch the D4 behaviour for bit-identical tensors holding inf or NaN.
+- **`tests/test_container_reader.py`** covers AMB-018:
+  - A cross-object collision between different encodings is rejected. It uses a third-encoding pack that is neither executed nor a uniform-encoding set, so the old reading would have accepted it.
+  - A collision between non-executed packs and a duplicate key within one representation are rejected.
+  - One object with three representations sharing keys, identical content under distinct keys, and shared storage are accepted.
+  - The check runs on open.
+- **`tests/test_e1.py`** covers AMB-019:
+  - Each of NaN, +inf and −inf inside an in-domain block gives exact counts, with canonical-JSON strings.
+  - A mixed tensor checks exact counts and the partition identity. It includes an out-of-domain block holding NaNs, which is not counted by class.
+  - A block with only non-finite upstream elements has no ratio.
+  - A finite tensor reports zeros.
+  - The old test that counted these elements as exceeding is replaced.
+- **`AMBIGUITIES.md`**: AMB-018 and AMB-019 are marked decided by D5 with the rule quoted. My earlier AMB-018 reading (executed set plus each uniform encoding) and the AMB-019 (iv) reading (counted as exceeding) are marked superseded. The D4 bit-identical note is left as an open question.
+- **`README.md`**: the container reader and E1 sections describe the new rules.
+
+## New ambiguity (not logged as its own AMB entry)
+
+D5 names elements of blocks inside T2's domain. A non-finite upstream element in a block that is itself outside the domain (negative, ±inf or NaN scale) is already outside T2 through the block. I leave it uncounted by class and unchanged. This is recorded in the AMB-019 entry as a point, not a decision.
+
+Two smaller notes:
+- The cross-object test builds its extra representation in memory on a loaded `Container` rather than through `_mini`. `_mini` can't give two packs of one object different tensor names without breaking the segment hashes.
+- I left an empty scratch file in `$TMPDIR`; it is outside the repository.
+exit 0

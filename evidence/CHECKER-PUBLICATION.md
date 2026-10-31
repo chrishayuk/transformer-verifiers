@@ -120,3 +120,21 @@ touch metric code.
 **New ambiguity, recorded by the checker in AMB-019:** D4 does not say what a bit-identical tensor holding inf or NaN
 reports. The checker reads "both are zero" literally: the error is 0, `rel_frobenius` is 0, and `ref_frobenius` is
 non-finite.
+
+## Checker run 6: 2026-10-31, `faaf587` (decision revision D5). Audited and pinned, NOT pushed
+
+**The run:** the first run under the immutable protocol snapshot `isolation/snapshots/1bfc341/` (PROTOCOL.md
+`79795f18…`), with settings `6f293a60…` (`ISOLATION.md` part 4), `--model sonnet`, `acceptEdits`, and `git add`/`git
+commit` allowed. The checker verified the snapshot hash before starting. Log: `checker-run-6.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 3337645`) | Clean: 1 new commit, no trailers, lockfile unchanged, environment matches (20,103 RECORD files, 0 bad), no new imports |
+| Scope | D5 only. `container.py`: ownership across every declared representation (AMB-018). `e1.py`: per-class counts of non-finite upstream elements in in-domain blocks, never within or exceeding (AMB-019). Tests, AMBIGUITIES.md, README. The D4 behaviour for bit-identical non-finite tensors is untouched, as briefed |
+| Tests, rerun by the publisher with `-W error` | 211, OK (200 before) |
+
+**Pin.** `faaf587` is the checker for scoring fresh D5 cases. Those cases are not yet built or sealed. The pin
+precedes their seal.
+
+**New point the checker recorded (in AMB-019, not decided):** a non-finite upstream element inside a block that is
+itself outside T2's domain is already outside T2 through its block, so it is not counted by class.
