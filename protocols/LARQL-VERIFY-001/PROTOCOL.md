@@ -922,6 +922,25 @@ expanded. D1–D8, all scoring runs (run 5 included) and all sealed corpora are 
     derived shape findings, RoPE derived findings), and test question 27. They are sealed against the pinned checker
     and scored once.
 
+- **Clarification 4 (2026-10-31, before corpus revision 6 is sealed; reviewer questions 35 and 36). Reason-field
+  schema v1.1.** This is appended to D9. Everything earlier is unchanged. Checker run 10 was briefed under snapshot
+  `6f28db9` (schema v1) and is not retroactively required to meet v1.1. If its output cannot satisfy a rule added here,
+  the result is kept and the change is evaluated separately.
+  - **Question 36, a schema amendment.** `num_attention_heads` and `num_key_value_heads` are added as **optional**
+    derived findings of `head_dim`.
+    - **Basis:** SPEC §17.7 compares the head counts also as `q_proj` rows ÷ `head_dim` and k/v rows ÷ `head_dim`, so
+      a `head_dim` mismatch can alter those derived head counts even when the tensor shapes are unchanged.
+    - Neither has to be emitted. Any that is emitted must be numerically and semantically justified by that division.
+  - **Question 35, categories.**
+    - A **primary** reason must carry exactly its expected category.
+    - A **derived** finding need not share its primary's category, but it must carry a category justified by its own
+      meaning. For example, a missing `head_dim` can make `score_scale` unresolved while a separately declared head
+      count that contradicts the authority is a contradiction.
+    - The reviewer preregisters, for each derived field in each case, which categories are permissible and when. Any
+      other category on a derived finding fails P2.
+  - **Field spelling.** `field` is matched exactly and case-sensitively against the canonical identifiers. There is no
+    lowercase conversion, no substring matching and no undocumented alias.
+
 - **Evaluation.** The corrections are implemented in a separate isolated checker run under a new protocol snapshot,
   audited and pinned. The reviewer builds fresh hidden cases that target the D9 changes, and seals them before they
   are scored once. No earlier corpus is revised.

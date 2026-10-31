@@ -1,6 +1,6 @@
 # Proposed amendment: the T3 pilot (draft, not in force)
 
-**Status: DRAFT,** for the protocol owner and the freeze reviewer (G4, G8). It changes nothing until it is adopted into
+**Status: DRAFT, with the owner's decisions of 2026-10-31 incorporated,** for independent review by the freeze reviewer (G4, G8). It changes nothing until it is adopted into
 PROTOCOL.md through the freeze procedure.
 - **Phase 1 limit:** preparing the method does not authorise running the pilot. The pilot is part of the frozen
   procedure and runs in Phase 3, after the freeze and before any measurement on the subject.
@@ -23,15 +23,20 @@ different rounding behaviour. Four gaps follow.
 
 ## Proposed changes
 
-1. **The pilot's arithmetic profile must match the subject's.**
+1. **The pilot's arithmetic profile must match the subject's** (owner's decision, 2026-10-31).
    - **The SmolLM2-135M problem:** it is a Llama-family model with no QK norm, a different RoPE θ and a different
-     head_dim, so it does not exercise differences 1–4 the way Qwen3-0.6B does.
-   - **Proposed:** the pilot uses the protocol's existing fallback, a declared corpus **on the subject**, disjoint from
-     the sealed held-out part, run after the freeze and discarded afterwards. This is already allowed text. The change
-     makes it the primary route, not the fallback.
-   - **Alternative, if the owner prefers a different checkpoint:** a Qwen3-architecture checkpoint, with QK norm,
-     split-half RoPE and a θ and head_dim that give comparable angle magnitudes. Its D2 comparability must be
-     established under D7 before it is used.
+     head_dim, so it does not exercise differences 1–4 the way Qwen3-0.6B does. It is not a suitable primary
+     calibration subject.
+   - **Preferred route:** an independently pinned **Qwen3-architecture pilot checkpoint**, other than the subject,
+     with the relevant arithmetic properties: QK norm, split-half RoPE, and a θ and head_dim that give comparable angle
+     magnitudes at the positions used. Its D2 comparability must be established under D7 before it is used.
+   - **Fallback, only if no such checkpoint is feasible:** the protocol's already permitted disjoint-subject-corpus
+     route, run after the freeze and discarded afterwards. Under this route T3 must be described as **calibrated to this
+     subject, not an externally validated numerical bound**. Disjoint prompts prevent reuse of test examples, but do
+     not give independence from the subject's model-specific numerical behaviour.
+   - **The route is fixed before the freeze.** The freeze reviewer decides whether it gives enough independence for the
+     exact claim made.
+   - **In neither route is the pilot a mathematical certification of numerical error.**
 2. **Positions must cover E2's range.**
    - The pilot corpus's sequence lengths reach at least the maximum position in the E2 corpus, with positions sampled
      across the whole range, the longest included.
@@ -41,17 +46,19 @@ different rounding behaviour. Four gaps follow.
      not separate tolerances.
 3. **Saturation needs a preregistered outcome.**
    - **The gap:** if no ladder value passes (some pilot logit fails at c = 32, k = 64), the current text says nothing.
-   - **Proposed:** the ladder is not extended. T3 is recorded as **"not determinable at the preregistered ladder"**,
-     a Phase 3 finding with the failing logits' positions and bands reported. E2 is then reported against no T3
-     verdict (like T4), and T3 is not widened after the fact.
-   - **The owner may instead preregister a longer ladder now,** before the freeze, but not after seeing pilot output.
+   - **Decided by the owner:** if no candidate passes, stop. T3 is recorded as
+     `not_determinable_at_preregistered_ladder`, a Phase 3 finding with the failing logits' positions and bands
+     reported. The ladder is not extended, the constants are not modified, and the acceptance condition is not relaxed.
+     E2 measurements may still be reported, with no claim of T3 agreement.
 4. **What the pilot may inspect, as an auditable gate check:**
    - only its own declared corpus;
    - never the sealed held-out part;
    - never any E2 measurement corpus logits.
 
-   The pilot run record names the corpus hash. A G1 tamper test covers changing the pilot corpus or the ladder after
-   the freeze.
+   The protected pilot record commits to the corpus bytes **and** to the tokenization (tokenizer files and their
+   hashes), the ordering, the positions evaluated, and the selection procedure, so the same nominal corpus cannot
+   support several different experiments. A G1 tamper test covers changing any of these, or the ladder, after the
+   freeze.
 
 ## Expected behaviour, so a reviewer can check the form is sensible
 
