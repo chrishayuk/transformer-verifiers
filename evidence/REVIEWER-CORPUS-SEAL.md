@@ -297,3 +297,35 @@ case is now `comparable` (the question 27 fallback), and some derived fields are
 | Content | Fresh cases for D6 and the metric aggregate contract, with expectations derived from the protocol under D10 clarification 1, never from checker output. The D6 cases are 5 synthetic containers holding 125 tensors: 11 with non-finite upstream values, 5 finite-upstream tensors whose decoded values are non-finite, and 109 finite controls. The aggregation cases are 7, with 42 positions, 25 of them comparable: a mixture, an entirely non-comparable sequence, two rate-flip traps, edge positions, a measured-zero-error case paired with the empty set, and an all-comparable control. Q8_0 bit identity is unscored, and non-finite block distributions are diagnostic only |
 | Checker | `4bc93d3`, pinned before this seal |
 | Isolation | The corpus author worked with no checker clone in its workspace once the clones were moved out (isolation part 10). Its access declaration and the tool-log review are recorded there |
+
+## Scoring run 8 (2026-10-31): corpus revision 7, aggregates only
+
+- **Checker:** `4bc93d3`, a clean clone in the separate evaluation directory
+  (`~/chris-source/transformer-verifiers-eval/run-8/`). **Corpus:** `71198d6`, unchanged since the seal. **Decision
+  revisions:** D10 with clarification 1.
+- **Order of commits:** eligibility, rules and adapter (`3ccc013`), then the field mapping from the checker README
+  (`39eff8f`), then the run (`e5814e8`). One pass. The scorer read only the README and the entry-point signatures.
+- **Tallies:** recounted by the coordinating session from `RESULTS.json`.
+
+**D6, 125 tensors** (11 with non-finite upstream values, 5 finite-upstream tensors with non-finite decodes, 109
+finite controls)
+
+| N1 status | N2 null metrics and reasons | N3 class counts | N4 BF16 bit identity | N5 Q8_0 inventory | N6 finite statistics | N7 non-finite decode | Complete |
+|---|---|---|---|---|---|---|---|
+| 125/125 | 11/11 | 125/125 | 55/55 | 70/70 | 109/109 | 5/5 | **125/125 tensors, 5/5 cases** |
+
+**Aggregation, 7 cases** (42 positions, 25 comparable)
+
+| Counts and indices | Non-comparable handling | Top-1 rate (comparable denominator) | Distribution coverage | Empty set against measured zero | Complete |
+|---|---|---|---|---|---|
+| 7/7 | 5/5, both rate-flip traps (2 n/a) | 6/6 (1 n/a, the empty case) | 6/6 (1 n/a) | 7/7 | **7/7** |
+
+- **No `checker_error`, no exception, no exclusion.**
+- **Unscored, as preregistered:** Q8_0 bit identity on the 4 tensors with non-finite upstream values, and the
+  diagnostic block distributions of those tensors (D10 clarification 1).
+- **Two rule changes from the draft.** They were made after the scorer read the published README, frozen in
+  `3ccc013` before any case ran, and disclosed in its `RULES.md`. Both narrow what is scored:
+  - **The Q8_0 class 3 block count:** scored only if documented, because no protocol clause requires it. It is not
+    documented.
+  - **Distribution quantiles:** not scored, because the README does not define them. Minimum, maximum and mean are
+    scored.
