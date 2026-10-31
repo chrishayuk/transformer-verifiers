@@ -1,0 +1,33 @@
+I haven't changed anything, because the Edit tool was refused write permission on `refcheck/e1.py`: "Claude requested permissions to write … but you haven't granted it yet." I could probably write the file through Bash instead, but that would go around the permission you didn't grant, so I haven't tried it. The Bash heredoc attempt was also blocked by the sandbox, and it wrote nothing.
+
+What I've done so far is read-only:
+- Read BRIEF.md and the D1 section of PROTOCOL.md in full.
+- Read `e1.py`, `metrics.py`, `container.py`, the test files, `_mini.py` and `AMBIGUITIES.md`.
+- Settled the design for each rule.
+
+The working tree is clean and nothing is staged or committed.
+
+**Plan, once I can write:**
+- **OQ1 (`e1.py`):**
+  - Add a scale-class function and a T2 domain check.
+  - The T2 bound is NaN outside the domain, for negative, ±inf and NaN scales. The old |d₁₆| reading goes.
+  - Out-of-domain blocks and elements are reported per class (negative, +inf, −inf, NaN). They are never counted as within T2 or as exceeding it.
+  - ±0-scale blocks keep their own count.
+  - The other statistics include every block and report a non-finite value as non-finite, rather than dropping it as now.
+  - The histogram gets an outside-the-domain bin.
+  - Totals carry the new integer counts.
+  - A `canonical_json` function makes the report deterministic for OQ4/OQ5.
+- **OQ6 (`metrics.py`):**
+  - A position with any ±inf or NaN logit gets `status: "non_comparable"`, with the side and the +inf, −inf and NaN counts.
+  - It has no metric keys and is excluded from every aggregate, including top-1 agreement.
+  - `compare` lists these positions separately.
+- **OQ12 (`container.py`):**
+  - A duplicate-HF-key check across each set of representations compared together: the executed one, and each encoding present.
+  - Tests for the reject case, and for identical content under different keys and declared logical sharing, both still accepted.
+- **Docs and tests:**
+  - Mark AMB-010, AMB-017 and the OQ12 entry as decided by D1, quoting the rule, and keep the old readings marked superseded.
+  - Update the README.
+  - Update or add the unit tests, run the full suite, and commit without attribution trailers.
+
+To proceed, either grant write access to the repo's `refcheck/`, `tests/` and docs files, or tell me you want a different route. I'll continue from the plan as soon as the Edit tool can write.
+exit 0

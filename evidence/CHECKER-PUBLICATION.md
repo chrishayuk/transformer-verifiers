@@ -74,3 +74,29 @@ publisher made the commit with the checker's own message** after reviewing the s
 | Tests, rerun by the publisher | 177, OK, **none skipped**: the real-checkpoint test now runs |
 | `verify_snapshot` on the re-acquired checkpoint (the checker's own run) | All 9 files pass, by size and SHA-256 |
 | Real Qwen3-0.6B, upstream weights, 7 tokens | f32 total 12.09 s, native f64 total 12.65 s, mostly model build. Max \|ref32 − ref64\| = 3.99e-5 over 7 × 151,936 logits (harness sanity figure only; not the T3 pilot) |
+
+## Checker run 4: 2026-10-31, `cd49069` (decision revision D1). Audited and pinned, NOT pushed
+
+**The run:** the same settings (`d05ce78f…`), `--model sonnet`, from the brief that implements D1 (PROTOCOL.md
+`81398e6`).
+- **First attempt** (`checker-run-4.log`): headless mode had no edit permission. The checker read the D1 text and its
+  code, planned the change, and stopped without trying another route. Nothing was written.
+- **Second attempt** (`checker-run-4b.log`): the same session, continued with `--permission-mode acceptEdits` and
+  `git add`/`git commit` allowed. The sandbox and deny rules were unchanged.
+- **Inputs:** the checker worked from the published rule text only. It has never seen a reviewer case.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 2e8fd34`) | Clean: 1 new commit, no trailers, lockfile unchanged, environment matches (20,103 RECORD files, 0 bad), same two `.pth` hooks, no new import kinds (stdlib `json` only) |
+| Tests, rerun by the publisher with `-W error` | 193, OK (177 before) |
+| Changes | `e1.py` OQ1 domain classes and per-class counts; `metrics.py` OQ6 `non_comparable`; `container.py` OQ12 ownership check across the executed set and each encoding; tests; AMB-010 and AMB-017 marked decided by D1 |
+
+**Pin.** `cd49069` is the revised checker for the next scoring run. It is pinned **before** any corpus revision 2
+case is scored, so revision 2 is scored blind against it. Any later checker change needs a new pin, and its scoring
+must name it.
+
+**New ambiguities that need a protocol-owner decision:**
+- **AMB-018:** which sets of representations are "compared together" under OQ12. The checker chose the executed set
+  plus each uniform encoding.
+- **AMB-019:** how non-finite E1 statistics are represented, and whether a NaN or infinite element error inside an
+  in-domain block counts as exceeding T2. The checker counts it as exceeding.

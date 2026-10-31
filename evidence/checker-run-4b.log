@@ -1,0 +1,42 @@
+D1 is implemented and committed as `cd49069`, with no attribution trailers. It is not pushed. The full suite (`.venv/bin/python -I -m unittest discover -s tests -v`) ran 193 tests: 193 OK, 0 failures, 0 errors. The count was 177 before. The git `xcrun_db` and `.config/git/ignore` warnings in the output are sandbox noise, and the commit went through.
+
+## What changed
+
+**`refcheck/e1.py` (OQ1)**
+- **New functions:** `in_t2_domain` and `scale_class`, plus `canonical_json`. The last writes a report deterministically, with `inf`, `-inf` and `nan` as strings.
+- **T2 bound:** it is now defined only for a finite d ≥ 0 (±0 included) and is NaN otherwise. The old |d| reading for a negative scale is gone.
+- **Out-of-domain blocks:** each tensor reports `outside_t2_domain` with blocks and elements for `negative`, `pos_inf`, `neg_inf` and `nan`. These blocks stay in the inventory and are never in `n_within_t2` or `n_exceed_t2`.
+- **New integer counts:** `n_blocks_in_t2_domain`, `n_elements_in_t2_domain`, `n_within_t2`, `n_blocks_outside_t2_domain` and `n_elements_outside_t2_domain`. `zero_scale_blocks` is unchanged. The totals sum all of these.
+- **Other statistics:** they now include every block. A non-finite error shows as inf or NaN instead of being dropped, and the old finite-only maximum is kept as `max_abs_error_finite_elements`.
+
+**`refcheck/metrics.py` (OQ6)**
+- A position with any ±inf or NaN logit returns `status: "non_comparable"` with per-side `pos_inf`, `neg_inf` and `nan` counts. It has no other keys, so no metric or top-1 flag can be read from it.
+- `compare` adds `n_comparable_positions`, `n_non_comparable_positions` and `non_comparable_indices`, and every aggregate covers comparable positions only. The old `finite` and `n_nonfinite_positions` keys are gone.
+
+**`refcheck/container.py` (OQ12)**
+- New `Container.check_unique_ownership`, called when a container is opened. It rejects a container where two stored tensors yield the same HF key. It checks the executed set and each encoding present, and the error names both tensors.
+- Identical content under different keys, and declared sharing with no second claimant, are not examined.
+
+**Tests (`test_e1.py`, `test_metrics.py`, `test_container_reader.py`)**
+- **OQ1:**
+  - The scale classification is checked exhaustively over all 65,536 f16 patterns.
+  - There are tests for each class, the ±0 count, a mixed tensor, and non-finite statistics.
+  - There is one control-versus-mutated report test: only the target tensor changes, by exactly the predicted counts.
+  - Determinism and integer counts have their own test.
+- **OQ6:** tests cover each non-finite class on each side, aggregate exclusion, and an all-non-comparable case with no agreement.
+- **OQ12:**
+  - **Rejected:** two objects on one prefix, and overlapping prefixes.
+  - **Accepted:** byte-identical embedding and head under different keys, and `head_reuses_embedding` with no second tensor.
+- **Replaced tests:** the old tests of the superseded readings are replaced (symmetric bound, infinite scale counting as exceeding, `finite` key).
+
+**`AMBIGUITIES.md`, `README.md`**
+- AMB-010 and AMB-017 are marked decided by D1 with the rule quoted. The old readings are kept and marked superseded.
+- AMB-008 carries a note that OQ12 treats the separate tied head as out of scope, without deciding that entry.
+- The README describes the new behaviour.
+
+## New ambiguities logged
+- **AMB-018:** D1 doesn't say which sets of representations are "compared together". I chose the executed set plus each uniform encoding. The alternative is the executed set only.
+- **AMB-019:** D1 doesn't say how non-finite statistics are written. This entry records how I wrote them, including a non-finite element inside an in-domain block counting as exceeding.
+
+Per D1's evaluation safeguards, these changes are verified only against my own synthetic data. The OQ1, OQ6 and OQ12 cases from scoring run 1 are diagnostic, not acceptance evidence. I did no D2 work and looked for no hidden cases.
+exit 0
