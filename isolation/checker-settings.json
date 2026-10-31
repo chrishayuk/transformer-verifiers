@@ -2,7 +2,7 @@
   "permissions": {
     "blockReadsOutsideWorkingDirectories": true,
     "additionalDirectories": [
-      "/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001",
+      "/Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/1bfc341",
       "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
       "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B",
       "/Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container"
@@ -40,7 +40,7 @@
       ],
       "allowRead": [
         "/Users/christopherhay/chris-source/transformer-verifiers/checker",
-        "/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001",
+        "/Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/1bfc341",
         "/Users/christopherhay/chris-source/transformer-verifiers/inputs",
         "/Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B",
         "/Users/christopherhay/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none",

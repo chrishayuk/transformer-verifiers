@@ -86,3 +86,30 @@ The settings file was re-tested at sha256 `a4cc2006…`.
 `checker-settings.json` gained `"attribution": {"commit": "", "pr": ""}`, the user's no-trailer preference, and is
 now sha256 `d05ce78f…`. Attribution does not affect isolation. The run started before this change (checker run 1)
 used `a4cc2006…`.
+
+## Part 4: immutable protocol snapshot (2026-10-31)
+
+The protocol owner asked for each checker session to read a fixed protocol snapshot, not the live `PROTOCOL.md`. That
+removes the risk of a protocol change reaching a session mid-run.
+- **The snapshot:** `isolation/snapshots/1bfc341/` holds `PROTOCOL.md` (sha256 `79795f18…`) and `draft.json`
+  (`f839c18b…`), copied from commit `1bfc341` (D1–D5), with `SHA256SUMS`. It sits under `isolation/`, which the
+  checker cannot write.
+- **The settings change:** the checker's read access to `protocols/LARQL-VERIFY-001` (both `additionalDirectories`
+  and the sandbox `allowRead`) is replaced by the snapshot directory. Settings are now sha256 `6f293a60…` (were
+  `d05ce78f…`).
+- **Every later checker run** names the snapshot it reads. A new snapshot directory, and this re-test, are needed
+  each time the snapshot changes.
+
+**Re-test, run as the checker role** (`isolation-test-4.log`):
+
+| Probe | Result |
+|---|---|
+| Snapshot `PROTOCOL.md`, shell and Read tool | Allowed; hash `79795f18…` matches |
+| Live `protocols/LARQL-VERIFY-001/PROTOCOL.md`, shell and Read tool | Blocked |
+| Write to the snapshot (shell `touch`, Edit tool) | Blocked |
+| `evidence/decisions/` draft records | Blocked |
+| SPEC revision 3 | Allowed; hash `6350e07c…` |
+| Reviewer repository | Blocked |
+| GitHub over the network | Blocked |
+
+The snapshot and settings hashes were unchanged after the test.

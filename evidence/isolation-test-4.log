@@ -1,0 +1,15 @@
+1. ALLOWED: `79795f1889a56b4d6ec34c0558a0f11add329b6f55f5df42789656dc9569c237  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/1bfc341/PROTOCOL.md`
+2. ALLOWED:
+   ```
+   1	# LARQL-VERIFY-001: independent verification of LARQL encodings
+   2	
+   3	> **STATUS: DRAFT, NOT FROZEN. DISCOVERY DISABLED.**
+   ```
+3. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md: Operation not permitted`
+4. BLOCKED: `/Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md is outside /Users/christopherhay/chris-source/transformer-verifiers/checker, /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/1bfc341, /Users/christopherhay/chris-source/transformer-verifiers/inputs, /Users/christopherhay/.cache/huggingface/hub/models--Qwen--Qwen3-0.6B, /Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container; the permissions.blockReadsOutsideWorkingDirectories setting blocks reads outside the working directories. Ask the user to add the directory with /add-dir, or to remove that setting.`
+5. BLOCKED: `touch: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/1bfc341/x: Operation not permitted`
+6. BLOCKED: `File is in a directory that is denied by your permission settings.`
+7. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/evidence/decisions/AMB-018-019-DRAFT.md: Operation not permitted`
+8. ALLOWED: `6350e07cff89fb04321ec49ea2e82b14d3893dc7a279d4fd2c899c8db1860a22  /Users/christopherhay/chris-source/transformer-verifiers/specs/vindex3-container/SPEC.md`
+9. BLOCKED: `ls: /Users/christopherhay/chris-source/transformer-verifiers-reviewer: Operation not permitted`
+10. BLOCKED: `curl: (56) CONNECT tunnel failed, response 403` (sandbox violation: `deny network-outbound github.com:443 (host is not on the allow list)`)
