@@ -945,6 +945,58 @@ expanded. D1–D8, all scoring runs (run 5 included) and all sealed corpora are 
   audited and pinned. The reviewer builds fresh hidden cases that target the D9 changes, and seals them before they
   are scored once. No earlier corpus is revised.
 
+### Decision revision D10 (2026-10-31): D2 feature cutoff, the D6 and aggregate checker run, the T3 pilot checkpoint
+
+Decided by the protocol owner on scoring run 7 (`evidence/REVIEWER-CORPUS-SEAL.md`). D1–D9, all scoring runs, their
+failures and all sealed corpora are unchanged.
+
+- **The D2 comparability gate is feature-complete** at checker commit `e232720`. The supporting evidence is scoring
+  run 7 against sealed corpus revision 6: 20/20 fresh blind cases passed every applicable property, and 5/5 negative
+  field-identity checks passed.
+  - **Scope of the claim:** feature-complete for the declared Qwen3 comparison profile. It is not a universal
+    transformer-equivalence proof, and it is not a Stage A acceptance verdict.
+  - **The feature scope is frozen, not the experiment.** The freeze remains the G1–G9 procedure.
+  - **D2 is not reopened** unless independent evidence identifies a material soundness defect.
+  - **AMB-028 is a documented limitation.** Framing and identity failures carry the correct rejection status, but an
+    approximate field label (`unknown_keys`). It is not reopened for this cosmetic issue alone.
+- **One narrowly scoped isolated checker run** implements the remaining checker requirements. It does not extend the
+  numerical model.
+  - **D6, non-finite reconstruction reporting.** The behaviour already decided in D6:
+    - bit identity and mismatch counts are kept (`bit_identical`, `n_bit_mismatches`);
+    - for a tensor whose upstream values include any non-finite value, the full-tensor numerical error metrics are
+      reported as non-comparable (`non_comparable_nonfinite`);
+    - the NaN, +inf and −inf counts are kept distinct;
+    - finite-tensor statistics keep D6's binary64 accumulation requirement;
+    - `absolute_frobenius_error` stays the documented field name.
+  - **Metric aggregation.** The aggregate contract already specified (D1 OQ6, D6 reviewer question 21).
+    - Non-comparable positions are excluded from the numerical aggregates.
+    - They are never silently counted as successful comparisons.
+    - The position counts are reported correctly.
+- **Evaluation.**
+  - **Isolation.** The run uses an immutable protocol snapshot and keeps checker/reviewer isolation.
+  - **Fresh cases.** The reviewer prepares fresh hidden cases independently, seals them after the checker is audited
+    and pinned, and scores them once.
+  - **D6 cases include:**
+    - bit-identical non-finite tensors;
+    - mixed finite/non-finite tensors.
+  - **Aggregate cases include:**
+    - a mixture of valid and non-comparable positions;
+    - an entirely non-comparable sequence;
+    - correct position counts.
+  - **Exposed cases are excluded.** Previously exposed metric cases are not fresh acceptance evidence.
+- **T3 pilot checkpoint.** An independently pinned Qwen3-architecture pilot checkpoint is preferred over using the
+  evaluated subject for tolerance selection.
+  - **This is not open-ended research.** The freeze reviewer assesses whether the candidate genuinely exercises the
+    numerical differences identified in Phase 1: RoPE, QK normalisation, the score scale and the epsilon.
+  - **The fallback stays available.** If no suitable independent checkpoint is available under the existing protocol,
+    the declared disjoint-subject-corpus fallback may be used, with its weaker independence claim stated explicitly.
+  - **Fixed in advance.** The pilot procedure and its ladder are fixed before any subject-specific E2 result is
+    inspected.
+- **After D6, the next milestone is the G1–G9 independent freeze review, not another comparator improvement.** It
+  must establish that the checker, its numerical rules, the pilot procedure, the baseline and the evidence are
+  controlled well enough to make the Phase 3 results meaningful. The real-model E2 comparison, and any exposure of the
+  subject's logits, remain prohibited until the freeze is complete.
+
 ### Stage A falsified if
 
 Any of:
