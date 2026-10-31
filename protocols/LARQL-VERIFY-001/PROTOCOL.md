@@ -1176,6 +1176,34 @@ unchanged. D11 remains a proposal.
     small, non-subject fixture before the format is admitted.
 - **Order of work:** the third-party logit-dump review and the T3 checker run proceed in parallel. After they pass,
   D11 and the external freeze-authorisation requirements are completed. Only then may the real LARQL comparison run.
+- **Clarification 1 (2026-10-31, before corpus revision 8 is sealed): `ulp₃₂` confirmed.** The owner approved the
+  proposed definition. It replaces the "proposed" wording above.
+  - **The definition,** for finite real x:
+    - ulp₃₂(x) = 2⁻¹⁴⁹ for |x| < 2⁻¹²⁶, including +0 and −0;
+    - ulp₃₂(x) = 2^(⌊log₂|x|⌋ − 23) for |x| ≥ 2⁻¹²⁶.
+  - **Binade spacing, not the distance to a neighbour.** It is the spacing of binary32 numbers in the binade containing
+    |x|, not the distance to the nearest adjacent float. At a power of two, the spacing below can differ from the
+    spacing above; this definition gives one value, with no platform `nextafter` convention.
+  - **Non-finite x:** ulp₃₂ is undefined, and the position follows D12's non-comparable rule. It is never assigned a
+    numerical tolerance.
+  - **Its input is the native-f64 reference logit, ref₆₄.** Never ref₃₂ or the LARQL output.
+  - **The binade is found by exact comparisons against powers of two,** never by a platform logarithm whose rounding
+    could pick the wrong binade. The inequality is decided exactly on the stored floating-point values, as D12 already
+    requires.
+  - **A finite ref₆₄ logit beyond the binary32 finite range:** the expression can be evaluated mathematically, but
+    that does not make the triple comparable. The declared representability and non-finite preconditions are applied
+    first.
+  - **Hidden cases** cover:
+    - zero (both signs);
+    - the smallest normal binary32 value and either side of it;
+    - power-of-two binade boundaries;
+    - very large finite logits;
+    - values where a binary64 computation of the threshold would give a different verdict.
+  - **Checker run 12** stays on snapshot `e056903`. If its implementation differs from this confirmed rule, the
+    difference is corrected in a separate run, never by revising the corpus or the scoring after the fact.
+  - **Logit-dump completeness, emphasised.** The format has no internal checksum, token ids or end marker. The
+    harness establishes completeness through its own trusted input manifest, successful process completion, exact byte
+    length and output hashing. A valid-looking file left behind by a failed run never becomes accepted evidence.
 
 ### Stage A falsified if
 
