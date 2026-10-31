@@ -560,6 +560,49 @@ Decided by the protocol owner. D1 (`81398e6`) and D2 (`a35841c`) are unchanged. 
   discipline, never adopted because the checker already implements a reading. They block only the cases whose
   expected result depends on them.
 
+### Decision revision D4 (2026-10-31): A1 statistics for unquantised tensors, metric tolerances, D2 field assessment
+
+Decided by the protocol owner after partial scoring run 2. D1–D3 are unchanged. Run 2's record (134 pass, 5 fail) is
+kept as it is. Its five failures stay failures.
+
+- **A1 per-tensor error statistics cover every tensor, unquantised (BF16) tensors included.** A1 says "per tensor".
+  - For each tensor the E1 report gives the maximum absolute error and the relative Frobenius error against upstream,
+    in addition to the BF16 bit-mismatch count.
+  - For a bit-identical tensor both are zero, provided the reference norm is non-zero.
+  - For a tensor that differs, both are computed, not replaced by a mismatch count.
+  - **Zero reference norm (any tensor).** When ‖upstream‖ = 0, the relative Frobenius error is undefined. It is
+    reported as `null` with the explicit flag `zero_reference_norm: true`, together with the absolute Frobenius error.
+    It is never silently reported as 0, and never as a computed 0/0 or x/0.
+  - **Consequence:** run 2's five failures are a checker reporting gap, not a reviewer rule defect. The fix goes
+    through the isolated checker session and gets a new pin. Its evaluation uses fresh hidden cases, because the five
+    failures are exposed.
+- **Metric tolerances, option (b): summation order is not constrained.** These replace the KL and RMS Δ values of D1
+  OQ5. The checker is judged on numerical accuracy, not on an implementation strategy. Here *e* is the independently
+  derived expected value.
+  - **max |Δ|:** unchanged (exact, or 1 ulp of f64 when the exact difference needs more than 53 bits).
+  - **top-1:** unchanged (exact).
+  - **KL:** |got − *e*| ≤ 2e-10 + 1e-9·|*e*|.
+  - **RMS Δ:** |got − *e*| ≤ 2e-11·|*e*| + 1e-300.
+  - **Conditions:**
+    - Before any metric case is evaluated, the reviewer confirms in writing that the a priori analysis supports these
+      values for the vocabulary sizes, logit ranges and free summation order of the cases being scored.
+    - These values are committed here before any revision 2 metric case is evaluated.
+  - **Status of the cases:** the 23 revision 2 metric cases have produced no observed output, so they stay eligible
+    as blind evidence, provided neither the checker nor the evaluator is changed in response to them. They are scored
+    against the pinned checker `cd49069`. The 21 revision 1 metric cases stay diagnostic.
+- **D2 fields not declared directly.** Documenting a correspondence (SPEC §17.7) does not resolve a field by itself.
+  The independent reviewer classifies every computation-relevant field as one of:
+  1. **directly declared** in the container;
+  2. **unambiguously derivable** from independently specified information (the admitted SPEC, the pinned
+     `config.json`, the pinned reference implementation);
+  3. **dependent** on an implementation assumption or a runtime default.
+
+  Only classes 1 and 2 support an unconditional D2 comparability verdict. A class 3 field is recorded as an
+  assumption, and the execution comparison it affects stays invalid. Equivalence is never inferred from matching
+  outputs. **E2 stays on hold until this assessment is complete.**
+- **AMB-018 and AMB-019** stay undecided until the owner has examined the draft records
+  (`evidence/decisions/AMB-018-019-DRAFT.md`). No scored case depends on them.
+
 ### Stage A falsified if
 
 Any of:

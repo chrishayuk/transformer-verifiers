@@ -177,6 +177,14 @@
       "Q19": "full D2 comparability requires every required field covered",
       "partial_scoring": "subset, exclusion reasons, checker commit, seal and decision revisions committed before the run; excluded cases pending; cases dependent on open ambiguities excluded; no blind rerun of failed cases against modified code",
       "open": "AMB-018, AMB-019 (independent decision records); owner ruling on the five indirect or missing D2 fields"
+    },
+    "D4": {
+      "date": "2026-10-31",
+      "scope": "A1 statistics for unquantised tensors, metric tolerances option (b), D2 field assessment; full text in PROTOCOL.md 'Decision revision D4'; run 2 record kept unchanged",
+      "A1_bf16": "max abs error and relative Frobenius error reported for every tensor, BF16 included; zero for bit-identical tensors with non-zero reference norm; computed for differing tensors; zero reference norm gives relative Frobenius null with zero_reference_norm true plus the absolute Frobenius error; run 2's five failures are a checker reporting gap, fixed via the isolated session, new pin, fresh hidden cases",
+      "metric_tolerances": "free summation order; max|Δ| and top-1 unchanged; KL |got-e| <= 2e-10 + 1e-9|e|; RMS Δ |got-e| <= 2e-11|e| + 1e-300; reviewer confirms the analysis supports them for the scored cases before evaluation; 23 revision 2 metric cases stay blind-eligible against cd49069; 21 revision 1 cases stay diagnostic",
+      "D2_fields": "reviewer classifies each computation-relevant field as directly declared, unambiguously derivable from independently specified information, or dependent on an implementation assumption or runtime default; only the first two support an unconditional verdict; E2 on hold until the assessment is complete",
+      "open": "AMB-018, AMB-019 pending owner review of the draft records"
     }
   }
 }
