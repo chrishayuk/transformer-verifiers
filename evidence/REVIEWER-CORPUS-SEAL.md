@@ -329,3 +329,37 @@ finite controls)
     documented.
   - **Distribution quantiles:** not scored, because the README does not define them. Minimum, maximum and mean are
     scored.
+
+## E2/E3 logit corpus: pilot and held-out seals (2026-10-31; not yet admitted)
+
+Built by an independent corpus author in the reviewer repository (`e2corpus/`). No model, LARQL or checker was run.
+The coordinating session has not read the held-out contents.
+
+| Set | Commit | Scope | Files | Digest |
+|---|---|---|---|---|
+| Pilot (declared) | `9facacb655d079cb03cf11905735f1d774409c72` (seal record `5673ba1`) | `e2corpus/pilot/` | 49 | `342f3978f587f0266aed618e1da24a030d8a5d1177ada822ab67bc853016143a` |
+| Held-out (sealed) | same commit | `e2corpus/heldout/`, salt included | 50 | `0f74bb760407953fbb0710bb355bf2c0aa252123d1a058009e6331422b4af3ce` |
+
+- **Digests:** both reproduced by the coordinating session from the git objects. The method is the usual one, with
+  paths scoped to each directory.
+- **Shape:**
+  - 23 sequences and 130,543 tokens per set;
+  - bands 0–511, 512–4095, 4096–32767 and 32768–40959;
+  - 9,536 pilot and 9,534 held-out evaluated positions;
+  - maximum position 40,959 (proposed; open question 45).
+- **Disjointness, as reported by the author:**
+  - 0 shared documents;
+  - the longest common run is 22 tokens, under the preregistered bound of 32;
+  - 0.07% of held-out 13-grams are also in the pilot, under a bound of 1%.
+- **Isolation:** built under written rules, not a sandbox. Its tool log (38 calls) shows no access to the checker,
+  its clones, the freeze review, the reference audit, LARQL or the network.
+- **Admission:** under proposed D11 §10, admitting it or rebuilding it under a mechanism is the owner's decision.
+- **Open questions:** 43–50 in the reviewer repository. They cover:
+  - tokenization and BOS;
+  - Qwen3-1.7B reuse;
+  - the 40,959 maximum;
+  - evaluated positions against "every pilot logit";
+  - the bands;
+  - the held-out handover;
+  - natural-text contamination for E3;
+  - licences.
