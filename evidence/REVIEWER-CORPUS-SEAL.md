@@ -84,3 +84,40 @@ and it never read the real container. Revision 1 (`8603fb7`) and the scoring run
 - **OQ2:** the scan of the pinned upstream checkpoint found no block, in any of the 311 tensors, that reaches the
   reference encoder's undefined float-to-int8 conversion (`evidence/OQ2/`). E1 encoder cases in that domain are
   excluded from encoder-equivalence claims, recorded and not deleted.
+
+## Scoring run 2 (2026-10-31): partial, aggregates only
+
+The full results are in the reviewer repository (`scoring/run-2/`). They stay sealed from the checker.
+
+- **Checker:** `cd49069`, pinned before corpus revision 2 was sealed. Not modified.
+- **Corpus:** `492b9a4`, unchanged.
+- **Decision revisions:** D1 and D2. The partial-scoring rules of D3 were followed.
+- **Order of commits:** the eligibility list and the pass/fail rules first (`f9226a3`), then the metric error
+  analysis (`0fb4d6a`), then the run (`83162f3`). One pass; nothing was rerun.
+
+| | Eligible | Pass | Fail | Error |
+|---|---|---|---|---|
+| A0 | 28 | 28 | 0 | 0 |
+| E1 | 24 | 24 | 0 | 0 |
+| Containers | 87 | 82 | 5 | 0 |
+| **Total** | **139** | **134** | **5** | **0** |
+
+- **Excluded (pending, not passed): 114.**
+  - 48 metric cases (pending the tolerance decision; 25 of them also diagnostic only)
+  - 34 held real-container recipes
+  - 13 ambiguous containers
+  - 10 D2 synthetic cases
+  - 9 diagnostic-only cases
+  - None depend on AMB-018 or AMB-019.
+- **The five failures share one cause:** the reviewer's rule required error statistics (maximum absolute error,
+  relative Frobenius) for BF16 tensors as well. The checker reports BF16 tensors by bit-equality only. Every other
+  predicted quantity matched exactly, including the D1 OQ1 class counts.
+  - **Diagnosis:** an ambiguity in A1. It is unsettled whether A1's error statistics apply to unquantised tensors,
+    whose T1 check is bit-exactness. It is not a numerical checker defect.
+  - **The failures stand.** Once the rule is decided, these cases need fresh replacements before they count, because
+    the decision comes after this result was seen.
+- **Metric error analysis:**
+  - max |Δ| and top-1: the D1 tolerances are justified.
+  - KL (absolute part) and RMS Δ: too tight unless the protocol requires pairwise or compensated summation. Under a
+    free summation order, the worst-case bounds are about 1e-10 (KL) and 8.5e-12 relative (RMS Δ).
+- **This is Phase 1 information, not Stage A evidence.**
