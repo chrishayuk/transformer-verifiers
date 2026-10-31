@@ -100,3 +100,23 @@ must name it.
   plus each uniform encoding.
 - **AMB-019:** how non-finite E1 statistics are represented, and whether a NaN or infinite element error inside an
   in-domain block counts as exceeding T2. The checker counts it as exceeding.
+
+## Checker run 5: 2026-10-31, `3337645` (decision revision D4, part A1). Audited and pinned, NOT pushed
+
+**The run:** the same settings (`d05ce78f…`), `--model sonnet`, `--permission-mode acceptEdits`, with `git add`/`git
+commit` allowed. It was briefed on D4's first bullet only (PROTOCOL.md `f80b7a4`). D5 was held uncommitted until this
+run ended, so it was never exposed. Log: `checker-run-5.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh cd49069`) | Clean: 1 new commit, no trailers, lockfile unchanged, environment matches (20,103 RECORD files, 0 bad), no new imports |
+| Scope | D4 A1 only: `refcheck/e1.py` (statistics for every tensor; a shared `_rel_frobenius`; `null` relative Frobenius error plus `zero_reference_norm` when ‖upstream‖ = 0), its tests, README, and an AMB-019 note. No reader, metric or D2 change |
+| Tests, rerun by the publisher with `-W error` | 200, OK (193 before) |
+
+**Pin.** `3337645` is the checker to be scored blind against the fresh D4 cases of corpus revision 3. Its pin comes
+before that corpus is sealed. Scoring run 3 (the metric cases) uses `cd49069`, as D4 requires. This change doesn't
+touch metric code.
+
+**New ambiguity, recorded by the checker in AMB-019:** D4 does not say what a bit-identical tensor holding inf or NaN
+reports. The checker reads "both are zero" literally: the error is 0, `rel_frobenius` is 0, and `ref_frobenius` is
+non-finite.

@@ -1,0 +1,32 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+D4 part A1 is implemented and committed as `3337645`. The full suite (`.venv/bin/python -I -m unittest discover -s tests -v`) ran 200 tests and all passed. Nothing is pushed.
+
+The git commands printed sandbox noise (xcrun cache and `~/.config/git/ignore` access denied). Neither stopped the add or the commit, and the working tree is clean afterwards.
+
+**Changes, file by file**
+- **`refcheck/e1.py`:**
+  - `e1_exact_tensor` now returns `max_abs_error`, `err_frobenius`, `ref_frobenius`, `rel_frobenius` and `zero_reference_norm` for unquantised tensors.
+    - They are computed in float64 from the values. An element with equal bit patterns has error 0, and a differing element has error `|x − decoded|`.
+    - A bit-identical tensor with a non-zero reference norm reports 0 and 0.
+    - `n_bit_mismatches` and `bit_identical` are untouched.
+  - A new helper, `_rel_frobenius`, is shared by the Q8_0 and unquantised paths.
+    - When ‖upstream‖ = 0 it returns `None` (JSON `null`) and `zero_reference_norm: true`. `err_frobenius` is reported alongside.
+    - Otherwise it computes the ratio.
+  - `e1_q8_tensor` now uses that helper and gains `zero_reference_norm`. The old zero-norm values (0 for an exact decode, inf otherwise) are gone. No other key changed, and `canonical_json` was not touched.
+- **`tests/test_e1.py`:** I replaced the old zero-tensor Q8_0 test and added tests on synthetic data. They cover:
+  - a bit-identical BF16 tensor;
+  - a differing BF16 tensor, with a hand-computed expected value;
+  - a one-ulp BF16 difference;
+  - a +0/−0 difference (a bit mismatch with error 0);
+  - a zero-norm BF16 tensor, both bit-identical and differing;
+  - a zero-norm Q8_0 tensor, both exact and with decoded error 5;
+  - a non-zero-norm Q8_0 tensor whose error is zero;
+  - a bit-identical tensor containing inf;
+  - the `null` in canonical JSON;
+  - the new fields on every tensor in a whole-container report.
+- **`README.md`:** the E1 section now describes the per-tensor statistics, the `null` and flag convention, and the superseded Q8_0 behaviour.
+- **`AMBIGUITIES.md`:** AMB-019 has a D4 note saying (i) is superseded for a zero reference norm only. The rest of AMB-019 stays open.
+
+**New ambiguity**
+D4 doesn't say what a bit-identical tensor holding inf or NaN should report. I read "both are zero" literally: equal bit patterns give error 0, so `rel_frobenius` is 0 and `ref_frobenius` is non-finite. This is recorded in the AMB-019 D4 note, not as a new AMB entry. I did not touch the metric tolerances or the D2 bullets.
+exit 0
