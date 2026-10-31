@@ -996,6 +996,69 @@ failures and all sealed corpora are unchanged.
   must establish that the checker, its numerical rules, the pilot procedure, the baseline and the evidence are
   controlled well enough to make the Phase 3 results meaningful. The real-model E2 comparison, and any exposure of the
   subject's logits, remain prohibited until the freeze is complete.
+- **Clarification 1 (2026-10-31, before corpus revision 7 is sealed; reviewer questions 37 and 39–42, checker
+  AMB-030).** Appended to D10. Everything earlier is unchanged. Checker `4bc93d3` stays pinned and unchanged. This is
+  the last clarification before revision 7 is sealed. The comparability gate is not reopened, and the numerical
+  requirements are not broadened.
+  - **Per-block distributions with non-finite observations (AMB-030f): a known limit, explicitly diagnostic.**
+    - A block-level distribution of a tensor whose `numerical_metric_status` is `non_comparable_nonfinite`, or any
+      distribution that contains a non-finite observation, is diagnostic. It is not a certified finite-real error
+      statistic, and it never stands in for a full-tensor metric that D6 makes null.
+    - For this campaign no new calculation is required, and the existing distribution is not removed.
+    - Checker `4bc93d3` predates this rule and does not label the distribution itself. The classification is applied
+      here, by the protocol: every report and scoring record that cites such a distribution labels it diagnostic and
+      notes that it contains non-finite observations. A checker-emitted label would be a separate change, and is not
+      required for revision 7.
+    - A future campaign may formally distinguish finite-only, extended-real and undefined error distributions.
+  - **Q8_0 bit identity against upstream (question 37): unscored.** The protocol defines no identity guarantee against
+    upstream for quantised tensors. The checker's value is recorded and never scored.
+  - **The minimum aggregate contract (question 40).**
+    - **Required:**
+      - exact counts of total, comparable and non-comparable positions, and the non-comparable indices;
+      - numerical distributions of max |Δ|, RMS Δ and KL (A2 logit-match details), computed only over comparable
+        positions;
+      - the top-1 agreement rate, whose denominator equals the number of comparable positions;
+      - an explicit empty-comparable-set status when that denominator is zero.
+    - **Scoring:** a missing required aggregate fails. A missing optional one does not. An optional aggregate never
+      substitutes for a required one.
+    - **No retrospective scoring:** an output that was never part of this contract is not scored retrospectively.
+  - **An empty comparable set (question 39).**
+    - **Required:** a sequence with no comparable positions reports an explicit empty status, a comparable count of 0,
+      and a null top-1 agreement rate. Every other applicable numerical aggregate rate and distribution is also null.
+    - **What is allowed:** a zero count is valid when it is explicitly defined as an event count, such as a count of
+      top-1 disagreements.
+    - **What is not:** a zero rate, a rate of 1, or a NaN standing for agreement. No count is ever used to imply that
+      agreement was established.
+    - **Key names:** the owner's example (`aggregate_status: "empty_comparable_set"`, `n_comparable: 0`,
+      `top1_agreement_rate: null`) fixes the content, not the key names. The scorer maps names from the checker's
+      published README.
+    - **The reviewer tests directly** that an empty comparable set is distinguished from a measured zero-error result.
+  - **Representing infinity (question 41).** Documented serialisation aliases are allowed: `inf` and `+inf` both mean
+    positive infinity. The counts must agree exactly.
+  - **The sign of a NaN (question 42).** NaN signs are not distinguished in numerical classification. Raw bit
+    information is kept separately where the contract requires it (D6 bit identity).
+  - **A sequence status (AMB-030; the reviewer's question 42 on a distinct status).** No new mandatory sequence status
+    is added. The counts, the indices and the aggregate status must make the exclusions unambiguous.
+  - **Corpus isolation.**
+    - **The finding:** the reviewer workspace held git-ignored clones of earlier pinned checkers, from scoring runs
+      1–7. The reviewer's declaration that it never opened them is kept.
+    - **The check:** the coordinating session reviewed the reviewer agent's tool-call log for revision 7. The only call
+      that touched those scoring folders listed `scoring/run-7` and read its `RULES.md`. No call opened, searched or
+      grepped a checker clone.
+    - **From revision 7 on,** checker clones are kept outside the corpus author's accessible workspace. The pinned
+      checker reaches the scorer only after the seal, in a separate evaluation directory.
+  - **Evaluation.** The reviewer re-derives the affected expectations from this public text, never from checker output.
+    It then:
+    - seals revision 7 against `4bc93d3`;
+    - commits eligibility and the scoring rules before anything is evaluated;
+    - scores once.
+
+    The report gives these separately:
+    - counts;
+    - non-comparable handling;
+    - the top-1 rate;
+    - numerical distribution coverage;
+    - complete-case pass/fail.
 
 ### Stage A falsified if
 
