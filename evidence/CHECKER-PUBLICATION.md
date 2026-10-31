@@ -190,3 +190,29 @@ misses on 6 of 10. So no outcome changes here, but the computation depends on th
 - **`readback.py:393`:** compares the reference's own `scaling` attribute with `float(hd) ** -0.5`. That is the
   pinned transformers' own computation on the reference side, not the container's declared value, so D8 does not
   cover it. It was left unchanged.
+
+## Checker run 9: 2026-10-31, `688d8e3` and `147a24e` (decision revision D9 and clarification 1). Audited and pinned, NOT pushed
+
+**The run:** snapshot `db08851` (PROTOCOL.md `63cae151…`, verified by the checker), settings `3f848cca…`. Log:
+`checker-run-9.log`. D9 clarification 2 (`6360a4c`) was committed after this snapshot, and is not in the run's inputs.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh ab38748`) | Clean: 2 commits, no trailers, lockfile unchanged, environment matches (0 bad RECORD files), no new imports |
+| Exception handling | Compliant with D9. Every broad `except Exception` returns `checker_error` (comparator, read-back, pins, construction, decode), commented "never as a refusal". The deliberate refusals (`ComparatorError`, `PinError`, `HarnessError`, `ComparisonInvalid`) are caught by name. Expected refusals are explicit checks in `authority_refusals`, run before any reference construction |
+| Reason schema | `{category, field, key_path?, site?, message}`. Must-be-absent keys are `contradiction`; unknown keys are `unresolved` (SPEC §17.1). `key_path` is built while the keys are walked |
+| Tests, rerun by the publisher with `-W error` | 427, OK (392 before) |
+| AMB-023 | Logits were byte-identical at 1, 2, 4 and 8 threads (4 layers, 1024 wide, f32 and f64), so there is no thread pin. Counts are recorded. Limits: one host, one size |
+
+**Pin.** `147a24e` is the D9 checker that corpus revision 5 is to be sealed and scored against.
+
+**Not implemented (expected):** clarification 2's question 27 fallback, where a layer with no `geometry` object
+inherits from `X.attention`. This checker compares absent geometry as missing, so it reports it as unresolved. Any
+revision 5 case whose expectation depends on question 27 is therefore pending under D3. It is not scored against this
+pin.
+
+**New: AMB-027, for the protocol owner:**
+- Categories on the reference side: a read-back difference, a failed pin and the weight-tie refusal are
+  `contradiction`; an unmapped read-back key is `unresolved`; a stand-in on the subject is `unsupported`.
+- Unprobed key types surface as `checker_error`.
+- `rope_parameters: null` counts as declared.

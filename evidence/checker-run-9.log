@@ -1,0 +1,53 @@
+I implemented D9 and its clarification. The full suite passes: `.venv/bin/python -I -m unittest discover -s tests -v` ran 427 tests, all OK. Before the change it was 392. It is committed in two commits and nothing is pushed.
+
+## Commits
+- `688d8e3`: the D9 code and tests.
+- `147a24e`: the AMBIGUITIES.md and README.md records.
+
+Neither commit has an attribution trailer. Neither was refused.
+
+## Changes, file by file
+- **`refcheck/config_compare.py`**
+  - **Reason schema.** Added `make_reason`, the three categories, the `CHECKER_ERROR` status and an `UNSUPPORTED` row status.
+  - **Authority screening.** Added `authority_refusals(authority)`, which runs explicit checks before any reference is built. It covers the unsupported cases and the unresolved cases below, and `compare_configuration` uses it.
+  - **Reference resolution.** `reference_resolution` no longer catches broadly, and it is called only for an authority that raised no refusal. This also stops the library's defaults leaking in for absent keys.
+  - **Key paths.** `key_path` is built while the keys are walked and is not parsed from message text. Each offending key gets its own reason.
+  - **Checker errors.** An unexpected exception in the comparator returns `checker_error`.
+  - **New result keys.** The result has `reasons` and `unsupported_fields`.
+- **`refcheck/harness.py`**: `reference_run` refuses a refused authority before `build_model`, with no logits. Unexpected exceptions in construction, read-back, pins or decode give `checker_error`. `HarnessError` and `PinError` still raise.
+- **`refcheck/d7.py`**: added `reason_details`, `refused_build` and `checker_error_record`.
+- **`refcheck/gate.py`**
+  - **Reason format.** Reasons are now structured dicts.
+  - **New status.** The gate has a `checker_error` status that is never comparable and never `invalid_comparison`, and `gated_compare` returns no metrics for it.
+- **Tests**: `test_config_compare.py` has 133 tests (107 before) and `test_d7_reference.py` has 81 (72 before). I changed the old D8 sliding-window and `rope_scaling` tests, which D9 supersedes.
+- **`AMBIGUITIES.md`, `README.md`**: updated as listed in the task, plus the new AMB-027.
+
+## Reason schema
+```json
+{"category": "unsupported | contradiction | unresolved",
+ "field": "...", "key_path": "optional", "site": "optional", "message": "..."}
+```
+- A forbidden key looks like `{"category":"contradiction","field":"keys_that_must_be_absent","key_path":"component.perception","message":"Prohibited key present"}`, plus a `site` field.
+- Container paths are `component`, `component.execution.…` and `component.attention[L].…`. Authority keys are `authority.<key>`.
+- A `checker_error` result carries `error: {type, message, stage}`.
+
+## Tests covered
+- **Unsupported:** each case, with its category and field, plus a regression case for the audit's control 5.
+- **Sliding layer, null window:** refused before construction, and `build_model` is never called.
+- **Forbidden and unknown keys:** several forbidden keys give several reasons with distinct `key_path`s. Unknown keys behave the same way.
+- **Injected exceptions:** failures injected into the comparator, the read-back, a pin and construction all give `checker_error`. A test confirms that a `checker_error` does not satisfy an `invalid_comparison` expectation.
+
+## Thread count (AMB-023)
+I decoded a 4-layer, 1024-wide model at 1, 2, 4 and 8 threads, in f32 and f64. The logit bytes were identical every time, so I added no thread pin. Thread counts stay recorded. This is one host and one size, and I wrote that limit into AMB-023.
+
+## New ambiguity: AMB-027
+- **Unexpected versus deliberate:** `ComparatorError`, `HarnessError` and `PinError` keep their old behaviour. Every other exception becomes `checker_error`, but only in a `reference_run` made with an authority.
+- **Typed-key checks:** the explicit checks cover only what I probed on transformers 5.5.0. A wrongly typed value in a key I did not probe will show up as `checker_error`.
+- **Category placement:** D9 doesn't define categories for the reference side, so I chose them. A differing read-back value, a failed pin and the weight-tie refusal are `contradiction`. A read-back key with no mapping is `unresolved`. A stand-in authority on the subject is `unsupported`.
+- **Hidden container checks:** a refused authority hides container-side span mismatches from that run's reason list. The verdict is unaffected.
+- **Null `rope_parameters`:** `rope_parameters: null` counts as declared, which is over-strict but never accepts wrongly.
+
+Please confirm the reference-side category placement above. Only the label of a reason that was already `invalid_comparison` would change.
+
+I did not read any LARQL source, and I did not look for the real container.
+exit 0
