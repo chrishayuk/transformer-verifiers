@@ -181,3 +181,40 @@ which revision 3's 1e-11 Frobenius tolerance assumes.
 
 33 fresh hidden D2 comparability cases under D7 and SPEC revision 4 §17, each with a reviewer-written stand-in
 authority and its provenance. They are built and not sealed. The seal follows the pin of the D7 checker.
+
+## Corpus revision 4: seal (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Commit | `acbc9320b3da79175f998f2bdc98d57e3a8bfc80` (seal record in `7a18a71`) |
+| Tree | `8537fce73f81d1640db719a70312ca2052474a9f` |
+| Files | 2371 |
+| Digest | `e68a35e6e6f8b72ffcdb270c00616b97dfc5ed099096951e9fc92781e5f1915c`, reproduced by the coordinating session |
+| Content | 33 fresh D2 comparability cases (3 comparable, 27 mismatch, 3 unresolved), each with a reviewer-written stand-in authority |
+| Checker | `ab38748`, pinned before this seal |
+
+**Expectations re-derived under D8 before the seal,** with no checker output seen. The formerly ambiguous score-scale
+case is now `invalid_comparison`: its container stores the square-root-route value, one ulp below the correctly
+rounded `1/√32`.
+
+## Scoring run 5 (2026-10-31): corpus revision 4, aggregates only
+
+- **Checker:** `ab38748`. **Corpus:** `acbc932`. **Decision revisions:** D2, D3, D7, D8.
+- **Order of commits:** the eligibility list and rules (`1e55631`), then the field mapping and adapter (`3cd8bc0`),
+  then the run (`c093210`). One pass.
+
+| Eligible | Status correct | Pass (mechanical) | Pass (after the preregistered hand review) | Fail | Error |
+|---|---|---|---|---|---|
+| 33 | **33** | 23 | 27 | 6 | 0 |
+
+- **Verdicts:** the comparator gave the right `comparable` or `invalid_comparison` verdict on all 33 fresh blind cases.
+- **Hand review:** applied after the run, from recorded outputs only, under a RULES clause fixed before the run
+  (reported entries that duplicate an expected field's site). Both tallies are kept.
+- **The six failures** show no checker defect:
+  - **one case defect:** an extra key the checker rightly reported as unresolved;
+  - **one scorer defect:** alias matching over path text;
+  - **one ambiguity:** a non-null authority `rope_scaling`, unresolved or mismatch;
+  - **three interface ambiguities:** must-be-absent mismatches do not name the offending key in a documented field.
+- **The failures stand.** These cases are now exposed. Fresh cases and a fixed scoring adapter are needed for any
+  re-test.
+- **This is Phase 1 information, not Stage A evidence.**
