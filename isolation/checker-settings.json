@@ -79,5 +79,9 @@
       ]
     }
   },
-  "disableClaudeAiConnectors": true
+  "disableClaudeAiConnectors": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  }
 }
