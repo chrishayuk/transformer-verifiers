@@ -1059,6 +1059,43 @@ failures and all sealed corpora are unchanged.
     - the top-1 rate;
     - numerical distribution coverage;
     - complete-case pass/fail.
+- **Clarification 2 (2026-10-31, after scoring run 8): the end of Phase 1 checker validation.** Appended to D10.
+  Everything earlier is unchanged, including checker `4bc93d3`, corpus revision 7 and scoring run 8.
+  - **Numerical distributions (question 40).** For this campaign, a numerical-distribution requirement is met by the
+    minimum, maximum and mean, provided they are computed only over comparable positions and clearly labelled.
+    - **No retrospective quantiles:** quantiles are not required retrospectively.
+    - **A stated limitation:** this reduced scope is a recorded limitation of the campaign. An unspecified
+      distribution is not treated as comprehensive.
+  - **Scoring-rule changes in run 8.** The two changes from the draft were made before scoring and disclosed: the Q8_0
+    class 3 block count scored only if documented, and the quantiles not scored. They are accepted for this Phase 1
+    evaluation. The freeze reviewer examines whether the scoring rules were sufficiently independent of the checker's
+    published interface.
+  - **The feature cutoff is enforced.** No further checker functionality is added unless independent review identifies
+    a material soundness defect.
+  - **Known limitations.** AMB-028, AMB-029 and AMB-030f are recorded as known limitations, unless independent review
+    identifies a material soundness issue:
+    - **AMB-028:** framing and identity failures carry an approximate field label.
+    - **AMB-029:** the geometry fallback is applied per object, where SPEC §17.2 could be read per key. This is
+      over-strict, and never a false acceptance.
+    - **AMB-030f:** non-finite block distributions are diagnostic only.
+  - **What Phase 1 establishes.** Independently scored synthetic evidence across the pinned checker versions shows
+    that the checker can:
+    - decode Q8_0 and inspect VINDEX3 representations;
+    - detect weight-reconstruction discrepancies;
+    - validate comparability;
+    - compute the numerical metrics on the tested cases;
+    - separate non-finite results from finite comparisons;
+    - exclude non-comparable positions from aggregate rates.
+
+    This is not Stage A acceptance evidence.
+  - **Next: the independent freeze-readiness review.** It concentrates on:
+    - the T3 pilot design, including the arithmetic compatibility of the proposed Qwen3-1.7B checkpoint and its
+      separation from the held-out subject evaluation;
+    - the exact trusted computing base;
+    - the protected approval mechanism;
+    - the independence of the numerical oracle.
+
+    Only a READY TO FREEZE verdict leads to the human-controlled freeze.
 
 ### Stage A falsified if
 
