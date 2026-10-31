@@ -185,6 +185,12 @@
       "metric_tolerances": "free summation order; max|Δ| and top-1 unchanged; KL |got-e| <= 2e-10 + 1e-9|e|; RMS Δ |got-e| <= 2e-11|e| + 1e-300; reviewer confirms the analysis supports them for the scored cases before evaluation; 23 revision 2 metric cases stay blind-eligible against cd49069; 21 revision 1 cases stay diagnostic",
       "D2_fields": "reviewer classifies each computation-relevant field as directly declared, unambiguously derivable from independently specified information, or dependent on an implementation assumption or runtime default; only the first two support an unconditional verdict; E2 on hold until the assessment is complete",
       "open": "AMB-018, AMB-019 pending owner review of the draft records"
+    },
+    "D5": {
+      "date": "2026-10-31",
+      "scope": "AMB-018 and AMB-019, clarifications of D1; full text in PROTOCOL.md 'Decision revision D5'; committed after checker run 5 (3337645) ended so it was not exposed mid-run",
+      "AMB-018": "each upstream HF key has exactly one owning logical object across every representation the container declares; reject cross-object collisions even if never executed together, and duplicates within one representation; scope is the declared inventory only; multiple representations of one object, shared storage, identical content under distinct keys and declared reuse are not prohibited",
+      "AMB-019": "a NaN/+inf/-inf upstream element inside an in-domain block is outside T2's domain at element level, counted per tensor by class, never within or exceeding; non-finite summaries as strings in the canonical report; integer counts normative; exclusion from T2 does not establish encoder or decoder correctness"
     }
   }
 }

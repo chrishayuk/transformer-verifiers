@@ -603,6 +603,40 @@ kept as it is. Its five failures stay failures.
 - **AMB-018 and AMB-019** stay undecided until the owner has examined the draft records
   (`evidence/decisions/AMB-018-019-DRAFT.md`). No scored case depends on them.
 
+### Decision revision D5 (2026-10-31): source-key ownership (AMB-018) and non-finite upstream elements (AMB-019)
+
+Decided by the protocol owner on independent draft records (`evidence/decisions/AMB-018-019-DRAFT.md`). Both are
+clarifications of D1. D1–D4 and all earlier scoring and sealed evidence are unchanged. The checker implements these
+rules from this text, and its implementation gets a new pin. Fresh hidden cases are prepared wherever earlier exposure
+or the implementation change would compromise blind evaluation.
+
+- **AMB-018. Ownership of a source key belongs to a logical object, across every representation declared in the
+  container.** This refines D1 OQ12's "compared together".
+  - **Rule.** Each upstream HF key has exactly one owning logical object. A reader MUST reject a container in which:
+    - a representation of one object and a representation of a different object yield the same HF key under SPEC
+      §10.1; or
+    - two stored tensors within one representation yield the same HF key.
+  - **Applies whether or not those objects are ever executed together.** Ownership must not change when a different
+    representation is selected for execution.
+  - **Scope.** The rule applies to the representations the container actually declares (`index.json`
+    `representations`). It does not extend to representations a future compiler might generate.
+  - **Not prohibited:**
+    - several representations of one object's tensor, which share a key legitimately;
+    - physically shared storage;
+    - identical numerical content under distinct source keys;
+    - reuse that the container declares.
+- **AMB-019. A non-finite upstream element is outside T2's domain, at element level.** This refines D1 OQ1.
+  - Inside a block whose stored scale is in T2's domain, an element whose upstream value is NaN, +inf or −inf is
+    outside T2's finite-input domain. It is not a bound violation.
+  - It is reported in its own per-tensor count, by class (`nan`, `inf`, `-inf`), separately from the elements within
+    T2 and those exceeding it. It is never counted as either.
+  - Its error appears as non-finite in the floating-point statistics. Non-finite summaries are written as the strings
+    `"inf"`, `"-inf"` and `"nan"` in the canonical report. Integer counts are normative and are validated exactly.
+  - **Limit.** Leaving an element out of T2 does not establish that the encoder or decoder behaved correctly on it.
+    Those are separate guarantees.
+  - **For this subject:** the OQ2 scan (`evidence/OQ2/`) found no non-finite upstream value, so no result on the
+    subject depends on this rule.
+
 ### Stage A falsified if
 
 Any of:
