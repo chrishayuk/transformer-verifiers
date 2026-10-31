@@ -1,0 +1,69 @@
+Both features are in: D6 non-finite reconstruction reporting and a public metric aggregate interface. The full suite passes, 476 tests against 461 before. The protocol snapshot hash matched `8595bd28…83b0` before I started, and nothing has been pushed.
+
+## Changes, file by file
+Nothing else changed. The comparability gate, the comparator, T2, the decoder and the reason schema are untouched (`git diff e232720 HEAD` covers only these six files).
+
+- **`refcheck/e1.py`**: a shared helper now produces the full-tensor metrics and their D6 status for both `e1_q8_tensor` and `e1_exact_tensor`.
+  - Q8_0 tensors now report `bit_identical` and `n_bit_mismatches`.
+  - `e1_report` totals gain the non-finite counts and a null maximum error (details below).
+  - A signalling-NaN cast warning is silenced; the value still counts as NaN.
+- **`refcheck/metrics.py`**: new public function `aggregate(positions)`. `compare(...)["summary"]` now returns exactly what it returns.
+- **`tests/test_e1.py`**: 10 new D6 tests. Three existing tests asserted the pre-D6 behaviour (inf/NaN or 0 for these tensors) and were updated to D6: two in the element-counting tests, and the old bit-identical inf tensor test.
+- **`tests/test_metrics.py`**: 5 new aggregate tests (a mixture of comparable and non-comparable positions, an entirely non-comparable sequence, zero positions, counts on a 50-position mixture, and an unknown status). One existing test was updated for the new empty-set representation.
+- **`README.md`**: a field table for D6, the aggregate contract (which positions are included, how non-comparable ones are excluded, how an empty set is shown), and a new status row.
+- **`AMBIGUITIES.md`**: a D6 update under AMB-019, which marks the old reading "bit-identical inf/NaN tensor reports error 0" as superseded, and a new AMB-030.
+
+## D6 field names and status values (every tensor, Q8_0 and unquantised)
+- **`numerical_metric_status`**: `non_comparable_nonfinite` if any upstream element is NaN or ±inf, otherwise `comparable`.
+  - `comparable` only means the metrics are defined. It is not a pass.
+  - A non-finite *decoded* value against finite upstream (D1 OQ1) is still `comparable`, and its metrics stay inf/NaN as before.
+- **`upstream_nonfinite`**: `{"nan", "+inf", "-inf"}` counts over the whole tensor, plus their sum in `n_upstream_nonfinite`.
+- **`bit_identical`, `n_bit_mismatches`**: NaN payloads, infinity signs and signed zeros are compared bit for bit.
+- **Full-tensor metrics**: `max_abs_error`, `absolute_frobenius_error`, `ref_frobenius` (the reference norm) and `rel_frobenius`. For a non-comparable tensor these are `null`, never 0 and never inf/NaN.
+  - `err_frobenius` is kept as an alias of `absolute_frobenius_error`, always with the same value.
+- **`null_metric_reasons`**: maps each null field to a reason. The reason is `nonfinite_upstream` for a non-comparable tensor, and `{"rel_frobenius": "zero_reference_norm"}` for a finite all-zero tensor (D4). It is `{}` otherwise.
+- **`zero_reference_norm`**: D4's flag, `false` on a non-comparable tensor.
+- **Finite-subset diagnostics**: `finite_subset_n_elements` and `finite_subset_max_abs_error`, reported only on non-comparable tensors.
+  - On those tensors the old `max_abs_error_finite_elements` is dropped. It stays, unchanged, on comparable Q8_0 tensors.
+- **D5's element-level fields are unchanged**: `nonfinite_upstream_in_t2_domain` (keys `nan`, `inf`, `-inf`), and the T2 counts and histogram.
+- **`e1_report` totals** add:
+  - `upstream_nonfinite` and `n_upstream_nonfinite`, summed over every tensor;
+  - `n_tensors_non_comparable_nonfinite`;
+  - `null_metric_reasons`.
+
+  The total Q8_0 `max_abs_error` is `null` (reason `nonfinite_upstream`) if any Q8_0 tensor's is.
+
+**Q8_0 bit identity** compares the decoded float32 bit pattern against the upstream's. Upstream supplied as float64 is compared as float64 bit patterns instead. This is recorded as AMB-030 (a): a NaN produced by decoding a non-finite scale can carry a host-dependent payload (AMB-001), and I did not relax the bit-for-bit rule to allow for that.
+
+## Aggregate interface: `metrics.aggregate(positions)`
+- **Fields**:
+  - `aggregate_status` (`computed` or `empty_comparable_set`) and `comparable_set_empty`;
+  - `n_positions`, `n_comparable_positions`, `n_non_comparable_positions` and `non_comparable_indices`;
+  - `max_abs_diff`, `rms_diff` and `kl` (distributions over comparable positions);
+  - `top1_agreement`, `n_top1_agree` and `n_top1_disagree`.
+- **Exclusion**: a non-comparable position appears only in the total and non-comparable counts and in the index list. It is never an agreement and never in the numerator or denominator of any rate.
+- **Unknown status**: a position with any other status raises `ValueError` instead of being counted.
+
+## How an empty comparable set is shown
+`aggregate_status: "empty_comparable_set"` and `comparable_set_empty: true`, with `max_abs_diff`, `rms_diff`, `kl`, `top1_agreement` and `n_top1_disagree` all `null`. `n_top1_agree` is 0, which can't read as agreement.
+
+This changes the previous output, where the distributions were `{"n": 0}` and `n_top1_disagree` was 0. I made it `null` because "0 disagreements" could be read as agreement.
+
+## Tests
+- Before: 461 tests, OK.
+- After: 476 tests, OK, run with `.venv/bin/python -I -m unittest discover -s tests -v`.
+
+## Commits
+- `fdee0cf`: the D6 implementation.
+- `fe9b671`: the aggregate interface.
+- `4bc93d3`: README and AMBIGUITIES records.
+
+## New ambiguity: AMB-030
+- (a) Q8_0 bit identity: computed from the decode, with the host-dependent NaN payload caveat above.
+- (b) The value `comparable` for finite-upstream tensors.
+- (c) The `null_metric_reasons` field. The new whole-tensor counts use D6's `+inf` key, while D5's in-domain field keeps its `inf` key.
+- (d) `zero_reference_norm` is `false` on a non-comparable tensor.
+- (e) Field names, the `err_frobenius` alias, and replacing `max_abs_error_finite_elements` with the `finite_subset_*` fields.
+- (f) The per-block error distribution is left unchanged. On a non-comparable tensor its top quantile (`block_max_abs_error` `q1`) can still be inf while `max_abs_error` is `null`, because D6 doesn't mention it. This is the one choice that may need an owner ruling.
+- (g) How the `e1_report` totals are aggregated.
+- (h) The representation of an empty comparable set.

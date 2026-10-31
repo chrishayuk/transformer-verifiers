@@ -237,3 +237,28 @@ pin.
   location in `site` or `key_path`. The status is right, and the field identity is approximate.
 - **AMB-029:** SPEC §17.2 states the geometry fallback per key, and the protocol applies it per object. The checker
   follows the protocol. This is over-strict if the SPEC reading was meant, and never accepts wrongly.
+
+## Checker run 11: 2026-10-31, `fdee0cf`, `fe9b671` and `4bc93d3` (D10: D6 and metric aggregates). Audited and pinned, NOT pushed
+
+**The run:** snapshot `c972d62` (PROTOCOL.md `8595bd28…`, verified by the checker), settings `b78f15d4…`. Log:
+`checker-run-11.log`. A first launch did nothing (the brief was parsed as extra `--allowedTools` rules, and the checker
+repository was unchanged). The run was relaunched with the brief on stdin.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh e232720`) | Clean: 3 commits, no trailers, lockfile unchanged, environment matches (0 bad RECORD files), no new imports |
+| Scope | Only `refcheck/e1.py`, `refcheck/metrics.py`, their tests, README and AMBIGUITIES. The comparability gate is untouched |
+| Exception and warning handling | One new `np.errstate(invalid="ignore")`, which quietens a signalling-NaN upstream value on conversion. It stays NaN and is counted. No new `except` |
+| D6 | `numerical_metric_status` is `non_comparable_nonfinite` when any upstream element of the tensor is non-finite. The full-tensor metrics are then null, each with a reason. `upstream_nonfinite` gives `nan`/`+inf`/`-inf` counts. Bit identity is reported for every representation. Finite-subset diagnostics appear only as `finite_subset_*`. `absolute_frobenius_error` is published, with `err_frobenius` as an alias |
+| Aggregates | `metrics.aggregate`: non-comparable positions appear only in the counts and indices, never in a rate's numerator or denominator. An empty comparable set is `aggregate_status: "empty_comparable_set"`, with null aggregates. An unknown status raises |
+| Tests, rerun by the publisher with `-W error` | 476, OK (461 at `e232720`) |
+
+**Pin.** `4bc93d3` is the checker that corpus revision 7 is sealed and scored against.
+
+**New item, for the protocol owner: AMB-030.** It covers the checker's conventions where D6 is silent:
+- Q8_0 bit identity against upstream, with the NaN payload caveat;
+- `comparable` as the status of a finite tensor;
+- the reason field, and the totals;
+- (f) the per-block error distribution on a non-comparable tensor. It is left unchanged, so its top quantile can be
+  inf while `max_abs_error` is null. D6 names only the full-tensor metrics. This is the one point that may need a
+  ruling.
