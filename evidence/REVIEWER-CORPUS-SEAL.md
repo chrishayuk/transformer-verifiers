@@ -285,3 +285,15 @@ case is now `comparable` (the question 27 fallback), and some derived fields are
 - **Question 27:** the fallback behaved as expected in all four of its cases.
 - **Exclusions:** none.
 - **This is Phase 1 information, not Stage A evidence.**
+
+## Corpus revision 7: seal (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Commit | `71198d678223475e70bbc46cd0f14a69a63976a9` (seal record in `0caf4f1`) |
+| Tree | `633986d778fe32e97369d55354d63107ade2400f` |
+| Files | 2993 |
+| Digest | `850ed7a268d6244cbab5bdc655e7c8340d29c3f41ec174a0c21914885d5504ba`, reproduced by the coordinating session from the git objects |
+| Content | Fresh cases for D6 and the metric aggregate contract, with expectations derived from the protocol under D10 clarification 1, never from checker output. The D6 cases are 5 synthetic containers holding 125 tensors: 11 with non-finite upstream values, 5 finite-upstream tensors whose decoded values are non-finite, and 109 finite controls. The aggregation cases are 7, with 42 positions, 25 of them comparable: a mixture, an entirely non-comparable sequence, two rate-flip traps, edge positions, a measured-zero-error case paired with the empty set, and an all-comparable control. Q8_0 bit identity is unscored, and non-finite block distributions are diagnostic only |
+| Checker | `4bc93d3`, pinned before this seal |
+| Isolation | The corpus author worked with no checker clone in its workspace once the clones were moved out (isolation part 10). Its access declaration and the tool-log review are recorded there |
