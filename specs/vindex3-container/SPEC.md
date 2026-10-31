@@ -4,6 +4,8 @@
 |---|---|
 | Document | LARQL-VERIFY-001 workstream B3, container specification |
 | Status | DRAFT. Not admitted. A third party must check it against emitted files before it is trusted |
+| Revision | 2 (see Revision history). Revision 1 was checked by a third party (`evidence/B3/CHECK.md`): ADMIT WITH CORRECTIONS; this revision applies those corrections |
+| Observed container | `/Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b-q8_0.vindex3`, encoded at LARQL `2536bb79` from the local HF snapshot path with a default build (no `reference-encoder` feature). `index.json` SHA-256 `7f3ba8e5da50276e501e7694c46c0a3c9c9d7530596656376cc9597f05fec490`; `system_graph.json` `05fcec4c45167c2f8f424c35b8c39acb06cc92716f11e0ffbec341e110d66f57`; `segments/target.decoder_stack@Q8_0.bin` `f7f68e997657e9f28394af937a10adbdceee7ccd4fc56839ad49f1190eb6573e` |
 | Describes | The files written by LARQL at commit `2536bb79b199b1115445678e3e82c400b0b3fd07` |
 | Subject | Qwen/Qwen3-0.6B, official BF16 safetensors, HF commit `c1899de289a04d12100db370d81485cdf75e47ca` |
 | Pipeline | `larql vindex3 encode` followed by `larql vindex3 represent --encoding Q8_0` (default role policy), consumed by `larql vindex3 exec --backend production-q8 --representation-source stored` |
@@ -19,14 +21,14 @@ The key words MUST, MUST NOT, REQUIRED, SHALL, SHOULD, SHOULD NOT and MAY are to
 - All integers in binary framing are little-endian. All JSON is UTF-8 (in practice ASCII). Hex digests are 64 lowercase hexadecimal characters with no prefix [S9][S31].
 - "Byte offset" always means a 0-based offset from the first byte of the named file, unless the text says "payload-relative".
 - This document describes only container framing. It does not describe Q8_0 arithmetic, how any value decodes to a float, numerical tolerances, or reference execution semantics. Those belong to ggml (`block_q8_0`) and gguf-py. Where the container stores a field with a numerical meaning, this document gives its name and byte position only.
-- Where a statement was confirmed by inspecting the existing container `/Users/christopherhay/chris-models/qwen3-0.6b.vindex3`, it is marked **(illustration)**. That container has no recorded upstream revision, predates this commit, and holds BF16 only. It is not evidence for the Q8_0 container, which is to be built fresh later.
-- Where a value is computed from the code rather than observed in a file, it is marked **(computed)**.
+- Where a statement was confirmed by inspecting the existing container `/Users/christopherhay/chris-models/qwen3-0.6b.vindex3`, it is marked **(illustration)**. That container has no recorded upstream revision, predates this commit, and holds BF16 only. It is not evidence for the Q8_0 container.
+- Where a value was observed in the fresh Q8_0 container `/Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b-q8_0.vindex3` (see the header table), it is marked **(observed)**. Every value revision 1 marked **(computed)** was confirmed by observation there, and is now marked **(observed)**.
 
 ## 1. Pipeline and the variant it selects
 
 ### 1.1 Steps
 
-1. **Encode.** `larql vindex3 encode <ARTIFACT> --output <SRC>` reads the HF checkpoint and writes a canonical BF16 container at `<SRC>` [S1][S2]. The exact form of `<ARTIFACT>` (a local directory or `hf://Qwen/Qwen3-0.6B@<rev>`) is **UNDETERMINED** (see §16). It changes only identity strings (§5.2 `model`, §6 `artifact`) and never tensor bytes, shapes, names or order.
+1. **Encode.** `larql vindex3 encode <ARTIFACT> --output <SRC>` reads the HF checkpoint and writes a canonical BF16 container at `<SRC>` [S1][S2]. For the observed container, `<ARTIFACT>` was the local HF snapshot directory, so the recorded artifact name is its stem `c1899de289a04d12100db370d81485cdf75e47ca` (§16, U1 closed). The form of `<ARTIFACT>` (a local directory or `hf://Qwen/Qwen3-0.6B@<rev>`) changes only identity strings (§5.2 `model`, §6 `artifact`) and never tensor bytes, shapes, names or order.
 2. **Represent.** `larql vindex3 represent <SRC> --output <OUT> --encoding Q8_0` writes a new container at `<OUT>` [S3][S4]. This profile passes no other flags. In particular: no `--include-role`, no `--protect`, no `--protect-layers`, no `--object`, no `--deployment`, no `--moments`, no `--plugin`. `--encoding` defaults to `NVFP4`, so `--encoding Q8_0` MUST be given explicitly [S4].
 3. **Execute.** `larql vindex3 exec <OUT> --backend production-q8 --representation-source stored ...` reads `<OUT>` [S5][S6].
 
@@ -41,7 +43,7 @@ The container this document specifies is `<OUT>`.
 | Target encoding | `NVFP4`, `Q4_K`, `Q6_K`, `Q8_0`, or a plugin encoder label [S11] | **`Q8_0`** |
 | Role policy | default, or default widened with `--include-role` [S12] | **Default** (§11) |
 | Protections | none, or `--protect`/`--protect-layers` exceptions [S12] | **None**. The precision map is named `r0-uniform` [S13] |
-| Encoder recipe | `kquant-larql-native` (default build) or `kquant-ggml-reference` (build with the `larql-vindex/reference-encoder` feature) [S14][S15] | Default build: `kquant-larql-native`. Which build L1 uses is **UNDETERMINED** (§16). The recipe never changes the byte layout, only which valid values are chosen |
+| Encoder recipe | `kquant-larql-native` (default build) or `kquant-ggml-reference` (build with the `larql-vindex/reference-encoder` feature) [S14][S15] | Default build: `kquant-larql-native`. **(observed)** The fresh container records `{"algorithm":"kquant-larql-native","revision":1}` with no `source` (§16, U3 closed). The recipe never changes the byte layout, only which valid values are chosen |
 | Auxiliary reference table | present only when an FP8 weight has a scale sibling [S16] | **Absent** |
 | Attestation table | named by `index.json` when present [S17] | **Absent** |
 
@@ -121,7 +123,7 @@ The writer emits keys in the order shown, with no other keys. A reader MUST igno
 
 - The table is sorted ascending by `name`, comparing names as byte strings (Rust `String` ordering, i.e. lexicographic over UTF-8 bytes) [S38]. Because `'.'` (0x2E) sorts before `'0'` (0x30), layer `1.` sorts before `10.`. Decoder layers therefore appear in the order `0, 1, 10, 11, ..., 19, 2, 20, ..., 27, 3, 4, 5, 6, 7, 8, 9` **(illustration: observed)**.
 - Offsets are contiguous with no gaps or padding between tensors: `offset[0] = 0` and `offset[i] = offset[i-1] + len[i-1]` [S39]. The sum of all `len` equals the payload size.
-- Individual tensor offsets have **no** alignment guarantee beyond what the lengths imply. A Q8_0 tensor's offset may be any even number.
+- Individual tensor offsets have **no** alignment guarantee beyond what the lengths imply. A Q8_0 tensor's offset may be any even number. **(observed)** In this container every tensor offset is a multiple of 16, because every tensor length here is. That is incidental, not a guarantee: a reader MUST NOT assume more than 2-byte alignment of a tensor offset.
 - The file's total length MUST equal `P + Σ len` and MUST equal `P + index.json.representations.<id>.payload_bytes`. LARQL's inspector reports a mismatch as a defect [S40].
 
 A reader MUST verify: `schema == 1`; the table names are unique; offsets are contiguous as above; every `offset + len <= payload length`; the file length rule holds. A reader MUST reject a segment that fails any of these.
@@ -146,7 +148,7 @@ Fields for this profile. Fields marked "absent" are omitted from the file when e
 | Key | JSON type | Required | Value in this profile |
 |---|---|---|---|
 | `version` | integer (u32) | MUST | `4`. The sole format-generation discriminator [S42] |
-| `model` | string | MUST | The artifact name the encoder recorded. It depends on how encode was invoked (§16): the checkpoint path's file stem for a local path, or the repo's last path component for `hf://` [S43][S44]. **(illustration)** `"Qwen3-0.6B"`. A reader MUST NOT depend on it |
+| `model` | string | MUST | The artifact name the encoder recorded. It depends on how encode was invoked (§16): the checkpoint path's file stem for a local path, or the repo's last path component for `hf://` [S43][S44]. **(observed)** `"c1899de289a04d12100db370d81485cdf75e47ca"`. A reader MUST NOT depend on it |
 | `family` | string | MUST | `"qwen3"`: the checkpoint's `model_type` [S45] |
 | `hidden_size` | integer | MUST | `1024` |
 | `num_layers` | integer | MUST | `28` |
@@ -220,7 +222,7 @@ LogicalObject [S59]:
 | `id` | string | `"<component>.<kind>"`, e.g. `"target.decoder_stack"` |
 | `component` | string | `"target"` |
 | `kind` | string | One of `"decoder_stack"`, `"embedding"`, `"final_norm"`, `"output_head"` in this profile [S60] |
-| `source_bindings` | array of `{ "artifact": string, "tensor_prefix": string, "tensors": integer, "bytes": integer }` | Where the object's tensors came from in the source checkpoint. Exactly one binding per object in this profile |
+| `source_bindings` | array of `{ "artifact": string, "tensor_prefix": string, "tensors": integer, "bytes": integer }` | Where the object's tensors came from in the source checkpoint. Exactly one binding per object in this profile. `artifact`: the artifact name (here `"c1899de289a04d12100db370d81485cdf75e47ca"`, **(observed)**). `tensor_prefix`: the HF key prefix (§10). `tensors`: the number of source tensors under the prefix. `bytes`: the total byte size of those source tensors' payloads [S109]. A reader MAY cross-check `tensors` against the canonical representation's `tensor_count` and `bytes` against its `payload_bytes`. **(observed)** 308/880,932,864, 1/311,164,928, 1/2,048, 1/311,164,928 for decoder_stack, embedding, final_norm, output_head |
 | `representations` | array of `{ "encoding": string, "fidelity": "canonical" \| "approximate" }` | Materialisations. Element 0 is the canonical one [S61]. After `represent`, `target.decoder_stack` has `[{"encoding":"BF16","fidelity":"canonical"},{"encoding":"Q8_0","fidelity":"approximate"}]` and the other three objects have only the BF16 entry [S62] |
 
 `represent` rewrites `system_graph.json`, adding the `Q8_0` entry and changing nothing else [S62].
@@ -295,7 +297,7 @@ For a `Q8_0` tensor with `shape = [d0, ..., dn-1]` (n ≥ 1) [S69][S70][S71]:
 - **Block `b` of row `r`** (0 ≤ r < R, 0 ≤ b < B) occupies payload-relative bytes
   `[offset + (r·B + b)·34, offset + (r·B + b)·34 + 34)`
   and covers source elements `r·K + 32·b ... r·K + 32·b + 31` of the row-major flattening.
-- **Block contents:** Q8_0 block, 34 bytes, layout per ggml `block_q8_0`. This document does not describe the block's internal fields or how they decode.
+- **Block contents:** Q8_0 block, 34 bytes, layout per ggml `block_q8_0`. The normative reference is ggml at commit `facdc44a67da17df4433adcc468b424f48e9ded2`, `src/ggml-common.h` lines 251-256: an f16 `d` (`ggml_half`) at block bytes 0-1, then `int8_t qs[32]` at block bytes 2-33. A copy is at `transformer-verifiers/inputs/ggml-facdc44a67da17df4433adcc468b424f48e9ded2/src/ggml-common.h`. This document does not describe how the block decodes.
 
 For the weights of this subject, `shape = [out_features, in_features]`, as in the HF `nn.Linear` convention. A row is one output feature, and blocks run along the input dimension. No tensor is transposed (§10.3).
 
@@ -312,17 +314,25 @@ For the weights of this subject, `shape = [out_features, in_features]`, as in th
 
 The binding prefixes come from the graph builder's group classification [S72] **(illustration)**. 308 + 1 + 1 + 1 = 311, which equals the checkpoint's tensor count. Every HF tensor appears exactly once per representation of its object.
 
-### 9.2 `index.json.representations` (expected)
+### 9.2 `index.json.representations` (observed)
 
 | Id | `segment` | `tensor_count` | `payload_bytes` |
 |---|---|---|---|
-| `target.decoder_stack@BF16` | `segments/target.decoder_stack.bin` | 308 | 880,932,864 **(illustration)** |
-| `target.decoder_stack@Q8_0` | `segments/target.decoder_stack@Q8_0.bin` | 308 | 468,056,064 **(computed)** |
-| `target.embedding@BF16` | `segments/target.embedding.bin` | 1 | 311,164,928 **(illustration)** |
-| `target.final_norm@BF16` | `segments/target.final_norm.bin` | 1 | 2,048 **(illustration)** |
-| `target.output_head@BF16` | `segments/target.output_head.bin` | 1 | 311,164,928 **(illustration)** |
+| `target.decoder_stack@BF16` | `segments/target.decoder_stack.bin` | 308 | 880,932,864 **(observed)** |
+| `target.decoder_stack@Q8_0` | `segments/target.decoder_stack@Q8_0.bin` | 308 | 468,056,064 **(observed)** |
+| `target.embedding@BF16` | `segments/target.embedding.bin` | 1 | 311,164,928 **(observed)** |
+| `target.final_norm@BF16` | `segments/target.final_norm.bin` | 1 | 2,048 **(observed)** |
+| `target.output_head@BF16` | `segments/target.output_head.bin` | 1 | 311,164,928 **(observed)** |
 
-The hashes of the fresh container are **UNDETERMINED** until it is built.
+**(observed)** Digests recorded in the fresh container's `index.json`:
+
+| Id | `payload_sha256` | `segment_sha256` |
+|---|---|---|
+| `target.decoder_stack@BF16` | `4e76d1f1e8411d334b3db85d5b7c2b69dc7321d5d5e605140c2945c2b921ce9e` | `5956d8c415f1e00cfce17aac493d03c60f0a2b1f0847b21991501d7b2a1116de` |
+| `target.decoder_stack@Q8_0` | `89b08854a357a607578122307b0f70b315cd11d1308fb28184363b19a8835074` | `f7f68e997657e9f28394af937a10adbdceee7ccd4fc56839ad49f1190eb6573e` |
+| `target.embedding@BF16` | `8f29acf519434862d95613b2b4f6b9d14933a5e4d16baebf8ac0b33b410acfb6` | `89cf6366b1fd0564a29a3f120c6157436006222ef146d9dd40444e98fc86b433` |
+| `target.final_norm@BF16` | `40983d5d6018627e0ea73b2f7650e67c42ab160ceb82404016799eaffdf9d078` | `8b48cd41cbe21f715108778c63d38052df5640cb2409289e639d69052acdb798` |
+| `target.output_head@BF16` | `8f29acf519434862d95613b2b4f6b9d14933a5e4d16baebf8ac0b33b410acfb6` | `fc82adeef3fa167956cfa4db7f69ed31fe6beac8dc50668bea6495be3afd2145` |
 
 ### 9.3 Single-tensor segments
 
@@ -336,7 +346,7 @@ The hashes of the fresh container are **UNDETERMINED** until it is built.
 
 ### 9.4 Decoder-stack tensors
 
-Each layer `L` in 0..27 has 11 tensors. The table below is for the `@Q8_0` pack **(computed)**. In the `@BF16` segment every tensor is `BF16`, with `len = 2 × elements`.
+Each layer `L` in 0..27 has 11 tensors. The table below is for the `@Q8_0` pack **(observed)**. In the `@BF16` segment every tensor is `BF16`, with `len = 2 × elements`.
 
 | Relative name | Shape | `dtype` in `@Q8_0` | `len` in `@Q8_0` | Offset within the layer group in `@Q8_0` |
 |---|---|---|---|---|
@@ -352,7 +362,7 @@ Each layer `L` in 0..27 has 11 tensors. The table below is for the `@Q8_0` pack 
 | `L.self_attn.q_proj.weight` | [2048, 1024] | Q8_0 | 2,228,224 | 13,373,952 |
 | `L.self_attn.v_proj.weight` | [1024, 1024] | Q8_0 | 1,114,112 | 15,602,176 |
 
-A layer group in `@Q8_0` is 16,716,288 bytes. Layer groups appear in the byte-sorted order of §4.3. **(computed)** The header JSON is 31,408 bytes plus 8 bytes of padding, so `H = 31,416`, `P = 31,424`, and the file is 468,087,488 bytes.
+A layer group in `@Q8_0` is 16,716,288 bytes. Layer groups appear in the byte-sorted order of §4.3. **(observed)** The header JSON is 31,408 bytes plus 8 bytes of padding, so `H = 31,416`, `P = 31,424`, and the file is 468,087,488 bytes.
 
 This table is informative, for cross-checking. A reader MUST take offsets and lengths from the header, not from this table.
 
@@ -432,7 +442,7 @@ The checkpoint declares `tie_word_embeddings: true`, and it ships both `model.em
 
 **(a) Logical identity. No.** The container holds two distinct logical objects, `target.embedding` (bound to `model.embed_tokens`) and `target.output_head` (bound to `lm_head`), because the graph builder classifies the `lm_head` group as its own output-head object [S72]. The graph does record the tie: the component's head surface has `head_reuses_embedding: true` [S58][S87]. But that flag only means that a *missing* output-head object should be read as "reuse the embedding" [S88]. When an output-head object exists, the operation plan binds the head operand to it, and falls back to the embedding only if no output-head object exists [S89]. For this subject, the head operand is `target.output_head` / `weight`.
 
-**(b) Physical storage. Two copies.** `segments/target.embedding.bin` and `segments/target.output_head.bin` each hold a full 311,164,928-byte BF16 matrix **(illustration: both present, same `payload_sha256`, different `segment_sha256` because the header names differ)**. Nothing in the format stores a single shared copy for this subject.
+**(b) Physical storage. Two copies.** `segments/target.embedding.bin` and `segments/target.output_head.bin` each hold a full 311,164,928-byte BF16 matrix **(illustration: both present, same `payload_sha256`, different `segment_sha256` because the header `representation` strings differ, and so, by §4.1, does the padding length (5 versus 3 spaces, **(observed)**). The parsed headers are otherwise equal)**. Nothing in the format stores a single shared copy for this subject.
 
 **(c) Numerical representation. Identical stored values, but not guaranteed by the format.** Under the default policy, neither object is compiled. Both stay BF16, copied verbatim from checkpoint payloads that are byte-identical, so both stored tensors decode to identical values. A reader can confirm this from the container alone: the two entries' `payload_sha256` values are equal. LARQL neither checks nor enforces this equality. A different checkpoint, or a policy that included `embedding` or `output-head`, could make them differ, because each object would be compiled or preserved independently [S84][S20].
 
@@ -514,9 +524,9 @@ Requirement: every tensor's representation type and quantisation metadata must b
 
 | Item | What was tried |
 |---|---|
-| U1. Exact `vindex3 encode` invocation (local snapshot path versus `hf://Qwen/Qwen3-0.6B@c1899de2…`). It decides `index.json.model`, `source_bindings[].artifact` and `candidate.json` contents | Read the protocol (`draft.json`, `PROTOCOL.md`), which states only the `represent` and `exec` commands. Read the naming rules [S43][S44]. A local path to the HF snapshot directory would record its stem `c1899de289a04d12100db370d81485cdf75e47ca` as the model name |
-| U2. All digests and the observed header lengths of the fresh Q8_0 container | No Q8_0 container exists on disk (searched `~/chris-models` to depth 4). The values in §9 are computed by reproducing LARQL's header serialisation from the illustration's BF16 header, a method that reproduced that header's bytes exactly |
-| U3. Build features used by L1 (whether `reference-encoder` is enabled), which decides the `encoder` field | The CLI's default features do not enable it [S15]. The L1 build command is not recorded |
+| U1. **CLOSED (revision 2).** Exact `vindex3 encode` invocation | Observed: encode was given the local HF snapshot directory, so `index.json.model`, `components[].source_artifact` and `source_bindings[].artifact` are `"c1899de289a04d12100db370d81485cdf75e47ca"` [S43] |
+| U2. **CLOSED (revision 2).** Digests and header lengths of the fresh Q8_0 container | Observed in the fresh container: every value revision 1 computed (H = 31,416, P = 31,424, payload 468,056,064, file 468,087,488, the §9.4 table) holds. Digests are in §9.2 |
+| U3. **CLOSED (revision 2).** Build features (`reference-encoder`) | Observed: `encoder` is `{"algorithm":"kquant-larql-native","revision":1}` with no `source`, i.e. the default build [S15] |
 | U4. The realised LM-head kernel on the L1 host | Depends on the host's L2 size and on `LARQL_CPU_MAX_FORMAT`/`LARQL_CPU_ARITHMETIC` [S92][S93]. Determined by code reading only. Not run |
 | U5. Full schema of `candidate.json` and of the `system_graph.json` component execution surface | Out of the reader's path. Only the fields needed are specified |
 | U6. Byte-exact `index.json` and `system_graph.json` text | Pretty-printed by `serde_json`. Readers must not depend on it |
@@ -636,3 +646,11 @@ All paths are relative to the LARQL worktree root `/Users/christopherhay/chris-s
 | S106b | `VX/represent/pipeline.rs:195-205`, `VX/represent/state/resolved.rs:53-64` | Per-tensor decision `Compiled`/`Source`/`LayoutRefused` recorded in the candidate |
 | S107 | `crates/larql-vindex/src/format/generation.rs:222-238`, `VX/inspect.rs:115-123` | Unknown versions refused; VINDEX2 refused by the graph path |
 | S108 | `crates/larql-vindex/src/format/generation.rs:3-5`, `crates/larql-vindex/src/format/generation.rs:224-227` | `version` is the sole discriminator |
+| S109 | `VX/graph/build/tables.rs:185-190` | `SourceBinding.tensors`/`.bytes` set from the source tensor group's count and byte total |
+
+## Revision history
+
+| Revision | SPEC.md SHA-256 | Changes |
+|---|---|---|
+| 1 | `47c2a304bffdc21bb17017aed248ee74f5827099c2d8b962a766dec888964ef0` | Initial draft, written before the fresh container existed |
+| 2 | (this file) | Applies the five corrections from the third-party check (`evidence/B3/CHECK.md`). **O2:** provenance updated to the fresh container `/Users/christopherhay/chris-models/l1-2536bb79/qwen3-0.6b-q8_0.vindex3`; §9 values marked observed; digests recorded; U1 (artifact name = snapshot hash), U2 and U3 (`kquant-larql-native` rev 1) closed; the §5.2 `model` example replaced. **O1:** ggml `facdc44a…` `src/ggml-common.h:251-256` named as the normative `block_q8_0` reference (§8.4). **A1:** `source_bindings[].tensors`/`.bytes` defined, with an optional cross-check (§6). **A2:** §12(b) notes the padding length differs and the parsed headers are otherwise equal. **A3:** §4.3 notes the observed 16-byte offset alignment while keeping the 2-byte assumption normative. No normative layout statement changed |
