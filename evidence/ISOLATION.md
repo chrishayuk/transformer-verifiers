@@ -163,3 +163,24 @@ Settings are now sha256 `b78f15d4…`; the only change is the snapshot path.
 - **Allowed:** the new snapshot (hash matches).
 - **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, and the real
   container.
+
+## Part 10: checker clones moved out of the reviewer workspace (2026-10-31, D10 clarification 1)
+
+- **The finding:** the reviewer repository held git-ignored clones of the pinned checkers used in scoring runs 1–7,
+  under `scoring/run-N/checker-src`.
+- **The access check:** the revision 7 corpus author's tool-call log has 38 calls. The only call touching those
+  folders listed `scoring/run-7` and read its `RULES.md`. None opened, searched or grepped a clone. The author's
+  declaration is kept.
+- **The move:** all seven clones were moved, unchanged, to `~/chris-source/transformer-verifiers-eval/run-N/checker-src`:
+
+  | Run | Clone at |
+  |---|---|
+  | 1 | `2e8fd34` |
+  | 2, 3 | `cd49069` |
+  | 4 | `3337645` |
+  | 5 | `ab38748` |
+  | 6 | `147a24e` |
+  | 7 | `e232720` |
+
+  No tracked file in the reviewer repository changed.
+- **From now on,** the pinned checker for scoring is placed there only after the corpus is sealed.
