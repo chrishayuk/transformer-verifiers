@@ -121,3 +121,38 @@ The full results are in the reviewer repository (`scoring/run-2/`). They stay se
   - KL (absolute part) and RMS Δ: too tight unless the protocol requires pairwise or compensated summation. Under a
     free summation order, the worst-case bounds are about 1e-10 (KL) and 8.5e-12 relative (RMS Δ).
 - **This is Phase 1 information, not Stage A evidence.**
+
+## Scoring run 3 (2026-10-31): partial, metric cases only, aggregates only
+
+- **Checker:** `cd49069`, as D4 requires. Not modified.
+- **Corpus:** `492b9a4`. **Decision revisions:** D1, D3, D4.
+- **Order of commits:** the D4 tolerance confirmation (`abf8ab7`), then the eligibility list and rules (`32dfd31`),
+  then the run (`21adaab`). One pass.
+
+| Eligible | Pass | Fail | Error |
+|---|---|---|---|
+| 18 | 18 | 0 | 0 |
+
+- **Tolerance confirmation:** the D4 values are confirmed for 18 of the 23 revision 2 metric cases. The other 5 have
+  logits with |z| > 128, outside the a priori analysis. They stay pending and unexposed.
+- **Observed margins:** KL errors are at most 2.3e-16, against tolerances of at least 2e-10. max |Δ| and top-1 are
+  exact. All 12 `non_comparable` positions are reported correctly.
+- **Not tested:** the aggregate rule (non-comparable positions left out of every aggregate). The checker exposes no
+  aggregate function under the names fixed in advance.
+- **Provenance note:** run 1 had already computed checker metric output on the 21 revision 1 metric cases, which are
+  diagnostic. No output existed for any revision 2 metric case before this run.
+- **Exposure:** these 18 cases are now exposed. A later checker revision needs fresh cases for these rules.
+
+## Corpus revision 3: seal (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Commit | `11a89c8049c635516f8d5d9080b96249a7914070` (seal record in `1b5d554`) |
+| Tree | `9d48679e64a41d0feac94de9e2bfe5267f5cb8ec` |
+| Files | 1961 |
+| Digest | `4bed58197a446242b70274bdfca1f733f33e2b625a36c5edc30ff74fce0fdc84`, reproduced by the coordinating session |
+| Purpose | 4 fresh D4 containers: bit-identical BF16, BF16 with known differences, zero reference norms, and a mix with fresh D1 OQ1 blocks. Run 2's five exposed failures are diagnostic only for D4 |
+| Checker to be scored against | `3337645`, pinned before this seal |
+
+Not yet scored. Reviewer open question 22 must be decided first: whether A1 statistics are computed in binary64,
+which revision 3's 1e-11 Frobenius tolerance assumes.
