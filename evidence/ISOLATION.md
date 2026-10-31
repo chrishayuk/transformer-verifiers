@@ -133,3 +133,13 @@ Settings are now sha256 `25fa1d9a…`; the only change is the snapshot path.
 - **Allowed:** the new snapshot (hash matches) and SPEC revision 4.
 - **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, and the real
   container.
+
+## Part 7: protocol snapshot db08851 (2026-10-31)
+
+The snapshot moves to `isolation/snapshots/db08851/` (D1–D9 plus the D9 clarification; `PROTOCOL.md` `63cae151…`,
+`draft.json` `591a9a36…`). Settings are now sha256 `3f848cca…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-7.log`):
+- **Allowed:** the new snapshot (hash matches).
+- **Blocked:** the old snapshot, the live protocol, writes to the snapshot, `evidence/AMB-022-MAPPING-AUDIT.md`, the
+  reviewer repository, and the real container.
