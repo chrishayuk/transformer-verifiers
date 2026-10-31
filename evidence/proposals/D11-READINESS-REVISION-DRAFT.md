@@ -1,6 +1,7 @@
 # Proposed decision revision D11: readiness revision after freeze review 1 (draft, not in force)
 
-**Status: PROPOSED.**
+**Status: PROPOSED.** The owner approved its stated direction on 2026-10-31, including the top-rung saturation rule,
+"subject to checking the actual draft". It is still pending line-by-line review, and is not in force.
 - **Approval:** for the protocol owner to approve, change or reject, item by item.
 - **Effect:** nothing here is in force until it is appended to PROTOCOL.md.
 - **Next review:** the next freeze review is held on a new immutable snapshot, after the owner-held items (below) also
@@ -122,13 +123,14 @@ Qwen3-1.7B is adopted only after the profile check in 5.6, on the owner's instru
 - **The candidates:** the 15 pairs (c, k), with c ∈ {2, 4, 8, 16, 32} and k ∈ {4, 16, 64}.
 - **The order:** by c ascending, then by k ascending: (2,4), (2,16), (2,64), (4,4), …, (32,64).
 - **Selection:** the selected pair is the first in this order under which every pilot logit passes.
-- **The margin step** is applied to c only: the next rung of c, with k unchanged.
-  - **If the selected c is already 32,** the margin step goes to k instead: the next rung of k, with c at 32.
-  - **If the selected pair is (32, 64),** no margin step exists. The outcome is
-    `not_determinable_at_preregistered_ladder`, as if no pair had passed.
-  - **Owner choice:** the alternative is to accept (32, 64) with a recorded "no margin". The draft takes the
-    conservative reading.
+- **The margin step** is the **immediate successor of the selected pair in this same preregistered order** (owner's
+  ruling, 2026-10-31). For example, (2,16) follows (2,4), and (4,4) follows (2,64). The final pair is that successor.
+- **If the selected pair is (32, 64),** it has no successor. The outcome is `not_determinable_at_preregistered_ladder`.
+  (32, 64) is never accepted silently as the final threshold, and the ladder is never extended after pilot results are
+  seen (owner's ruling).
 - **No pair passes:** the outcome is `not_determinable_at_preregistered_ladder`, unchanged from the amendment.
+- **Fixed before any pilot result:** the order, the tie-breaking (none is needed in a total order) and the successor
+  rule.
 
 ### 5.3 Pilot run conditions (correction b)
 The pilot runs under the subject's conditions, all of them:
@@ -290,6 +292,90 @@ a new review.
 - **The E2/E3 corpus author started today under written rules.** Its work is admitted only if its tool log shows no
   access to the excluded paths, or if it is rebuilt under the mechanism. **The owner chooses which.**
 
+## 11. The E2/E3 corpus (owner's rulings of 2026-10-31)
+
+- **Admission.**
+  - **The corpus is kept, not rebuilt for lack of a sandbox.** It is admitted by its exact hashes only if a separate
+    reviewer's admission check passes. That check covers:
+    - the 46 sequences;
+    - the provenance of the generator and its source pools;
+    - disjointness;
+    - the pinned tokenizer;
+    - position selection;
+    - the absence of checker or LARQL-output exposure.
+  - **The author's clean tool log and the two valid seals are evidence, not admission.**
+  - **A rebuild is required only if that check finds a material provenance or independence problem.**
+  - **The check is running.** Its report will be `e2corpus/ADMISSION-REVIEW.md` in the reviewer repository.
+- **Tokens:**
+  - the subject's pinned tokenizer, with exact token ids stored in the corpus;
+  - an explicit BOS token-id policy, with no automatic BOS insertion by either runtime;
+  - no runtime chat template; any templating happens before sealing.
+- **Held-out data:** it need not be wholly synthetic. Synthetic data is acceptable if generated and sealed
+  independently. Its provenance and selection are frozen.
+- **Phase 3 handover:** read-only and hash-verified, after the freeze, with separate permissions for the pilot and
+  held-out sets, so that the pilot provably runs first.
+- **Licences:** the licences of the model, tokenizer, corpus sources and reference code are recorded before anything
+  is published.
+
+## 12. Extended context and selective capture (owner's rulings of 2026-10-31)
+
+- **The maximum position stays 40,959,** as an extended-context stress case. Results are reported in two classes:
+  - **native-context evidence:** positions ≤ 32,767, within the configured native limit;
+  - **extended-context evidence:** positions 32,768–40,959, reported separately.
+
+  Both classes use the same preregistered T3 rule. A failure in the extended class is never described as a failure
+  of the model's native-context contract.
+- **Positional behaviour must be defined.** Extended positions are compared only where both implementations have
+  explicitly defined and supported positional behaviour there. If either refuses those positions, the result is an
+  unsupported comparison, never a numerical discrepancy. The logit-dump specification records LARQL's behaviour (§13).
+- **Position-selective capture is permitted.**
+  - **What is captured:** logits only at the preregistered evaluated positions, with the **whole vocabulary**
+    compared at each.
+  - **What is never skipped:** every preceding token is executed and the KV cache is maintained. Selective capture
+    never changes the computation.
+  - **"Every pilot logit" in T3** means every vocabulary logit at every preregistered pilot position.
+
+## 13. AMB-012 and AMB-014 (owner's proposed resolutions, 2026-10-31)
+
+- **AMB-012, container identity.**
+  - **The proposal:** an unambiguous SHA-256 commitment over a canonical inventory of relative paths and raw file
+    bytes. The inventory includes `index.json`, the system graph and every required segment. Its encoding, sorting,
+    path normalisation and exclusion rules are published and frozen. The digest never relies only on hashes stored
+    inside the container.
+  - **Existing constructions, to be reconciled rather than silently replaced:**
+    - **The checker's** (its AMB-012, `harness.container_sha256`): SHA-256 over the lines
+      `<relative path>\0<size>\0<file sha256>\n`, one for every regular file, sorted by path.
+    - **The L1 record** (`evidence/L1/container-q8_0.sha256`): a per-file `shasum` listing of the 11 files, including
+      the informative `candidate.json` and `generation_config.json`.
+    - **SPEC revision 4 §13:** per-segment digests inside `index.json`, with no digest of the whole container.
+  - **Questions for the reconciler:** which construction is adopted, and which files are in or out of the inventory
+    (for example, `candidate.json` is informative under SPEC §13.4).
+  - **Who reconciles:** the independent reviewer, before the freeze.
+- **AMB-014, logit-dump format.**
+  - **A separate output contract** covers tensor shape, vocabulary ordering, token and position identifiers, dtype,
+    endianness, framing and completeness.
+  - **Who writes it:** a specification author who may read LARQL's producer code. That draft is in progress at
+    `specs/larql-logit-dump/SPEC.md`, from LARQL `2536bb79`, without running LARQL.
+  - **Before it is trusted:** a third party checks it.
+  - **The checker** implements the admitted format without consulting LARQL code.
+  - **Until that interface is independently reviewed,** no logit comparison is accepted as E2 evidence.
+
+## 14. Freeze authorisation (owner's ruling, 2026-10-31)
+
+The freeze is **not** authorised until the reference-forward audit and an independent readiness review are complete.
+Drafting and testing the mechanisms below is authorised now. Gate closure still needs the independent evidence. The
+remaining work is grouped into three deliverables:
+
+| Deliverable | Contents |
+|---|---|
+| Independent numerical foundation | the reference-forward audit; an admitted logit-dump specification; an independent inspection of the T3 calibration procedure |
+| Immutable experiment package | the admitted E2/E3 corpus, the pinned LARQL commit, the frozen A4 suite, the cross-repository manifest |
+| Independent authorisation | a named human reviewer, the externally controlled signed approval, the ten tamper tests, restricted Phase 3 credentials |
+
+- **If the reference-forward audit finds a genuine numerical error** in `f64_patch.py`, reference attention, KV
+  caching or the harness, that component is repaired and revalidated before it is used as an oracle.
+- **The second blind freeze review** is held on a new immutable snapshot once these exist.
+
 ---
 
 ## Owner-held items (not draftable by the coordinating session)
@@ -304,7 +390,7 @@ These close review 1's remaining changes. None may be done by the agent this pro
    change 6).
 6. **The LARQL freeze SHA.** Name it, and have `CAPABILITIES.md` re-checked at it by an auditor who is not the
    checker (review change 9).
-7. **AMB-012 and AMB-014.** Decide them (review change 11). AMB-012 is how the container digest is defined. AMB-014 is
+7. **AMB-012 and AMB-014.** Proposed resolutions are in §13; AMB-012 needs independent reconciliation and AMB-014 a third-party-checked specification (review change 11). AMB-012 is how the container digest is defined. AMB-014 is
    that LARQL's logit-dump format has no admissible source.
 8. **The A4 mutation suite (G6).** Freeze it, including rows for the A3 laws (S5, IP1–IP3). It is built by an
    independent author under section 10.
