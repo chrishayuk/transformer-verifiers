@@ -156,3 +156,28 @@ The full results are in the reviewer repository (`scoring/run-2/`). They stay se
 
 Not yet scored. Reviewer open question 22 must be decided first: whether A1 statistics are computed in binary64,
 which revision 3's 1e-11 Frobenius tolerance assumes.
+
+## Scoring run 4 (2026-10-31): corpus revision 3, aggregates only
+
+- **Checker:** `3337645` (D4 A1), pinned before revision 3 was sealed. Not modified.
+- **Corpus:** `11a89c8`. **Decision revisions:** D1, D3, D4, D6.
+- **Order of commits:** the D6 A1 precision confirmation (`ccba011`), then the eligibility list and rules
+  (`73d55da`), then the run (`8f81de3`). One pass.
+
+| Eligible | Pass | Fail | Error | Excluded |
+|---|---|---|---|---|
+| 4 | 4 | 0 | 0 | 0 |
+
+- **Result:** the BF16 reporting gap behind run 2's five failures is closed, shown on fresh blind cases:
+  - every tensor's counts are exact;
+  - max abs error is exact, or within 1 ulp where it is not an f64 value;
+  - relative Frobenius error is within 1.6e-16;
+  - all 7 zero-norm tensors report `null` with the flag, and the predicted absolute Frobenius error.
+- **Run 2 is unchanged:** its five failures stay recorded as failures.
+- **Field name:** checker `3337645` publishes the absolute Frobenius error as `err_frobenius`, not D6's
+  `absolute_frobenius_error`, so the scorer mapped it by name, as D6 allows.
+
+## Corpus revision 4 (in preparation, not sealed)
+
+33 fresh hidden D2 comparability cases under D7 and SPEC revision 4 §17, each with a reviewer-written stand-in
+authority and its provenance. They are built and not sealed. The seal follows the pin of the D7 checker.
