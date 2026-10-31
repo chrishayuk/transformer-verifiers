@@ -432,6 +432,69 @@ an argument. These rules decide semantics; they do not decide which already obse
   behaviour is not a numerical oracle. Each affected input needs either a defined rule, justified independently, or an
   explicit exclusion from the guarantee it would test.
 
+### Decision revision D2 (2026-10-31): OQ11, the authority for the model configuration
+
+D2 settles the "model configuration" item of the A2 comparability preconditions. It is a clarification: it names the
+authority that precondition already needs. D1 is unchanged and stays pinned at `81398e6`. E2 and E3 do not start
+until D2's comparability tests exist (below).
+
+- **Authority.** The reference configuration is the pinned upstream `config.json` (sha256 `660db3b7…`, Baseline),
+  as interpreted by the pinned reference implementation (`transformers` 5.5.0 Qwen3 under `torch` 2.14.0, with the
+  AMB-013 f64 patch). It is never LARQL's configuration, and never the checker's interpretation of LARQL metadata.
+- **Computation-relevant fields for this subject:**
+  - shapes: `hidden_size`, `intermediate_size`, `num_hidden_layers`, `num_attention_heads`, `num_key_value_heads`,
+    `head_dim`, `vocab_size`;
+  - operations: `hidden_act`, `attention_bias`, `rms_norm_eps`;
+  - positions: `rope_theta`, `rope_scaling`;
+  - windows: `sliding_window`, `use_sliding_window`, `max_window_layers`;
+  - `tie_word_embeddings`.
+
+  Anything else the reference computes with, but `config.json` does not state, is a runtime default. Runtime defaults
+  are covered below.
+- **Container side.** The checker compares, field by field, every computation-relevant value the container states
+  against the authority:
+  - from `index.json`: `family`, `hidden_size`, `num_layers` (SPEC §5.2);
+  - from the tensor table: the shapes, which fix the products of heads and `head_dim`, and the intermediate and
+    vocabulary sizes;
+  - from `system_graph.json`: the execution surface, which carries the values LARQL computes with that the shapes do
+    not fix (for example the norm epsilon, the RoPE base and the attention score scale).
+- **The execution surface is not yet specified.** SPEC revision 2 leaves the execution surface out of scope (§16, U5),
+  and the ambiguity policy bars the checker from settling field meanings by reading LARQL. So:
+  - **Route.** The field names and meanings come from a B3 revision (revision 3) that covers the computation-relevant
+    execution-surface fields. As for revision 2, it is written by the spec author, never the checker, checked against
+    emitted files by a third party, and admitted before the checker uses it. The reviewer independently confirms the
+    mapping it states when building the hidden cases.
+  - **Until it is admitted,** every computation-relevant field the container does not declare in a specified place
+    is recorded in each run as an **unresolved comparability assumption**. E2 does not start while any such
+    assumption remains.
+- **Mismatch means invalid.** Any computation-relevant mismatch between the container and the authority makes that E2
+  or E3 comparison **invalid** (status `invalid_comparison`). The check runs before any logit metric is computed, and
+  no metrics are reported for an invalid comparison. It is never a numerical disagreement.
+  - The check must be precondition-based. Some mismatches have no numerical effect at some positions: RoPE and the
+    score scale do not affect position 0.
+- **Nothing is filled in silently.**
+  - The reference is built from the pinned `config.json` alone, never from container fields. A missing or
+    contradictory container field is not filled with a LARQL default.
+  - Every runtime default the reference uses that `config.json` does not state (attention implementation, compute
+    dtype, RoPE table construction, cache settings) is set explicitly by the harness, is frozen with the checker, and
+    is recorded.
+  - After instantiating the reference, the harness reads back its effective configuration and compares it with
+    `config.json`. A difference makes the run invalid.
+- **Recorded for every run:**
+  - the sha256 of `config.json`;
+  - the reference implementation versions and the sha256 of the f64 patch;
+  - the container sha256;
+  - the effective configuration on each side: the reference as read back, and the container as declared;
+  - the field-by-field comparison result, and any unresolved comparability assumptions.
+- **Acceptance (A4 rows for this precondition).** The reviewer builds fresh hidden cases, never reused from run 1:
+  - at least one valid control, which the checker must accept as comparable;
+  - at least one independently constructed configuration mismatch, which the checker must report as
+    `invalid_comparison` before computing any logit metric. The reviewer should cover the mismatches that have no
+    effect at position 0.
+- **What D2 does not establish.** Matching configurations establish the same architecture. They do not establish that
+  the two implementations perform numerically identical operations. E2 still states its arithmetic and accumulation
+  assumptions separately (the accumulation-dtype precondition and T3).
+
 ### Stage A falsified if
 
 Any of:

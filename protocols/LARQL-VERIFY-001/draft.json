@@ -152,6 +152,18 @@
       "OQ6_non_finite_logits": "any non-finite logit makes the position non_comparable (side and class counts reported, no metrics, excluded from aggregates); not an E2 agreement pass; under E2 traced to decoded weights, reference execution or LARQL execution before attribution; untraced falsifies Stage A",
       "OQ12_duplicate_source_key": "reader rejects two stored tensors in the compared representations yielding the same HF key under SPEC §10.1; identical content under different keys and declared logical sharing are out of scope; census stays with E1 coverage",
       "open": "OQ11 (model configuration source, before E2); OQ2 (undefined C reference encoder behaviour: defined rule or explicit exclusion)"
+    },
+    "D2": {
+      "date": "2026-10-31",
+      "scope": "OQ11, the authority for the model configuration in the A2 comparability preconditions; clarification; full text in PROTOCOL.md 'Decision revision D2'; D1 unchanged at 81398e6",
+      "authority": "pinned upstream config.json (sha256 660db3b7...) as interpreted by transformers 5.5.0 Qwen3 under torch 2.14.0 with the AMB-013 f64 patch; never LARQL's configuration or the checker's reading of LARQL metadata",
+      "fields": "hidden_size, intermediate_size, num_hidden_layers, num_attention_heads, num_key_value_heads, head_dim, vocab_size, hidden_act, attention_bias, rms_norm_eps, rope_theta, rope_scaling, sliding_window, use_sliding_window, max_window_layers, tie_word_embeddings",
+      "container_side": "index.json family/hidden_size/num_layers, tensor-table shapes, system_graph.json execution surface; execution-surface field meanings come from a third-party-checked, admitted B3 revision 3 (never from the checker reading LARQL); until then undeclared fields are recorded as unresolved comparability assumptions and E2 does not start",
+      "mismatch": "any computation-relevant mismatch makes the comparison invalid_comparison, checked before any logit metric, no metrics reported",
+      "no_silent_fill": "reference built from config.json alone; runtime defaults not in config.json set explicitly, frozen with the checker and recorded; effective configuration read back and compared, a difference invalidates the run",
+      "recorded": "config.json sha256, reference versions and f64 patch sha256, container sha256, effective configuration on each side, field comparison, unresolved assumptions",
+      "acceptance": "fresh hidden cases: at least one valid control accepted as comparable, at least one independently constructed mismatch reported invalid_comparison before metrics, covering mismatches invisible at position 0",
+      "limit": "configuration identity establishes architecture, not numerically identical operations; arithmetic and accumulation assumptions stay separate (accumulation dtype precondition, T3)"
     }
   }
 }
