@@ -203,6 +203,10 @@
     "D8": {
       "date": "2026-10-31",
       "scope": "Q23 stand-in authorities interpreted through the pinned reference's documented semantics, unresolved gives invalid_comparison with structured per-field reasons, synthetic only; Q24 declared score scale compared against exact 1/sqrt(head_dim) rounded once to the SPEC-declared type, never via platform pow/sqrt/division, execution precision a separate E2/T3 question, no undocumented conversion; subject's stored 0.08838834764831845 is the correctly rounded value (60-digit check) and matches; non-null sliding_window an explicit scope limitation; committed after checker run 7"
+    },
+    "D9": {
+      "date": "2026-10-31",
+      "scope": "AMB-022 audit corrections and AMB-020/021/023/026: one status invalid_comparison with categories unsupported/contradiction/unresolved; authority rope_parameters unsupported; sliding layer with null window unsupported, detected before construction; any non-null sliding_window unsupported even if disabled; expected refusals detected explicitly, unexpected exceptions give checker_error which never counts as a correct rejection; missing values and missing head_dim or scale overrides unresolved; reproducibility settings recorded and pinned where shown to matter; read-back limits recorded; separate checker run, fresh sealed cases, scored once; committed after scoring run 5"
     }
   }
 }

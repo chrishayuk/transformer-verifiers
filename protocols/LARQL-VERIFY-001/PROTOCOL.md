@@ -761,6 +761,65 @@ ended, and before corpus revision 4 is sealed or scored.
   explicit scope limitation: the pinned subject has `sliding_window: null`, and D7's window derivations are limited to
   that case. Extending the protocol to windowed configurations needs a new assessment and new cases.
 
+### Decision revision D9 (2026-10-31): read-back corrections from the AMB-022 audit, and the remaining comparability rulings
+
+Decided by the protocol owner on the independent AMB-022 mapping audit (`evidence/AMB-022-MAPPING-AUDIT.md`: no false
+acceptance on the production path, one class (iii) entry, three controls that passed when they should have failed)
+and on checker ambiguities AMB-020, -021, -023 and -026. A focused correction; the verification programme is not
+expanded. D1–D8, all scoring runs (run 5 included) and all sealed corpora are unchanged.
+
+- **One status, three categories.** Every non-comparable D2 outcome is `invalid_comparison`. Each reason carries a
+  structured category:
+  - **`unsupported`:** a valid configuration outside this campaign's declared comparison domain. It is never described
+    as malformed or as a contradiction.
+  - **`contradiction`:** the container and the authority, or the authority and the reference read-back, disagree.
+  - **`unresolved`:** a value that cannot be established under the current contract.
+- **Authority-declared `rope_parameters`: `unsupported`.** transformers 5.5.0 gives `rope_parameters` precedence over a
+  top-level `rope_theta`, and the comparator derived θ from the top-level key. Rather than reproduce that precedence
+  logic, which the pinned subject does not need, an authority that declares `rope_parameters` is unsupported for this
+  campaign. The audit's control 5 is kept as a regression case.
+- **A sliding layer with a null window: `unsupported`.** An authority whose `layer_types` marks any layer sliding while
+  `sliding_window` is null is rejected by the comparator before any reference construction. It must never reach a
+  runtime exception.
+- **Any non-null authority `sliding_window`: `unsupported`, even when disabled** by `use_sliding_window: false`. D8
+  limits this campaign to `sliding_window: null`. An inactive window is still outside the declared profile, even
+  though the reference would compute full attention. Equivalence under other configurations is for a later campaign
+  with its own tests. This also settles AMB-020: windowed models are an out-of-scope incompatibility, and no
+  equivalence between LARQL's and the reference's window rules is claimed.
+- **Expected refusals and checker errors are kept apart.**
+  - **Expected refusal.** A configuration or compatibility condition that the checker anticipates, detects
+    explicitly and classifies, produces `invalid_comparison` with one of the three categories. This covers the
+    unsupported, unresolved and contradiction cases in this revision. Such a condition is detected by an explicit
+    check before it can raise. It is never inferred from an exception.
+  - **Checker error.** Any unexpected exception (a programming error, or an unanticipated library failure in the
+    read-back, a pin or reference construction) produces a distinct status, `checker_error`, carrying the exception
+    type and message. The comparison is unavailable and no metrics are produced. A `checker_error` is **never** a
+    successful validation or a correct rejection. It never satisfies a test that expects `invalid_comparison`, and it
+    is diagnosed as a checker defect.
+  - **The checker never catches every exception and reports `invalid_comparison`.** A broken checker must not look
+    correct because it refuses everything.
+  - **Hidden cases must show the right reason.** Each one confirms that an unsupported or contradictory configuration
+    is refused for the stated reason and category, not because some unrelated part of reference construction failed.
+- **Missing geometry or computation-relevant values (AMB-021): `unresolved`.** Absence is not agreement. A
+  computation-relevant value that must be declared, and cannot be derived independently, makes the comparison
+  invalid. It is never inherited from elsewhere unless the admitted SPEC explicitly permits that.
+- **Missing `head_dim`, or a scale override (AMB-026): `unresolved`.** A stand-in with no `head_dim`, or with
+  `attention_multiplier` or `query_pre_attn_scalar`, leaves the expected score scale underivable under the current
+  contract.
+- **Thread counts (AMB-023).** Execution settings that affect numerical reproducibility are recorded, and pinned where
+  they are shown to matter. No universal thread count is imposed without evidence that it is needed.
+- **Recorded limits of the read-back (no change):**
+  - It checks one direction only. Authority keys the library drops are not examined by the read-back. The guarantee
+    rests on the reference always being built from the authority, and the checker's records say so.
+  - `dtype` is governed by the dtype pin, not the mapping.
+  - The `scaling` and `inv_freq` module checks reuse the library's own formulas. They confirm internal consistency, not
+    independent correctness. The RoPE convention probe (SPEC §17.5, bit for bit) is the independent check.
+  - Some refusals are over-strict for values that change nothing. They reject but never wrongly accept, which is
+    accepted.
+- **Evaluation.** The corrections are implemented in a separate isolated checker run under a new protocol snapshot,
+  audited and pinned. The reviewer builds fresh hidden cases that target the D9 changes, and seals them before they
+  are scored once. No earlier corpus is revised.
+
 ### Stage A falsified if
 
 Any of:
