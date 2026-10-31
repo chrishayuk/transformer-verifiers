@@ -140,5 +140,18 @@
     "phases": "1 build the verification system now; 2 freeze after READY TO FREEZE; 3 run Stage A",
     "allowed": "B1 freeze mechanism and tamper tests (freeze owner); B3 container spec from LARQL's implementation (spec author, may read LARQL) and its third-party check; L1 clean worktree, pinned commit, fresh Q8_0 encoding, production-q8 audit (may read LARQL); independent checker: Q8_0 decoder from ggml, container reader from the admitted B3 spec, reference harness (no LARQL source, fixtures, tests or docs besides B3); A0 fixtures and hidden fault rows (reviewer, kept from the checker agent)",
     "rules": "nothing counts toward Stage A, and every Stage A result is reproduced after the freeze by the frozen checker; checker isolation is enforced, not instructed, and recorded from its first commit, and code produced after any breach is discarded; the checker is not run on LARQL's Qwen3 container or logit dumps before the freeze; the T3 pilot is not run in Phase 1; the freeze review is not weakened and its snapshot includes the Phase 1 evidence records"
+  },
+  "decision_revisions": {
+    "D1": {
+      "date": "2026-10-31",
+      "scope": "reviewer open questions OQ1, OQ4, OQ5, OQ6, OQ12; all clarifications; full text in PROTOCOL.md 'Decision revision D1'",
+      "safeguards": "sealed corpus 8603fb7 and scoring run 1 unchanged; later scoring names the decision revision; cases whose outcome was visible before a rule was fixed (OQ6, OQ12) or whose checker implementation changes after exposure (OQ1) are diagnostic only, acceptance uses fresh sealed hidden cases; no run 1 result promoted to Stage A evidence",
+      "OQ1_T2_domain": "three classes: invalid under the format (reject); valid outside T2's domain (negative finite, ±inf or NaN d16; reported per tensor by scale class, kept in inventory, never within T2, never in the exceed count); valid inside the domain (finite d16 >= 0, T2 evaluated, ±0 counted separately)",
+      "OQ4_E1_detection": "detection means identifying the discrepancy against a same-build control report: predicted integer quantities change by exactly the predicted amount in target tensors; predicted floating summaries match the reviewer's expected values within a recipe-stated, pre-justified tolerance (exact only where semantics fix it); non-target tensors equal the control; any unpredicted change fails the row; neutral mutations equal the control with neutrality shown",
+      "OQ5_metric_accuracy": "measurement accuracy only, never model acceptability: KL |got-exp| <= 1e-12 + 1e-9|exp|; max|Δ| exact or 1 f64 ulp beyond 53 bits; RMS Δ <= 1e-12|exp| + 1e-300; top-1 exact; conditional on the reviewer confirming the values were chosen without sight of checker metric outputs",
+      "OQ6_non_finite_logits": "any non-finite logit makes the position non_comparable (side and class counts reported, no metrics, excluded from aggregates); not an E2 agreement pass; under E2 traced to decoded weights, reference execution or LARQL execution before attribution; untraced falsifies Stage A",
+      "OQ12_duplicate_source_key": "reader rejects two stored tensors in the compared representations yielding the same HF key under SPEC §10.1; identical content under different keys and declared logical sharing are out of scope; census stays with E1 coverage",
+      "open": "OQ11 (model configuration source, before E2); OQ2 (undefined C reference encoder behaviour: defined rule or explicit exclusion)"
+    }
   }
 }

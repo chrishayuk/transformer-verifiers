@@ -341,6 +341,97 @@ Agreement is recorded as evidence; disagreement is a finding.
 - **Accept** only if the checker rejects every mutation that changes behaviour beyond tolerance.
 - A mutation that is behaviourally neutral and correctly accepted must be shown to be neutral, not assumed to be.
 
+### Decision revision D1 (2026-10-31): reviewer open questions OQ1, OQ4, OQ5, OQ6, OQ12
+
+Decided by the protocol owner on draft records the reviewer repository keeps (they name hidden cases, so they are not
+published). Each rule below is a **clarification** of a passage that already exists, argued from that passage, the
+admitted SPEC revision 2, ggml `facdc44a` or IEEE 754. The reading the checker took in scoring run 1 was not used as
+an argument. These rules decide semantics; they do not decide which already observed cases pass.
+
+- **Evaluation safeguards.**
+  - The sealed corpus `8603fb7` and the scoring run 1 results are not edited. A corpus that reflects D1 is a new
+    revision, sealed before use. Every later scoring run names the decision revision it applies (here, D1).
+  - A case whose outcome under a D1 rule was visible before the rule was fixed is diagnostic evidence only, never blind
+    acceptance evidence. This covers the run 1 cases under OQ6 and OQ12. Fresh hidden cases, independently built and
+    sealed, are required for those rules.
+  - The same applies to any rule whose checker implementation is changed after its cases were seen (OQ1): the change
+    can be verified on the old cases, but acceptance uses fresh hidden cases.
+  - No run 1 result is promoted into Stage A evidence.
+
+- **OQ1. T2's domain.** Every Q8_0 block falls into exactly one of three classes, and the checker keeps them apart:
+  1. **Invalid under the format** (a SPEC rejection rule fails). The container is rejected.
+  2. **Valid, outside T2's domain.** The stored scale d₁₆ is negative and finite, ±inf or NaN. These are legal
+     bit patterns, not malformed containers. T2's derivation assumes a finite d ≥ 0, which ggml's reference encoder
+     always produces except through f16 overflow, so T2 makes no statement about these blocks.
+  3. **Valid, inside T2's domain** (finite d₁₆ ≥ 0, including ±0). T2 is evaluated, and each element is within or
+     exceeds the bound. ±0-scale blocks keep their separate count.
+  - Per tensor, the report gives the class 2 blocks and their elements by scale class (negative, +inf, −inf, NaN).
+    They stay in the tensor's inventory. They are never counted as within T2, and never added to the T2 exceed count.
+  - The other E1 statistics include every block. A non-finite value is reported as non-finite, not dropped.
+
+- **OQ4. Detection of an E1-layer mutation (A4).** For a mutation of a valid container that changes decoded values,
+  "the checker rejects the mutation" means the checker identifies the discrepancy. It does not mean the container
+  fails to open.
+  - The control is the checker's E1 report on the unmutated container, from the same build and run.
+  - The recipe declares its target tensors and its expected change, computed independently by the reviewer under
+    the rules of this protocol, OQ1 included.
+  - **Detected** means:
+    - each integer quantity the recipe predicts for a target tensor (the T2 exceed count, the OQ1 class counts,
+      the ±0-scale count, BF16 bit mismatches, coverage entries) changes from the control by exactly the predicted
+      amount;
+    - each floating-point summary the recipe predicts matches the reviewer's expected value within a tolerance the
+      recipe states and justifies before scoring. Exact equality is required only where the recipe shows that the
+      numerical semantics fix the value;
+    - every quantity of every non-target tensor equals the control. The bytes and the build are the same, so equality
+      is justified.
+  - A floating-point summary for which the recipe states no expected value is not part of the test.
+  - A change the recipe does not predict fails the row, and is diagnosed as a checker defect or a recipe defect.
+  - A neutral mutation passes when the report equals the control in every tensor, and the recipe shows why it is
+    neutral.
+
+- **OQ5. Metric computation accuracy (A2 "the metrics are computed correctly").** These are measurement-accuracy
+  criteria for the checker's arithmetic. They are never thresholds for model acceptability. Each is compared against
+  a value computed independently at higher precision than f64:
+  - **KL:** |got − expected| ≤ 1e-12 + 1e-9·|expected|.
+  - **max |Δ|:** exact, or 1 ulp of f64 when the exact difference needs more than 53 bits.
+  - **RMS Δ:** |got − expected| ≤ 1e-12·|expected| + 1e-300.
+  - **top-1:** the token ids and the agreement flag are exact.
+  - **Provenance condition.** These values were fixed in the reviewer's sealed corpus before any metric case was
+    scored. The reviewer confirms in writing that they were chosen without sight of any checker metric output. If that
+    cannot be confirmed, the affected cases are not independent acceptance evidence.
+
+- **OQ6. Non-finite logits (A2).** The metrics are defined only for positions where every logit on both sides is
+  finite.
+  - A position with any ±inf or NaN logit gets the explicit status `non_comparable`, with the side and the count of
+    each non-finite class. It gets no KL, Δ or top-1 value, and is left out of every aggregate. No numerical drift is
+    reported for it.
+  - A `non_comparable` position is not an E2 agreement pass.
+  - Under E2 it is a finding to be traced to its origin: the decoded weights, the reference execution or LARQL's
+    execution. It is not attributed to LARQL without that trace. Leaving it untraced falsifies Stage A, as for a
+    discrepancy beyond T3.
+  - For checker correctness, the checker passes such a case by reporting `non_comparable`. Returning numbers fails
+    the case.
+
+- **OQ12. Duplicate ownership of a source key (container reader).** Under SPEC §10.1, each source tensor key is owned
+  by exactly one object. The encoder assigns each key to the longest covering prefix across objects, and §10.1 rejects
+  any arrangement that makes the inverse map non-unique. §10.2 calls the subject's mapping a bijection.
+  - **Rule.** Take the representations that are compared together, one per logical object. A reader MUST reject a
+    container in which two stored tensors there yield the same HF key under the §10.1 forward rule.
+  - **Out of scope:**
+    - **identical content:** two stored tensors with equal bytes or equal decoded values under different keys, such
+      as the subject's separate `model.embed_tokens.weight` and `lm_head.weight` (SPEC §12);
+    - **logical sharing:** reuse that the container declares, such as `head_reuses_embedding`, where no second stored
+      tensor claims the key.
+  - **Not this rule's job:** the subject's 311-key census, which stays with E1 coverage.
+  - **The forbidden condition** is duplicate ownership of a source key, not duplicate numerical content.
+
+**Open, to be decided before the stage that needs them:**
+- **OQ11**, before E2 runs: the source of the "model configuration" in the A2 comparability preconditions. The
+  reference configuration must not be chosen by the checker without independent validation.
+- **OQ2:** encoder inputs for which the C reference encoder's behaviour is undefined (C11 6.3.1.4). Undefined
+  behaviour is not a numerical oracle. Each affected input needs either a defined rule, justified independently, or an
+  explicit exclusion from the guarantee it would test.
+
 ### Stage A falsified if
 
 Any of:
