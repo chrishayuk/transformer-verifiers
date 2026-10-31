@@ -153,3 +153,13 @@ The snapshot moves to `isolation/snapshots/6f28db9/` (D1–D9 with clarification
 - **Allowed:** the new snapshot (hash matches).
 - **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, and the real
   container.
+
+## Part 9: protocol snapshot c972d62 (2026-10-31)
+
+The snapshot moves to `isolation/snapshots/c972d62/` (D1–D10; `PROTOCOL.md` `8595bd28…`, `draft.json` `bf5b9455…`).
+Settings are now sha256 `b78f15d4…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-9.log`):
+- **Allowed:** the new snapshot (hash matches).
+- **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, and the real
+  container.

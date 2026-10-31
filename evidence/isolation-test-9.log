@@ -1,0 +1,6 @@
+1. ALLOWED: `8595bd28ded179f337af5a7829f5b1690c52816dc7ea85c5d686c3af6d3283b0  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/c972d62/PROTOCOL.md`
+2. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/6f28db9/PROTOCOL.md: Operation not permitted`
+3. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md: Operation not permitted`
+4. BLOCKED: `touch: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/c972d62/x: Operation not permitted`
+5. BLOCKED: `ls: /Users/christopherhay/chris-source/transformer-verifiers-reviewer: Operation not permitted`
+6. BLOCKED: `ls: /Users/christopherhay/chris-models/l1-2536bb79: Operation not permitted`
