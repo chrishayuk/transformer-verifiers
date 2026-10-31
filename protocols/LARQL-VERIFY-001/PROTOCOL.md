@@ -1097,6 +1097,86 @@ failures and all sealed corpora are unchanged.
 
     Only a READY TO FREEZE verdict leads to the human-controlled freeze.
 
+### Decision revision D12 (2026-10-31): the reference-forward audit, T3 evaluation, extended context, the logit dump
+
+Decided by the protocol owner on the independent reference-forward audit (`evidence/reference-audit/REPORT.md`, audit
+commit `13f9cb3`, checker `4bc93d3`: no material defect) and on the draft logit-dump specification
+(`specs/larql-logit-dump/SPEC.md`, revision 1, not admitted). D1–D10, all scoring runs and all sealed corpora are
+unchanged. D11 remains a proposal.
+
+- **m1, T3 at long positions: accepted as a declared limitation; ref32 is not changed.**
+  - **The finding:** ref32 computes its RoPE angle in binary32, so its long-position error is dominated by its own
+    angle error:
+    - 4.8e-4 maximum logit difference against an independent f64 forward at 4,096 positions;
+    - about 2e-3 in the RoPE table at position 40,959.
+
+    LARQL takes the angle in binary64 (SPEC §17.5, logit-dump draft §6). So the yardstick |ref₃₂ − ref₆₄| grows with
+    position, and T3 may be **substantially more permissive at long positions**.
+  - **Why ref32 stays:** changing it now would change the numerical reference T3 is built on.
+  - **Reporting:** T3 results are reported per preregistered position band, and separately for native-context and
+    extended-context positions.
+  - **What a T3 pass means:** empirical agreement under a calibrated criterion. It is not a certified numerical-error
+    bound, and not a proof of execution equivalence.
+- **m2 and m3: a narrow isolated checker run is authorised.** It completes and protects existing requirements. It is
+  not new scope. It is restricted to:
+  - **evaluating the existing T3 inequality** at given (c, k), for every vocabulary logit at every evaluated position:
+    |LARQL − ref₃₂| ≤ max(c·|ref₃₂ − ref₆₄|, k·ulp₃₂(ref₆₄));
+  - **pairing** each LARQL result with its matching ref₃₂ and native-ref₆₄ results;
+  - **requiring identical provenance:** token ids, positions, container identity, configuration and the required
+    execution settings, with a passing D7 gate on both reference runs, ref₆₄ in native mode and ref₃₂ in f32;
+  - **refusing** an incomplete or inconsistent triple, with a reason, before any T3 verdict is produced;
+  - **guarding the f64 patch:** a requested native-f64 run must never execute outside its patch context (audit m3).
+  - **Also in scope:** the evaluator works on the preregistered evaluated positions of full arrays (selective
+    evaluation), and reports by band and by native/extended class.
+  - **Out of scope:**
+    - choosing c and k (the ladder rule is part of the T3 amendment, not yet in force);
+    - reading LARQL's dump format (the specification is not admitted);
+    - any change to ref₃₂ or ref₆₄.
+  - **Tests:** synthetic triples only, never LARQL's logits or any held-out result. Fresh hidden synthetic triples
+    built by the independent reviewer are sealed after the audit and pin, and scored once.
+- **Evaluation details for that run.**
+  - **Non-finite values:** a position where any logit of the three is NaN or ±inf is `non_comparable` (D1 OQ6). It is
+    excluded from T3 counts, reported by index, and never a pass.
+  - **Arithmetic:** the inequality is decided exactly, for example with rational arithmetic on the binary32 and
+    binary64 values, or binary64 only where it is shown to be exact. Rounding must never flip a verdict.
+  - **`ulp₃₂(x)`:** this is a **proposed definition, to be confirmed by the owner before the hidden T3 corpus is
+    sealed**. For a finite x it is the spacing of binary32 numbers in the binade containing |x|: 2^(max(⌊log₂|x|⌋, −126)
+    − 23), with ⌊log₂|x|⌋ taken on the exact binary64 value. For x = 0 it is 2⁻¹⁴⁹. |x| above the binary32 range
+    makes the position `non_comparable`.
+- **OI-5, extended context: permitted as a separate, explicitly labelled stress experiment.**
+  - **What is defined:** LARQL executes positions 32,768–40,959 with its ordinary RoPE formula and an unbounded KV
+    cache, with no clamp or wrap. That defines an experimental execution path. It does not establish that Qwen3 is
+    supported or reliable beyond its native context.
+  - **Native positions** get ordinary E2 agreement reporting. **Extended positions** get separately labelled
+    stress-test reporting.
+  - **Interpretation:** an extended-position disagreement is never described as a violation of the native-context
+    guarantee.
+  - **When an extended position cannot be executed:** if either implementation fails to execute it, the result is
+    recorded as unsupported or resource-limited, never as a numerical error.
+  - **Freeze:** this is reviewed and frozen before Phase 3.
+- **Storage: the maximum position 40,959 is kept for now.** A full dump of the longest sequence is about 24.9 GB, with
+  about 9.4 GB of KV state.
+  - **Resource precondition:** no Phase 3 run begins without enough disk space and memory for the declared workload.
+  - **Scientific coverage** is not reduced merely to save storage.
+  - **No new LARQL feature:** a selective-capture interface is not introduced into the frozen LARQL path unless
+    resource feasibility makes the existing design impossible.
+- **The logit dump: externally supplied provenance and a fail-closed rule.** LARQL's dump records no token ids and has
+  no completeness marker, so the harness supplies the provenance.
+  - **Before each run:** the harness deletes any old dump and sidecar.
+  - **After each run,** it records:
+    - the SHA-256 of the exact token-id sequence;
+    - the command arguments;
+    - the exit status;
+    - the model and container identity;
+    - the output file's SHA-256.
+  - **Acceptance:** an output is accepted only under the draft's fail-closed rule (exit 0, the expected output lines, a
+    matching sidecar, size exactly 4·N·V) and with all of the above consistent. Any mismatch or incomplete run
+    invalidates that output.
+  - **Validation before admission:** the third-party reviewer of the specification validates this procedure on a
+    small, non-subject fixture before the format is admitted.
+- **Order of work:** the third-party logit-dump review and the T3 checker run proceed in parallel. After they pass,
+  D11 and the external freeze-authorisation requirements are completed. Only then may the real LARQL comparison run.
+
 ### Stage A falsified if
 
 Any of:
