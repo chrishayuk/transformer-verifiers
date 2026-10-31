@@ -164,6 +164,19 @@
       "recorded": "config.json sha256, reference versions and f64 patch sha256, container sha256, effective configuration on each side, field comparison, unresolved assumptions",
       "acceptance": "fresh hidden cases: at least one valid control accepted as comparable, at least one independently constructed mismatch reported invalid_comparison before metrics, covering mismatches invisible at position 0",
       "limit": "configuration identity establishes architecture, not numerically identical operations; arithmetic and accumulation assumptions stay separate (accumulation dtype precondition, T3)"
+    },
+    "D3": {
+      "date": "2026-10-31",
+      "scope": "D2 comparison rules, reviewer questions 16-19, partial scoring; full text in PROTOCOL.md 'Decision revision D3'; D1 and D2 unchanged; SPEC revision 3 (6350e07c...) admitted",
+      "equality": "type-aware and specification-driven, no tolerance: authority value converted from its config.json text to the SPEC-declared type by round-to-nearest-even, exact equality; never narrower rounding than declared; rms_norm_eps compares against f64(f32(1e-6)) per SPEC 17.3/17.7 and matches, with LARQL's binary64 execution of that value recorded as an E2 arithmetic difference",
+      "effect_only": "insufficient",
+      "missing_fields": "not agreement; unacceptable unless an admitted specification establishes meaning or absence; rope_scaling, sliding_window, tie_word_embeddings (indirect) and use_sliding_window, max_window_layers (no field) unresolved pending owner ruling on SPEC 17.7; E2 does not start while any is unresolved",
+      "Q16": "head-split mismatch is a configuration mismatch even with products preserved; never infer equivalence from products",
+      "Q17": "reviewer-supplied stand-in config.json for synthetic fixtures only, recorded as synthetic, never substituted for the pinned upstream config",
+      "Q18_OQ5": "provenance covers selection time and independent derivation; a priori error analysis required; unjustified values not changed after results, affected cases diagnostic, new cases under preregistered tolerances; revision 2 metric cases not acceptance until the analysis exists",
+      "Q19": "full D2 comparability requires every required field covered",
+      "partial_scoring": "subset, exclusion reasons, checker commit, seal and decision revisions committed before the run; excluded cases pending; cases dependent on open ambiguities excluded; no blind rerun of failed cases against modified code",
+      "open": "AMB-018, AMB-019 (independent decision records); owner ruling on the five indirect or missing D2 fields"
     }
   }
 }

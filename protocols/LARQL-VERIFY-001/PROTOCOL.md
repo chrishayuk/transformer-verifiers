@@ -495,6 +495,71 @@ until D2's comparability tests exist (below).
   the two implementations perform numerically identical operations. E2 still states its arithmetic and accumulation
   assumptions separately (the accumulation-dtype precondition and T3).
 
+### Decision revision D3 (2026-10-31): D2 comparison rules, reviewer questions 16–19, partial scoring
+
+Decided by the protocol owner. D1 (`81398e6`) and D2 (`a35841c`) are unchanged. SPEC revision 3 (sha256
+`6350e07c…`, admitted 2026-10-31) is the admitted source for the execution-surface fields.
+
+- **Equality is type-aware and set by the specification, with no tolerance.**
+  - Each container field is compared at the type and encoding the admitted SPEC declares for it.
+  - The authority's value is taken from its `config.json` text, converted to that type with correct rounding
+    (round-to-nearest-even), and compared for exact equality.
+  - The comparator never compares an exact decimal with a floating-point approximation and calls the difference a
+    mismatch. Nor does it round a field to a narrower type than the SPEC declares, merely to make it match.
+  - **Applied to `rms_norm_eps`:** SPEC §17.3/§17.7 declare `X.norm.pre.eps` and `X.norm.final_norm.eps` as binary64
+    values holding `f64(f32(rms_norm_eps))`, by an encoding rule the admitted SPEC states. The comparison is therefore
+    against `f64(f32(1e-6))` = `9.999999974752427e-7`, which matches.
+    - **Recorded consequence:** LARQL executes that value in binary64 (§17.8). The f64 reference uses binary64
+      `1e-6`, while the f32 reference rounds to the same binary32 value. The difference is a known arithmetic
+      difference between the two sides, to be stated with the E2 arithmetic assumptions. It is not a configuration
+      mismatch, and not a silent rounding.
+- **Comparing by effect alone is not enough.** A field is not matched by observing that outputs agree: different
+  configurations can produce identical outputs at selected positions. RoPE and the score scale have no effect at
+  position 0.
+- **A missing computation-relevant field is not agreement.** It is unacceptable unless an admitted specification
+  establishes its meaning or its absence.
+  - Until a field is resolved, it is an unresolved comparability assumption, and any unresolved assumption makes an
+    E2 or E3 comparison invalid.
+  - **Status of the five D2 fields SPEC revision 3 does not declare directly:**
+    - **Indirect:** `rope_scaling` (through `position.kind`), `sliding_window` (through `span`/`window`) and
+      `tie_word_embeddings` (through `head_reuses_embedding` plus equal payload hashes).
+    - **No field:** `use_sliding_window` and `max_window_layers`.
+
+    They stay **unresolved** until the owner decides whether SPEC §17.7's normative correspondences, and its account of
+    the two fields with no trace, count as "an admitted specification establishing meaning or absence". E2 does not
+    start while any of them is unresolved.
+- **Reviewer question 16: head split.** A mismatch in `num_attention_heads`, `num_key_value_heads` or `head_dim` is a
+  configuration mismatch, even when every product is preserved (16 × 64 = 8 × 128 is not the same attention). Whether
+  it shows up in tensor shapes or in the execution surface is a provenance detail.
+  - The checker never infers equivalence from products. Where shapes cannot fix the split, the admitted
+    execution-surface fields (SPEC §17.2, §17.4) decide it.
+- **Reviewer question 17: stand-in authority for synthetic tests.** A stand-in `config.json` is allowed for synthetic
+  D2 fixtures only.
+  - The independent reviewer supplies it, with explicit provenance. The checker never generates it from a container.
+  - The checker records that the authority was synthetic, and never substitutes a stand-in for the pinned upstream
+    `config.json` in a comparison on the subject.
+- **Reviewer question 18 and OQ5.** The provenance condition covers both when the tolerance values were selected and
+  whether they were derived independently of checker outputs.
+  - A session that saw no checker output is necessary but not enough. The reviewer supplies an a priori error
+    analysis of the rounding and accumulation error of each metric.
+  - If the D1 tolerance values cannot be justified by that analysis, they are not changed after results are seen. The
+    affected cases stay diagnostic, and new acceptance cases are prepared under preregistered tolerances.
+  - The 21 revision 1 metric cases stay diagnostic. The revision 2 metric cases are not scored as acceptance evidence
+    until the analysis exists.
+- **Reviewer question 19.** Before SPEC revision 3, a comparison on the real container could establish agreement only
+  on fields whose meaning was already specified. Even with revision 3, a full D2 comparability pass needs every
+  required field covered.
+- **Partial scoring.** A scoring run may cover a subset of a sealed corpus.
+  - Before anything runs, the subset is fixed from the sealed manifest: the case ids, the reason for every exclusion,
+    the checker commit, the corpus seal and the decision revisions. This is committed before the run.
+  - Excluded cases are **pending**, never passed.
+  - A case whose expected result depends on an open ambiguity is excluded until the ambiguity is decided.
+  - A failed hidden case is never rerun against modified checker code as if it were still blind. Repairs are allowed,
+    but evaluating them needs fresh held-out cases.
+- **AMB-018 and AMB-019** (raised by the checker) stay open. They go to independent decision records under the D1
+  discipline, never adopted because the checker already implements a reading. They block only the cases whose
+  expected result depends on them.
+
 ### Stage A falsified if
 
 Any of:
