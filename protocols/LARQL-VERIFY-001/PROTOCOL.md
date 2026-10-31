@@ -816,6 +816,28 @@ expanded. D1–D8, all scoring runs (run 5 included) and all sealed corpora are 
     independent correctness. The RoPE convention probe (SPEC §17.5, bit for bit) is the independent check.
   - Some refusals are over-strict for values that change nothing. They reject but never wrongly accept, which is
     accepted.
+- **Clarification (2026-10-31, after scoring run 5 and before checker run 9; reviewer questions 25 and 26).** This is
+  appended to D9. D9's text above and all earlier scoring and corpus records are unchanged.
+  - **Non-null authority `rope_scaling` (question 25): `unsupported`.** D7 established the `rope_scaling` derivation
+    only for null.
+    - A non-null authority `rope_scaling` gives `invalid_comparison`, with a reason of category `unsupported` and field
+      `rope_scaling`, and no metrics.
+    - It is detected before reference construction, whether or not the scaling would produce identical outputs at
+      some positions.
+    - This does not say non-default RoPE scaling is invalid in general. It is outside this campaign's scope.
+  - **Offending key identity (question 26).** Every must-be-absent violation and every unknown-key report carries
+    `key_path`, the canonical path to the specific key, built from the parsed structure, never extracted from message
+    text. Example:
+
+    ```json
+    {"status": "invalid_comparison",
+     "reasons": [{"category": "contradiction", "field": "keys_that_must_be_absent",
+                  "key_path": "component.perception", "message": "Prohibited key present"}]}
+    ```
+
+    - When several such keys occur, each gets its own reason with its own `key_path`.
+    - Hidden cases test status, reason category, field identity and key path as separate properties.
+
 - **Evaluation.** The corrections are implemented in a separate isolated checker run under a new protocol snapshot,
   audited and pinned. The reviewer builds fresh hidden cases that target the D9 changes, and seals them before they
   are scored once. No earlier corpus is revised.
