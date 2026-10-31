@@ -354,6 +354,11 @@ check(g, "every key present under any C.attention[L] (recursive) is listed in §
       {"present": present_l, "unlisted": unlisted_l})
 check(g, "C keys (informative): id, role, source_artifact, num_layers, hidden_size, attention, execution",
       set(C) == {"id", "role", "source_artifact", "num_layers", "hidden_size", "attention", "execution"}, sorted(C))
+# corrected draft, §17.1 C2: keys directly on C, and C.perception
+ALLOWED_C = {"id", "role", "source_artifact", "num_layers", "hidden_size", "attention", "execution"}
+check("17.1-C2", "no key directly on C outside the seven listed", set(C) <= ALLOWED_C, sorted(set(C) - ALLOWED_C))
+check("17.1-C2", "C.perception absent", "perception" not in C)
+check("17.1-C2", "C.role == 'primary_text'", C.get("role") == "primary_text", C.get("role"))
 # every D2 key exists upstream
 D2 = ["hidden_size", "intermediate_size", "num_hidden_layers", "num_attention_heads", "num_key_value_heads",
       "head_dim", "vocab_size", "hidden_act", "attention_bias", "rms_norm_eps", "rope_theta", "rope_scaling",

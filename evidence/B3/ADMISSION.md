@@ -31,3 +31,36 @@ ggml `facdc44a` and gguf-py 0.18.0.
 - F4: the executed LM head is not recorded in the container
 - F5: `head_reuses_embedding` is ambiguous
 - F6: why a tensor stays BF16 is recorded only in `candidate.json`
+
+## Revision 3 (2026-10-31)
+
+| Item | Value |
+|---|---|
+| Admitted document | `specs/vindex3-container/SPEC.md`, revision 3, sha256 `6350e07cff89fb04321ec49ea2e82b14d3893dc7a279d4fd2c899c8db1860a22`. It replaces revision 2 (`3c4feb5e…`) at the same path |
+| Written against | LARQL `2536bb79`, by the spec-author subagent (not the reference checker, not the third-party checker). Draft and notes: `evidence/B3/rev3/` |
+| Third-party check | `evidence/B3/rev3/CHECK.md` (sha256 `421eed24…`). First draft (`2d525879…`): ADMIT WITH CORRECTIONS C1–C3, 605/605 assertions. Corrected draft (`6350e07c…`): **ADMIT**, 608/608 assertions; the diff is exactly the eight reported hunks; all 26 execution-path claims confirmed |
+| Admitted on | 2026-10-31, by copying the checked draft to the path the checker session already reads. The settings are unchanged (`d05ce78f…`), so isolation is unchanged |
+
+**Scope of admission:** container framing as before, plus §17. §17 gives the meanings of the execution-surface
+fields of `system_graph.json`, for comparing a declared configuration only (D2). §17.8 is informative. It is evidence
+for the execution-path audit, not a format rule.
+
+**Known limits, accepted:**
+- **Coverage of D2's 16 fields:**
+  - 11 are declared directly. `rms_norm_eps` is stored as f64(f32(x)).
+  - 3 are represented only indirectly: `rope_scaling`, `sliding_window` and `tie_word_embeddings`.
+  - 2 have no field at all: `use_sliding_window` and `max_window_layers`.
+
+  Whether the indirect and missing fields are enough for D2 is a protocol decision (D3), not part of admission.
+- **What exec actually computes with** (§17.8, confirmed):
+  - the split-half RoPE pairing is hard-coded;
+  - the QK-norm epsilon is the pre-norm epsilon;
+  - the residual, projection and logit widths come from tensor shapes;
+  - the score scale is rounded to f32.
+
+  Declared but not consumed for this container: the surface `num_kv_heads`/`head_dim`, `head_reuses_embedding` and
+  `context_length`.
+- **Advisory B1, not a condition of admission:** the S155 location for `LARQL_KQUANT_EXEC` is a describing comment.
+  The definition is at `VX/opplan/exec/cpu/physical/projection.rs:436`.
+- **Scoring:** corpus revision 2 and the pinned checker `cd49069` were built against revision 2. Revision 3 changes no
+  revision 2 normative statement, so neither is affected.

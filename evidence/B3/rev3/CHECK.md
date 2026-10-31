@@ -150,3 +150,77 @@ Each row was confirmed by reading the cited file:line at `2536bb79`. Paths: `VX`
 | `tie_word_embeddings` | true | **Indirect** | `X.head.head_reuses_embedding` **and** equal `payload_sha256` of `target.output_head@BF16` and `target.embedding@BF16` | No field of its own. The flag is `true` for an absent key too, and exec ignores it when a head object exists. Equal payload digests hold here (`8f29acf5…`) |
 
 Summary: 11 direct (one of them lossy), 3 indirect, 2 with no trace. This agrees with the author's flags. Whether "indirect" or "none" satisfies D2's "declared in a specified place" is a protocol decision, and I have not made it.
+
+## Revision 3, corrected draft
+
+| Field | Value |
+|---|---|
+| Draft checked | `evidence/B3/rev3/SPEC.md`, SHA-256 `6350e07cff89fb04321ec49ea2e82b14d3893dc7a279d4fd2c899c8db1860a22` (verified; not edited) |
+| Compared against | the draft checked above, `git show fa09234:evidence/B3/rev3/SPEC.md`, SHA-256 `2d5258798b6a9b5373e1d346fbbfe99fb087a64cab26aee0d7558f694f93f4aa` (verified) |
+| LARQL source | `/Users/christopherhay/chris-source/larql-l1-2536bb79`, HEAD `2536bb79b199b1115445678e3e82c400b0b3fd07`, `git status --porcelain` empty |
+| Script | `check/check_rev3.py`, extended with three §17.1 C2 assertions. It is now SHA-256 `1e1c964c269393aa562b99a627bee2e3fec134d48a3c887855435d06a3bdfbc1`. The first run above used the earlier version (`7edaa0f6…`), whose outputs `check/rev3_stdout.json` and `check/rev3_results.json` are kept. The new outputs are `check/rev3c_stdout.json` (`981b4c32…`) and `check/rev3c_results.json` (`8b1118c2…`) |
+
+### Verdict
+
+**ADMIT.** All three corrections are resolved. The diff contains exactly the eight hunks the author reported. The only new normative text is in §17.1. The new rule holds on the emitted container, and the rerun passes 608/0. One informative citation could be sharper (advisory B1 below). It does not affect admission.
+
+### Diff against `2d525879…`
+
+The diff has exactly 8 hunks and nothing else.
+
+| # | Lines (old → new) | Section | Content | Class |
+|---|---|---|---|---|
+| 1 | 24c24 | §0 framing bullet | Appends "**Exception (revision 3):** §17 gives the meanings of the execution-surface fields … for comparing a declared configuration only" | Scope qualification. **Resolves C1**: the revision 2 sentence is unchanged, and it is now true of the document |
+| 2 | 79c79 | §3 JSON bullet | Appends "(Revision 3: for a configuration comparator, §17.1 says otherwise.)" | Pointer (A2) |
+| 3 | 554c554 | §17.1 Unknown keys | Adds keys directly on `C` other than the seven listed to the report-as-unresolved rule; `C.perception` MUST be absent, and its presence is a configuration mismatch [S110] | **New normative text. Resolves C2.** S110 (`VX/graph/component.rs:103-136`) does contain `pub perception: Option<PerceptionComponent>` (line 135) |
+| 4 | 649c649 | §17.6 `head_reuses_embedding` row | "for this family"; the general rule `!has_lm_head \|\| tie ≠ false` given in parentheses | Clarification (A1). Adds no requirement. The stated rule matches `LM/config/architecture/tensor_keys.rs:54` |
+| 5 | 705c705 | §17.8 bias row | Adds the output-projection bias at [S149, `exec/production/helpers.rs:19`] | Informative citation. **Resolves C3** |
+| 6 | 716a717-724 | §17.8 | New informative block with N1, N2, N3, N5 and N6 | Informative |
+| 7 | 877a886-888 | Appendix A | S153, S154, S155 | Addition |
+| 8 | 885c896 | Revision history, row 3 | Appends the list of corrections. It matches hunks 1-7 | Editorial |
+
+**New normative text only in §17.1:** confirmed. Hunk 1 is a scope sentence in §0 with no RFC 2119 keyword. Hunk 2 is a pointer. Hunk 4 rewords the encoding note in a §17.6 table cell; it adds no MUST, and the value and comparison rule are unchanged. Hunks 5-6 are in informative §17.8. The only new MUST statements are in hunk 3 (§17.1). No revision 2 statement changed.
+
+### New citations, checked in the clean worktree
+
+| Source | Cited lines | What is there | Result |
+|---|---|---|---|
+| S153 | `VX/graph/build/components.rs:242-253` | `match component.role { ComponentRole::Perception if matches!(component.perception.map(\|p\| p.transform), …)` | **Correct** |
+| S154 | `VX/opplan/exec/layer_exec.rs:336-366` | `ops.call(attention_op, &inputs, layer.declared_norm_eps, hidden)` on all three branches | **Correct** |
+| S154 | `VX/opplan/exec/production/select.rs:64-67` | `project_matrix(&call.w_q/w_k/w_v, pre, …, call.hidden)` | **Correct** |
+| S154 | `VX/opplan/exec/backend/plan_backend.rs:184` | `hidden: call.hidden` in `FfnCall` | **Correct** |
+| S154 | `VX/opplan/exec/production/plan_backend.rs:68-71` | `fn embed(… hidden …)`: row `token·hidden .. (token+1)·hidden` | **Correct** |
+| S155 | `LC/residual.rs:48-52` | `effective_eps` → `forward_overrides::norm_eps_override()` | **Correct** |
+| S155 | `LC/attention/block.rs:377-383`, `:483` | RoPE-base, position-divisor and frequency-scaling overrides; attention-window override | **Correct** |
+| S155 | `CLI/prepare.rs:214-224` | A **comment** that describes `LARQL_KQUANT_EXEC=widen`. The variable is read in `VX/opplan/exec/cpu/physical/projection.rs` (`KQUANT_EXEC_ENV = "LARQL_KQUANT_EXEC"`, line 436; read via `std::env::var(KQUANT_EXEC_ENV)` near line 501) | **Points at documentation, not the read** (B1). This imprecision came from my own N2 wording |
+
+**The author's two points:**
+- **`helpers.rs:19` versus 18-22.** Line 19 is the conditional that applies the output bias (`if let Some(o) = call.bias…bias.o`). Lines 18-22 are the whole `add_output_bias` function. Either is acceptable, and line 19 is the more precise.
+- **N3 with no file:line.** That is acceptable. The evidence is a search that found nothing, and N3 states the search scope (`VX/graph`, `LM/config`, `deny_unknown_fields`), so anyone can reproduce it. N3's positive part does carry a citation (S153).
+
+### Rerun: C2 on the emitted container
+
+Three assertions were added (group `17.1-C2`):
+- no key directly on `C` outside `{id, role, source_artifact, num_layers, hidden_size, attention, execution}`. Observed keys: exactly those seven;
+- `C.perception` absent;
+- `C.role == "primary_text"`.
+
+All three pass. No other assertion changed.
+
+| Group | Pass / fail |
+|---|---|
+| inputs | 3 / 0 |
+| 17.1 | 3 / 0 |
+| 17.1-C2 | 3 / 0 |
+| 17.2 | 158 / 0 |
+| 17.3 | 36 / 0 |
+| 17.4 | 34 / 0 |
+| 17.5 | 313 / 0 |
+| 17.6 | 36 / 0 |
+| 17.7 | 19 / 0 |
+| coverage | 3 / 0 |
+| **Total** | **608 / 0** (exit 0) |
+
+### Advisory (not a condition of admission)
+
+- **B1 (§17.8 N2, S155).** Replace or supplement `CLI/prepare.rs:214-224` (a comment) with `VX/opplan/exec/cpu/physical/projection.rs:436` and the `std::env::var(KQUANT_EXEC_ENV)` read near line 501, where the switch is actually read. This is informative text only.

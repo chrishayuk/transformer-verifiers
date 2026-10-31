@@ -1,0 +1,53 @@
+{
+ "inputs": {
+  "system_graph.json": "05fcec4c45167c2f8f424c35b8c39acb06cc92716f11e0ffbec341e110d66f57",
+  "index.json": "7f3ba8e5da50276e501e7694c46c0a3c9c9d7530596656376cc9597f05fec490",
+  "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd"
+ },
+ "assertions": 608,
+ "pass": 608,
+ "fail": 0,
+ "by_group": {
+  "inputs": {
+   "pass": 3,
+   "fail": 0
+  },
+  "17.1": {
+   "pass": 3,
+   "fail": 0
+  },
+  "17.2": {
+   "pass": 158,
+   "fail": 0
+  },
+  "17.4": {
+   "pass": 34,
+   "fail": 0
+  },
+  "17.3": {
+   "pass": 36,
+   "fail": 0
+  },
+  "17.5": {
+   "pass": 313,
+   "fail": 0
+  },
+  "17.6": {
+   "pass": 36,
+   "fail": 0
+  },
+  "17.7": {
+   "pass": 19,
+   "fail": 0
+  },
+  "coverage": {
+   "pass": 3,
+   "fail": 0
+  },
+  "17.1-C2": {
+   "pass": 3,
+   "fail": 0
+  }
+ },
+ "failures": []
+}
