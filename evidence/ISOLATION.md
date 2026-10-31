@@ -123,3 +123,13 @@ Settings are now sha256 `a8f65afa…`; the only change is the snapshot path.
 - **Allowed:** the new snapshot (hash matches) and SPEC revision 4 (`8f3f7c2b…`).
 - **Blocked:** the old snapshot, the live protocol (shell and Read tool), writes to the snapshot, the reviewer's
   `evidence/D2-FIELD-ASSESSMENT.md`, the real container, and the reviewer repository.
+
+## Part 6: protocol snapshot 19ab645 (2026-10-31)
+
+The snapshot moves to `isolation/snapshots/19ab645/` (D1–D8; `PROTOCOL.md` `1e79ae8b…`, `draft.json` `82abec65…`).
+Settings are now sha256 `25fa1d9a…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-6.log`):
+- **Allowed:** the new snapshot (hash matches) and SPEC revision 4.
+- **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, and the real
+  container.
