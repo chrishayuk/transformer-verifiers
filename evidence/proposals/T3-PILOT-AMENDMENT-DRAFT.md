@@ -1,6 +1,6 @@
 # Proposed amendment: the T3 pilot (draft, not in force)
 
-**Status: DRAFT, with the owner's decisions of 2026-10-31 incorporated,** for independent review by the freeze reviewer (G4, G8). It changes nothing until it is adopted into
+**Status: DRAFT, with the owner's decisions of 2026-10-31 (including D10's checkpoint assessment) incorporated,** for independent review by the freeze reviewer (G4, G8). It changes nothing until it is adopted into
 PROTOCOL.md through the freeze procedure.
 - **Phase 1 limit:** preparing the method does not authorise running the pilot. The pilot is part of the frozen
   procedure and runs in Phase 3, after the freeze and before any measurement on the subject.
@@ -59,6 +59,45 @@ different rounding behaviour. Four gaps follow.
    hashes), the ordering, the positions evaluated, and the selection procedure, so the same nominal corpus cannot
    support several different experiments. A G1 tamper test covers changing any of these, or the ladder, after the
    freeze.
+
+## Candidate pilot checkpoint (D10), for the freeze reviewer's assessment
+
+D10 asks the freeze reviewer to judge whether a candidate actually exercises differences 1–4. This is not an open-ended
+search. One candidate is proposed. If the reviewer rejects it, the declared fallback applies.
+
+- **Candidate:** `Qwen/Qwen3-1.7B`, at Hugging Face revision `70d244cc86ccca08cf5af4e1e306ecf908b1ad5e`, licensed
+  Apache-2.0. The values below come from its public `config.json`, read 2026-10-31. Nothing was downloaded or run.
+
+  | Property | Subject (Qwen3-0.6B) | Candidate (Qwen3-1.7B) | Difference exercised |
+  |---|---|---|---|
+  | Architecture | `Qwen3ForCausalLM` | `Qwen3ForCausalLM` | QK norm present (Qwen3 architecture) |
+  | `head_dim` | 128 | 128 | 1, 2, 3 (same RoPE frequencies and score scale) |
+  | `rope_theta`, `rope_scaling` | 1,000,000, null | 1,000,000, null | 1, 2 (same angles at every position) |
+  | `rms_norm_eps` | 1e-6 | 1e-6 | 4 |
+  | `max_position_embeddings` | 40,960 | 40,960 | positions can cover E2's range |
+  | `sliding_window` | null | null | inside D8's declared profile |
+  | `num_attention_heads`, `num_key_value_heads` | 16, 8 | 16, 8 | same GQA grouping |
+  | `hidden_size`, layers | 1024, 28 | 2048, 28 | **differs:** longer projection dot products |
+  | `tie_word_embeddings`, dtype | true, bfloat16 | true, bfloat16 | same |
+
+- **Questions for the reviewer:**
+  - **Does it exercise differences 1–4?** On the configuration, yes: the RoPE angles, inverse frequencies, score scale
+    and epsilon are the same as the subject's.
+  - **Difference 5, summation order,** is exercised over longer dot products (hidden size 2048 against 1024). That
+    plausibly makes the pilot's c more conservative, not less. The reviewer decides whether that mismatch is
+    acceptable.
+  - **Independence:** its weights differ from the subject's, but it shares the family, developer and training lineage.
+    The claim it supports is "calibrated on an independent checkpoint of the same architecture", not independence from
+    Qwen3 numerics in general.
+  - **Feasibility preconditions,** confirmed under the frozen procedure before the pilot runs, never in Phase 1:
+    - LARQL can encode the candidate;
+    - its D2 comparability is established under D7, from its own pinned upstream `config.json` as the authority;
+    - its admission does not require a new SPEC revision.
+
+    If any of these fails, the fallback applies. No second candidate is searched for.
+- **Fallback:** the disjoint-subject-corpus route, under the label "calibrated to this subject".
+- **Order:** whichever route is chosen, the route, the pilot procedure and the ladder are fixed at the freeze, before
+  any subject-specific E2 result is inspected.
 
 ## Expected behaviour, so a reviewer can check the form is sensible
 
