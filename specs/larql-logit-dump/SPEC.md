@@ -3,11 +3,11 @@
 | Field | Value |
 |---|---|
 | Document | LARQL-VERIFY-001, decision AMB-014, logit-dump output contract |
-| Status | **DRAFT, not admitted; requires third-party check.** No statement here may be relied on until a third party has checked it against the cited source and, where possible, against emitted files |
-| Revision | 1 |
+| Status | **DRAFT, not admitted; requires third-party confirmation of corrections.** Revision 1 was checked by a third party (verdict ACCURATE WITH CORRECTIONS, `specs/larql-logit-dump/THIRD-PARTY-CHECK.md`, commit `4bce40d`). This revision applies its corrections C1–C5; a third party must confirm them before admission |
+| Revision | 2 (see Revision history and §14). Revision 1 was commit `0e6de8f`, SHA-256 `48fe2666b5f0d11f7e274641a46eba80859838db3dbf88c484cc7a1b6afe1150` |
 | Describes | The files written by `larql vindex3 exec ... --logit-dump <OUT>` at LARQL commit `2536bb79b199b1115445678e3e82c400b0b3fd07` (clean worktree `/Users/christopherhay/chris-source/larql-l1-2536bb79`) |
 | Profile | `--backend production-q8 --representation-source stored`, CPU, on the Q8_0 container of Qwen/Qwen3-0.6B (HF `c1899de289a04d12100db370d81485cdf75e47ca`) described by `specs/vindex3-container/SPEC.md` (B3), under the environment pinned in `protocols/LARQL-VERIFY-001/PROTOCOL.md` "Baseline" |
-| Method | Source reading only. LARQL was not built or run in any mode. No logits were produced. The release binary was not present in the worktree, so `--help` output was not consulted either; the flag list below comes from the clap definitions in source |
+| Method | The author read source only and did not build or run LARQL. Revision 2 additionally cites the third-party check's observations on a non-subject Qwen3-architecture fixture (2 layers, V = 20000), built from the pinned commit by the third party. Those observations are labelled **(third-party fixture)** and are the third party's evidence, not the author's. No subject logits were produced by anyone |
 | Author | A specification-author subagent with read access to LARQL source. Not the reference checker. It did not read `checker/`, the hidden-corpus repository, `evidence/freeze-review/` or the refaudit repository |
 
 ## 0. Conventions
@@ -24,6 +24,7 @@
   - `KQ` = `crates/larql-compute/src/cpu/kquant_gemv.rs`
   - `POS` = `crates/larql-models/src/config/position.rs`
 - Where a value depends on the container (for example `V = 151936`), the value is taken from B3 revision 4 (`specs/vindex3-container/SPEC.md` §17.6, §17.7), which records it as **(observed)** in the pinned container. Those are marked **(from B3)**.
+- **(third-party fixture)** marks a statement observed by the third party on its non-subject fixture, as recorded in third-party fixture evidence, `specs/larql-logit-dump/THIRD-PARTY-CHECK.md` at `4bce40d`. Such observations show the behaviour of the pinned code on that fixture and host; subject-specific values remain derived.
 - Open items are numbered `OI-n` and collected in §13. Where the source leaves behaviour undefined or ambiguous, this document says so and does not resolve it.
 
 ## 1. What the writer is
@@ -61,7 +62,9 @@ env -i PATH=/usr/bin:/bin HOME="$HOME" \
 | `--bank <JSONL>`, `--dump-dir <DIR>` | If `--bank` is given, the bank path runs **instead of** `--logit-dump`, which is then silently ignored. `--logit-dump` does not conflict with `--bank` at the argument parser | MUST NOT be passed | `CLI/exec.rs:222-234` (checked before line 242); `CLI/args.rs:293-298, 308` |
 | `--dump-layers`, `--resume`, `--generate` | Rejected by the argument parser together with `--logit-dump` | MUST NOT be passed | `CLI/args.rs:308` |
 | `--plugin`, `--lowering`, `--representation` | Change what is bound and which provider runs | MUST NOT be passed | `CLI/plugins.rs:36-57`; `evidence/L1/AUDIT.md` "Exact commands" |
+| `--speculate`, `--stop-at-eos`, `--residency-curve`, `--profile` (and, by the same mechanism, `--repeat`, `--warmup`, `--unquiet-ok`, `--expert-access`) | Declared `requires = "generate"` (or `requires = "residency_curve"`), but the argument parser does **not** reject them when `--logit-dump` is present. They are accepted without error and ignored on this path: `run_teacher_force` returns before any code that reads them. **(third-party fixture)** `--speculate 2 --profile --stop-at-eos --residency-curve` with `--logit-dump` exits 0 with a dump bit-identical to the run without them; the four `residency_curve`-dependent flags were not tested | MUST NOT be passed | `CLI/args.rs:245, 251, 259, 266-283, 329`; `CLI/exec.rs:242-246` (returns before `:250-264`) |
 
+0. **[N-H]** The harness MUST pass **exactly** the conforming argument list of §2.1 (container, `--backend production-q8`, `--representation-source stored`, `--tokens`, `--logit-dump`) and nothing else, each flag once. Checking only for the absence of named forbidden flags is not sufficient, because some flags are accepted and silently ignored (row above) and a repeated flag is a parser error (§7.2).
 1. **[N]** There is **no** flag for position selection, stride, a position range, a row subset or a vocabulary subset on this path. The complete set of `exec` flags is `CLI/args.rs:181-331`; none of them selects positions, and `run_teacher_force` takes no such parameter (`CLI/teacher_force.rs:39-47`). See §9.
 2. **[N]** There is no flag selecting the continuation (KV) provider on this path. The provider is always the CLI's declared default, alias `row`, identity `row/v1` (`CLI/teacher_force.rs:54` passes `None`; `CONT:29-35, 47-56, 125-134`).
 3. **[N]** There is no text-prompt input on this path. `exec` never tokenises (`CLI/exec.rs:10-15`; `CLI/args.rs:190-191`).
@@ -70,7 +73,7 @@ env -i PATH=/usr/bin:/bin HOME="$HOME" \
 
 1. **[N]** `--tokens` is a single string. The writer splits it on `,`, trims ASCII/Unicode whitespace from each item, **drops empty items**, and parses each remaining item with Rust's `u32` parser (`CLI/exec.rs:506-512`).
 2. **[N]** A parse failure, or an empty result, aborts the run before any weight is loaded and before any file is written (`CLI/exec.rs:81, 513-516`).
-3. **[I]** Consequences of the parser: `"1,,2"` and `"1,2,"` both mean `[1, 2]`; an optional leading `+` and leading zeros are accepted (Rust `u32::from_str`); values above 4294967295, negative values, hexadecimal and internal spaces are rejected. See OI-10.
+3. **[I]** Consequences of the parser: `"1,,2"` and `"1,2,"` both mean `[1, 2]`; an optional leading `+` and leading zeros are accepted (Rust `u32::from_str`); values above 4294967295, negative values, hexadecimal and internal spaces are rejected. See OI-10. **(third-party fixture)** all of these cases behaved as stated, and a non-breaking space is trimmed.
 4. **[N-H]** The harness SHOULD pass the ids in canonical form: unsigned decimal, no sign, no leading zeros (except `0` itself), separated by single commas, no spaces, no empty items. The harness MUST record the exact `--tokens` string it passed (§6).
 5. **[N]** An id `t` is accepted by the parser even if `t >= V`. It is refused when its step runs: the embedding lookup returns an error if `t >= rows(embedding table)` (`EX/prepared/accessors.rs:313-318`). The run then fails (§8). **(from B3)** The embedding table of this container has 151936 rows, so ids `0 ..= 151935` are executable, including ids the tokenizer never emits.
 
@@ -118,6 +121,7 @@ env -i PATH=/usr/bin:/bin HOME="$HOME" \
    - the session's position is the continuation state's counter, which starts at 0 for a fresh state (`EX/kv.rs:389-404`, `#[derive(Default)]`), is read at the start of each step (`EX/decode/run.rs:43`) and is set to `position + 1` at its end (`EX/decode/run.rs:674`);
    - each step consumes the next token (`CLI/teacher_force.rs:68-70`);
    - a step is refused unless the cached K/V ends exactly at its position (`EX/backend/step_calls.rs:107-125`), so no position is skipped or repeated.
+   - **(third-party fixture)** the dump of the first 8 ids was bit-identical to the first 8 rows of a 200-id dump, and row `i` matched an independent forward at position `i` (not `i+1`).
 4. **[N]** Row `i` holds the logits computed after consuming tokens `0 ..= i`, i.e. the distribution that predicts token `i+1` (`CLI/teacher_force.rs:19-20`). Row `N−1` is present: it predicts the token after the last supplied token and has no target in the sequence (`CLI/teacher_force.rs:32-38`). There are no prefill rows and no row before position 0.
 5. **[N-H]** A reader establishes identifiers only externally. The harness MUST hand the checker, with each dump, the exact `--tokens` list (or the corpus record it was generated from and the means to regenerate it byte for byte), and the reader MUST take `N` from that list and check it against the sidecar and the file size (§8.3).
 
@@ -160,8 +164,9 @@ followed by one newline (0x0A), with 2-space indentation.
 
 ### 7.2 Exit status
 
-1. **[N]** Exit status 0 means the command returned success; every error returned on this path prints `Error: <message>` on stderr and exits with status 1 (`MAIN:369-370, 455-459`).
-2. **[I]** A panic on the main worker thread propagates to `main`'s `expect` (`MAIN:356-362`); with Rust's default unwinding this ends the process with a non-zero status (101 by Rust convention). A signal (SIGINT, SIGTERM, SIGKILL) ends it with the signal's status. No signal handler is installed on this path (none found in `crates/larql-cli`).
+1. **[N]** Exit status 0 means the command returned success (`MAIN:455-459`). Errors returned by the command print `Error: <message>` on stderr and exit with status 1 (`MAIN:455-459`). Argument-parser (clap) rejections, such as conflicting or repeated flags, are reported by `Cli::parse_from` (`MAIN:378`), which exits the process itself with status **2** before any weight is loaded or any file is touched. The research-trampoline refusal also exits 2 (`MAIN:371-376`; `crates/larql-cli/src/trampoline.rs:54-56`). **(third-party fixture)** `--logit-dump` with `--generate`, and a repeated `--backend`, each exit 2.
+2. **[N]** A reader MUST require exit status 0 and MUST NOT give any meaning to a particular non-zero value.
+3. **[I]** A panic on the main worker thread propagates to `main`'s `expect` (`MAIN:356-362`); with Rust's default unwinding this ends the process with a non-zero status (101 by Rust convention). A signal (SIGINT, SIGTERM, SIGKILL) ends it with the signal's status. No signal handler is installed on this path (none found in `crates/larql-cli`). **(third-party fixture)** SIGKILL gave 137, SIGTERM 143, and SIGINT a killed-by-signal status.
 
 ### 7.3 Stdout lines
 
@@ -178,9 +183,11 @@ runtime compile: <n> tensor(s)[  — served entirely from stored bytes]
 projection plans: <plan> <calls> calls <GB> GB, ...
 ```
 
-1. **[N]** The `representation: ...` line is printed earlier, before execution (`CLI/exec.rs:94-102`).
-2. **[N]** The `runtime compile:` and `projection plans:` lines are printed **only if the whole run succeeded**, including the sidecar write (`CLI/exec.rs:130, 155-160`). The run-acceptance check of PROTOCOL "Baseline" (only `FusedKQuant` and `FusedBf16` in `projection plans:`) therefore can be applied only to a successful run.
-3. **[I]** Progress lines `  position <k>/<N>  (<s> s)` go to stderr every 32 positions and at the last one; `k` is a 1-based count (`CLI/teacher_force.rs:85-92`).
+1. **[N]** The `representation: <want>  source: ...` line is printed before execution, and only when the backend requests a stored representation (`want` is `Some`) (`CLI/exec.rs:94-102`). It is therefore printed **also on runs that later fail**, and its presence is not evidence of success. **(third-party fixture)** it appeared on every mid-run and post-load failure.
+2. **[N]** `runtime compile:` is printed only if (a) the whole run succeeded, including the sidecar write, **and** (b) the backend requests a stored representation (`want` is `Some`) (`CLI/exec.rs:130, 155-169`). `stored precision:` additionally requires at least one tensor bound at stored precision (`CLI/exec.rs:170-179`). `projection plans:` requires (a) and (b) and at least one projection plan with a non-zero call count in the executor's ledger (`CLI/exec.rs:180, 195-210`).
+3. **[N]** Under `--backend production-q8`, `want` is `Q8_0` (`CLI/prepare.rs:88-102`; `evidence/L1/AUDIT.md` item 1), so on a successful run `runtime compile:` and `projection plans:` are printed. Under `--backend production`, `want` is `None` and **none** of `representation:`, `runtime compile:`, `stored precision:` or `projection plans:` is printed, even on success. **(third-party fixture)** observed for both backends.
+4. **[N]** The run-acceptance check of PROTOCOL "Baseline" (only `FusedKQuant` and `FusedBf16` in `projection plans:`) can therefore be applied only to a successful `production-q8` run, and a reader MUST treat a missing `projection plans:` line as a failed check.
+5. **[I]** Progress lines `  position <k>/<N>  (<s> s)` go to stderr every 32 positions and at the last one; `k` is a 1-based count (`CLI/teacher_force.rs:85-92`).
 
 ## 8. Completeness and failure
 
@@ -188,9 +195,13 @@ projection plans: <plan> <calls> calls <GB> GB, ...
 
 1. **[N]** **Failure before the dump file is created** (argument parsing, token parsing, container preparation, weight loading, session construction: `CLI/exec.rs:81-92`; `CLI/teacher_force.rs:53-55`): the writer creates, truncates and writes nothing. **Any dump file and sidecar already at those paths from an earlier run are left unchanged.**
 2. **[N]** **Failure during the steps** (for example an out-of-range token id, `EX/prepared/accessors.rs:313-318`, or a vocabulary change, `CLI/teacher_force.rs:75-81`): the function returns early through `?`. The dump file then holds the rows completed so far: rows already pushed to the OS, plus the rows still in the write buffer, which the buffered writer's destructor attempts to flush on drop (`CLI/teacher_force.rs:66` uses `std::io::BufWriter`). No sidecar is written for this run, but **a sidecar from an earlier run at the same path survives** (§3.6). Exit status 1.
+   - **[I] (third-party fixture)** An out-of-range id at position `k > 0` left exactly `k` complete rows (ids `1,2,3,20000,5` gave 240,000 bytes = 3 × 80,000), exit 1, no sidecar.
+   - **[I] (third-party fixture)** An out-of-range id at position 0 left a **0-byte** dump file, because the file is created before the first step (§3.4).
+   - **[I] (third-party fixture)** A missing output directory failed after the weights were loaded, with exit 1 and no file. The message, `No such file or directory (os error 2)`, does not name the path.
+   - **[I] (third-party fixture)** After a good run, a mid-run failure without pre-run deletion truncated the dump to 2 complete rows and left the old sidecar (`positions: 4`) in place; a parse failure left the old dump and sidecar unchanged.
 3. **[N]** **I/O failure while writing a row** (for example a full disk; `CLI/teacher_force.rs:83`): the file may end in the middle of a row.
 4. **[N]** **Failure after the dump is complete:** if the sidecar write fails (`CLI/teacher_force.rs:131`), the dump file is complete but there is no new sidecar, and exit status is 1.
-5. **[I]** **Interruption by a signal:** buffered data is not flushed. With the pinned toolchain (`rust-toolchain.toml`, channel 1.98.0), `BufWriter`'s default capacity is 8 KiB and each value is 4 bytes, so the file length at interruption is normally a multiple of 8192 bytes. A row (607,744 bytes) is not a multiple of 8192, so an interrupted file normally ends mid-row. This depends on standard-library internals and is not a property a reader may rely on (OI-4).
+5. **[I]** **Interruption by a signal:** buffered data is not flushed. With the pinned toolchain (`rust-toolchain.toml`, channel 1.98.0), `BufWriter`'s default capacity is 8 KiB and each value is 4 bytes, so the file length at interruption is normally a multiple of 8192 bytes. A row (607,744 bytes) is not a multiple of 8192, so an interrupted file normally ends mid-row. This depends on standard-library internals and is not a property a reader may rely on (OI-4). **(third-party fixture)** SIGKILL, SIGTERM and SIGINT on an N = 4000 run each left a file whose size was a multiple of 8192 bytes and ended mid-row, with no sidecar.
 
 ### 8.2 Completeness markers
 
@@ -206,7 +217,10 @@ projection plans: <plan> <calls> calls <GB> GB, ...
    2. stdout contains `positions: <N>  vocab: <V>` and `wrote [<N>, <V>] f32 to <OUT>`, where `N` is the length of the recorded token list;
    3. the sidecar exists, parses as JSON, and has `positions == N`, `vocab == V`, `draft_depth == null`, `executed_layers == [0, model_layers]` and `max_format_env == "bf16"`;
    4. the dump file's size is exactly `4·N·V` bytes;
-   5. the run passed the PROTOCOL "Baseline" acceptance check on the `projection plans:` line.
+   5. stdout contains `representation: Q8_0  source: stored` and `runtime compile: 0 tensor(s)`, and the run passed the PROTOCOL "Baseline" acceptance check on the `projection plans:` line (a missing line fails it, §7.3.4);
+   6. the harness confirmed, from its recorded argv, that the argument list was exactly the conforming one (§2.2.0).
+
+   **[I] (third-party fixture)** A procedure implementing these checks accepted every conforming run and rejected every failure mode tried, including stale files with deletion skipped, `--bank`, `--draft-depth`, a silently ignored `--speculate`, wrong environment, non-canonical `--tokens`, and a host-dependent `BlasF32` head. In the stale cases only exit status, stdout and a no-slack modification-time check distinguished old files from a new success, so pre-run deletion (§8.3.1) is the primary guard.
 4. **[N]** A reader MUST reject a file whose size is not a multiple of `4·V`, and MUST NOT interpret a trailing partial row. A file of `4·k·V` bytes with `k < N` is an incomplete run and MUST be rejected as a whole; its first `k` rows MUST NOT be scored as a partial result unless the protocol says otherwise.
 5. **[N]** For this profile, a reader SHOULD also require `V == 151936` **(from B3)**. A vocabulary-width mismatch with the reference makes the comparison invalid (PROTOCOL "A2 logit-match details").
 
@@ -231,6 +245,8 @@ projection plans: <plan> <calls> calls <GB> GB, ...
 4. **[N] The KV cache is unbounded.** The `row/v1` provider appends each position's K and V rows to growable vectors with no capacity limit (`EX/kv.rs:389-410, 459-463`).
 5. **[N] Attention reads every earlier position.** For a `"full"` span the first readable key position is 0 (`EX/kv.rs:74-79`), so the step at position `p` attends to keys `0 ..= p` (`EX/production/helpers.rs:228-234`). **(from B3)** All 28 layers are `"full"` (B3 §17.5).
 
+6. **[I] (third-party fixture)** On a fixture with `max_position_embeddings = 128` and `N = 200`, the run exited 0, all values were finite, and positions 128–199 agreed with an independent float64 forward using unbounded RoPE as well as positions 0–127 did. No refusal, clamp or wrap was observed. This was not tested at subject scale, and the resource figures in §10.3.2 were not tested.
+
 ### 10.3 Consequences for the protocol
 
 1. **[I]** Under the owner's ruling (D11 draft §12), LARQL does not refuse extended positions, so a LARQL run never yields an "unsupported comparison" on LARQL's side for that reason. Whether "computes by the same formula, with no declaration" counts as "explicitly defined and supported positional behaviour" is not a question the source answers: LARQL declares nothing about positions beyond the native context. See OI-5.
@@ -249,6 +265,7 @@ projection plans: <plan> <calls> calls <GB> GB, ...
    - then, if declared, a binary32 multiplier and a softcap `cap·tanh(x/cap)` (`EX/production/plan_backend.rs:333-340`).
    **(from B3)** This container declares neither the multiplier nor the softcap (B3 §17.6), so neither is applied.
 3. **[I]** With the pinned environment, the head runs `FusedBf16`: BF16 weights widened exactly to binary32, binary32 activation, NEON fused multiply-add in four 4-lane accumulators, then a horizontal sum and a scalar tail (`EX/cpu/kernels.rs:86-102, 701-751`). Without `LARQL_CPU_MAX_FORMAT=bf16`, the head is re-quantised and runs `FusedQ8` (`evidence/L1/AUDIT.md`, headline finding). That changes the values written, not the format; such a run is invalid under PROTOCOL "Baseline".
+4. **[I] Host dependence of the head's kernel (C5).** For a BF16 matrix the production plan is chosen by size against the host's L2 cache size, read from `hw.perflevel0.l2cachesize` (`EX/cpu/physical/projection.rs:541-549`). A matrix whose **f32 image is smaller than L2** runs `BlasF32`, whatever `LARQL_CPU_MAX_FORMAT` says (`EX/cpu/physical/projection.rs:203-209`). The `bf16` cap matters only when the BF16 image is at least L2 (`EX/cpu/physical/projection.rs:218`). The subject's head has 155,582,464 elements, so its f32 image is about 622 MB and its BF16 image about 311 MB, far above any current L2; `FusedBf16` is therefore expected under the pin. The `projection plans:` check is nevertheless a per-host observation, and a fixture used to test the acceptance procedure needs a head whose BF16 image is at least the host's L2. **(third-party fixture)** a fixture with a 10.24 MB f32 head ran `BlasF32` on a 16 MiB-L2 host and was correctly rejected by the acceptance check.
 
 ## 12. Determinism and threads
 
@@ -258,7 +275,7 @@ projection plans: <plan> <calls> calls <GB> GB, ...
    - **stored Q8_0 projections** (`FusedKQuant`, library-owned threading, `EX/cpu/kernels.rs:413-444`; `EX/cpu/executor.rs:183-195`): rows in 32-row chunks on the rayon global pool (`RAYON_NUM_THREADS`), each row a sequential binary32 sum in a fixed order (`KQ:58, 67-109`);
    - **attention at a decode step:** a serial loop over heads and key positions (`EX/production/select.rs:215-251`; `EX/production/helpers.rs:228-266`);
    - **RoPE:** a serial loop (`EX/production.rs:302-311`; `EX/kernels.rs:147-158`).
-3. **[I]** By inspection, then, the dump's values do not depend on `LARQL_CPU_WORKERS`, `RAYON_NUM_THREADS` or scheduling. This is a reading of the code, not a test (OI-9). The protocol pins both variables to 12 anyway.
+3. **[I]** By inspection, then, the dump's values do not depend on `LARQL_CPU_WORKERS`, `RAYON_NUM_THREADS` or scheduling. This is a reading of the code. **(third-party fixture)** an N = 200 dump was bit-identical across two Baseline runs and at `LARQL_CPU_WORKERS`/`RAYON_NUM_THREADS` = 1, 4 and 12, with the head split across the executor pool at 4 and 12; the sidecars differed only in the timing fields (OI-9). The protocol pins both variables to 12 anyway.
 4. **[I]** The values depend on the binary, the CPU architecture (the NEON path is chosen at compile time for aarch64, `EX/cpu/kernels.rs:701-713`) and the platform maths library used for `powf`, `sin` and `cos` in RoPE (OI-8).
 
 ## 13. Open items
@@ -268,22 +285,35 @@ projection plans: <plan> <calls> calls <GB> GB, ...
 | OI-1 | **No identifiers in the output.** Neither the dump, nor the sidecar, nor stdout records token ids. Row-to-position mapping rests on the harness's record of `--tokens` (§6.5) | Writer design; cannot be fixed by a reader |
 | OI-2 | **Stale files survive.** A run that fails before `File::create` leaves an older dump and sidecar untouched; a run that fails mid-way leaves an older sidecar beside a new partial dump (§8.1) | Writer design; mitigated only by the harness deleting both files first (§8.3.1) |
 | OI-3 | **No in-file completeness marker or checksum.** The sidecar is written after the dump but non-atomically. Completeness is inferred from exit status, stdout, sidecar and size together (§8.2, §8.3) | Writer design |
-| OI-4 | **Truncation granularity.** Whether a failed or interrupted file ends on a row boundary depends on where the failure occurs and on `BufWriter` internals (§8.1.2, §8.1.3, §8.1.5). The 8 KiB figure is a standard-library detail at toolchain 1.98.0, not a LARQL statement | Standard library behaviour, not specified by LARQL |
-| OI-5 | **"Defined and supported" at extended positions.** LARQL computes at every position by one formula, but declares no support for positions beyond the native context and enforces no limit. Whether that satisfies the owner's "explicitly defined and supported" condition is a protocol decision (§10.3.1) | The source defines behaviour by code but makes no support claim |
-| OI-6 | **Expected sidecar values not observed.** `executed_layers == [0, 28]`, `model_layers == 28` and `draft_depth == null` are derived from code (`EX/prepared/accessors.rs:463-465`) and the B3 layer count, not from an emitted file | No LARQL run was allowed. A third party can confirm on a non-subject run |
-| OI-7 | **No emitted file was inspected.** Every statement here comes from source. The byte layout (§4) has not been checked against a real dump | As OI-6 |
+| OI-4 | **Truncation granularity (partly settled).** **(third-party fixture)** A mid-run error left a file ending on a row boundary (`k` complete rows); a signal left a multiple of 8192 bytes, mid-row (§8.1). Both observed at toolchain 1.98.0. They remain standard-library behaviour, not LARQL statements, so a reader still rejects anything not exactly `4·N·V` | Standard-library behaviour; the reader rule makes it irrelevant to acceptance |
+| OI-5 | **"Defined and supported" at extended positions.** **(third-party fixture)** Computation beyond the declared context was observed on the fixture (§10.2.6). LARQL computes at every position by one formula, but declares no support for positions beyond the native context and enforces no limit. Whether that satisfies the owner's "explicitly defined and supported" condition is a protocol decision (§10.3.1) | The source defines behaviour by code but makes no support claim |
+| OI-6 | **Expected sidecar values (partly settled).** **(third-party fixture)** `draft_depth: null`, `executed_layers: [0, L]`, `model_layers: L` observed for L = 2. `--draft-depth L` records `draft_depth: L` with a dump bit-identical to the full run, so only the sidecar shows the flag. The subject value L = 28 remains expected, not observed | Not observable without a subject run |
+| OI-7 | **Closed for the format.** **(third-party fixture)** Byte layout, endianness, shape, row and column order and size were checked against emitted files and an independent forward (§4–§6). Subject-specific values (V = 151936, 28 layers) remain derived | — |
 | OI-8 | **Platform maths library.** RoPE uses binary64 `powf`, `sin` and `cos` from the platform library. The values may change with the OS or library version even with the binary fixed | The source does not pin the maths library. The protocol may need to pin the OS build |
-| OI-9 | **Thread-independence is by inspection only** (§12.3). No test of a dump under different worker counts was run or read | No run allowed. A third party can test it on a non-subject model |
-| OI-10 | **Lenient token parsing.** Empty items are dropped silently; `+` and leading zeros are accepted (§2.3). A malformed list can therefore run as a different, shorter sequence without error | Writer design; mitigated by canonical harness input and by checking `positions == N` |
-| OI-11 | **`--bank` silently overrides `--logit-dump`** (§2.2) | Writer design; mitigated by the forbidden-flag rule |
+| OI-9 | **Closed on the fixture.** **(third-party fixture)** Dumps bit-identical at worker counts 1, 4 and 12 and across repeated runs (§12.3). This shows the property for that binary and those shapes, not for the subject's | Subject shapes not tested |
+| OI-10 | **Lenient token parsing (confirmed).** **(third-party fixture)** Every listed case behaves as §2.3 says: `5,,9` silently runs N = 2; `+5,007,9` runs the same sequence as `5,7,9`, so only a canonical-string check catches it; a non-breaking space is trimmed | Writer design; mitigated by canonical harness input, the canonical-string check and `positions == N` |
+| OI-11 | **`--bank` silently overrides `--logit-dump` (confirmed).** **(third-party fixture)** Exit 0, nothing written at the `--logit-dump` path, no `positions:`/`wrote [` lines | Writer design; mitigated by the exact-argv rule (§2.2.0) |
 | OI-12 | **Non-finite logits are written without comment** (§4.2). Whether a NaN or infinity in a dump is a run failure or a scored value is not decided by the writer | Protocol decision |
-| OI-13 | **Unescaped environment value in the sidecar** (§7.1). A `LARQL_CPU_MAX_FORMAT` value containing `"` or `\` makes the sidecar invalid JSON | Writer design; harmless under the pinned value `bf16` |
-| OI-14 | **`--help` not consulted.** The release binary was absent from the worktree, so the flag list comes only from `CLI/args.rs:181-331` and `CLI/plugins.rs:36-57` | A third party with the pinned binary can compare `vindex3 exec --help` |
-| OI-15 | **Resource failures at large `N`.** A run near `N = 40,960` needs roughly 9.4 GB of KV state and writes about 24.9 GB (§9.4, §10.3.2). Whether a resource failure counts as an unsupported comparison, a harness failure or something else is not decided | Protocol decision |
-| OI-16 | **The engine string does not identify the arm.** `engine` is the same for `production` and `production-q8` (§7.1). The arm is shown only by the command line and the `representation:` stdout line | Writer design; the harness archives the command line and stdout |
+| OI-13 | **Unescaped environment value in the sidecar (confirmed).** **(third-party fixture)** `LARQL_CPU_MAX_FORMAT='bf"16'` gave exit 0 and an invalid-JSON sidecar | Writer design; harmless under the pinned value `bf16` |
+| OI-14 | **Closed.** **(third-party fixture)** `vindex3 exec --help` lists exactly the 22 flags of `CLI/args.rs:181-331` plus `CLI/plugins.rs:36-57`. Some of them are accepted and ignored with `--logit-dump` (§2.2, C2) | — |
+| OI-15 | **Resource failures at large `N`.** Not tested by the fixture. A run near `N = 40,960` needs roughly 9.4 GB of KV state and writes about 24.9 GB (§9.4, §10.3.2). Whether a resource failure counts as an unsupported comparison, a harness failure or something else is not decided | Protocol decision |
+| OI-16 | **The engine string does not identify the arm (confirmed).** **(third-party fixture)** `--backend production` writes the same `engine` string; it also prints no `representation:` line (§7.3.3) | Writer design; the harness archives the argv and stdout |
+
+## 14. Changes against revision 1
+
+| # | Section | Change |
+|---|---|---|
+| C1 | §7.2 | Exit status 2 for argument-parser (clap) rejections and the trampoline refusal, not 1. A reader requires 0 and gives no meaning to particular non-zero values |
+| C2 | §2.2 | New row: `--speculate`, `--stop-at-eos`, `--residency-curve`, `--profile` (and the `residency_curve`-dependent flags) are accepted with `--logit-dump` and ignored; MUST NOT be passed. New §2.2.0: the harness passes exactly the conforming argv |
+| C3 | §7.3 | Exact print conditions for `representation:`, `runtime compile:`, `stored precision:` and `projection plans:`; `representation:` also prints on runs that later fail; none print under `--backend production`; a missing `projection plans:` line fails acceptance |
+| C4 | §8.1 | Observed boundary cases: `k` complete rows for a bad id at position `k`; 0-byte file for position 0; missing directory fails after load with no file; signal truncation at a multiple of 8192 bytes, mid-row |
+| C5 | §11.4 | New informative note: the head's kernel depends on the host's L2 size; `FusedBf16` expected for the subject's ~622 MB f32 head, but the check is per host |
+| — | Header, §0 | Revision 2 status; the **(third-party fixture)** label defined |
+| — | §6, §8.3, §10.2.6, §12.3, §13 | Third-party fixture evidence added; reader procedure gains the stored-representation lines and the exact-argv condition; OI-4, -6, -7, -9, -10, -11, -13, -14, -16 updated or closed; OI-5 and OI-15 annotated. No byte-format statement changed |
 
 ## Revision history
 
 | Revision | Date | Change |
 |---|---|---|
 | 1 | 2026-10-31 | First draft, from LARQL source at `2536bb79` only. Not admitted |
+| 2 | 2026-10-31 | Applies corrections C1–C5 of the third-party check (`THIRD-PARTY-CHECK.md`, `4bce40d`) and records its fixture evidence (§14). Not admitted; requires third-party confirmation of the corrections |
