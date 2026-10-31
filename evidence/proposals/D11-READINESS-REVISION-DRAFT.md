@@ -112,6 +112,10 @@ Qwen3-1.7B is adopted only after the profile check in 5.6, on the owner's instru
   that LARQL shows on both the pilot and the subject is absorbed into c and k and cannot be detected by T3. A
   systematic LARQL error that is the same on both routes is invisible to T3.
 - **What T3 can detect:** deviations on the subject that exceed what the pilot exhibited.
+- **T3 is less sensitive at long positions** (D12, audit finding m1). The yardstick |ref₃₂ − ref₆₄| contains ref₃₂'s own
+  binary32 RoPE angle error: about 12× its other f32 error at positions 1024–2047, and about 2e-3 in the RoPE table
+  at 40,959. So T3 may be substantially more permissive there. Results are reported per position band, and separately
+  for native (≤ 32,767) and extended (≥ 32,768, a labelled stress experiment) positions.
 - **What remains for systematic errors:** E1, the A3 self-check laws, the A4 fault matrix and the reference-forward
   audit. T3 is not one of them.
 - **Required wording:** every Stage A report states the above, and also names the route: "calibrated on an
