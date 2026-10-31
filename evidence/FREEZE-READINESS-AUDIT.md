@@ -56,3 +56,22 @@ gate, what exists in the repositories and what does not. It contains no verdict 
 - **The checker has not been run** on LARQL's Qwen3 container or on its logit dumps.
 - **The T3 pilot has not been run.**
 - **No Phase 1 measurement is Stage A evidence.**
+
+## Corrections after freeze review 1 (2026-10-31)
+
+Freeze review 1 (`evidence/freeze-review/REVIEW-1-8d2ca58.md`) returned **REVISE AND RE-REVIEW** on snapshot
+`8d2ca58`. It found these statements in the audit above inaccurate or incomplete. They are kept as written and
+corrected here:
+- **Unpushed commits:** there were 52 at `8d2ca58`, not 50.
+- **"Reviewer and checker are kept apart":** only the checker-to-reviewer direction is enforced, by mechanism.
+- **"The access log was reviewed":** only for revision 7's author, and only for the clone folders.
+- **TRUST-BOUNDARY item 2:** still listed as open there.
+- **G1:** omits the approval-record requirement in `evidence/B1/SETUP.md`.
+- **G4:** called "fixed" without noting:
+  - the unpinned LARQL and ggml SHAs;
+  - the SmolLM2-135M pilot text still in force;
+  - T3's "Accelerate" rationale, which the L1 audit contradicts;
+  - the undecided AMB-012 and AMB-014.
+- **B3:** PROTOCOL.md and `draft.json` still show it as open or pending.
+- **Isolation re-tests:** the later ones probe fewer paths, and they are the checker session's own reports.
+- **The remote:** `evidence/B1/SETUP.md`'s table still says "Private remote".
