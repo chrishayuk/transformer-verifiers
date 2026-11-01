@@ -1,0 +1,31 @@
+[23:29:04] identities: verified
+[23:29:07] container_integrity: verified
+[23:29:16] configuration: comparable
+[23:29:48] reference_decoded_q8_0: comparable
+[23:30:14] larql_execution: completed
+[23:30:14] ingestion: accepted
+[23:30:14] E2: comparable
+[23:30:42] reference_bf16: comparable
+[23:30:43] E3: comparable
+[23:30:43] reference_quantisation_drift: computed
+
+larql-verify compare  (n_tokens=128, DEVELOPMENT ONLY, D15)
+  Identities:               verified
+  Container integrity:      verified
+  Configuration:            comparable
+  Reference (decoded Q8_0): comparable
+  LARQL execution:          completed
+  Ingestion:                accepted  (content_valid only; not execution_authenticated)  dev overrides: DO-1
+  E2  LARQL vs reference, same decoded weights
+      max |dlogit|: 0.000228405   RMS (mean over positions): 2.17456e-05
+      KL ref||cand mean / max: 1.73622e-10 / 3.5429e-09 nats
+      top-1 agreement: 1 (0 disagree of 128); non-comparable positions: []
+  E3  LARQL vs reference, BF16 checkpoint
+      max |dlogit|: 2.03745   RMS (mean over positions): 0.157609
+      KL ref||cand mean / max: 0.00677723 / 0.072009 nats
+      top-1 agreement: 0.992188 (1 disagree of 128); non-comparable positions: []
+  ctx reference Q8_0 vs reference BF16 (no LARQL)
+      max |dlogit|: 2.03747   RMS (mean over positions): 0.157607
+      KL ref||cand mean / max: 0.00677709 / 0.0720157 nats
+      top-1 agreement: 0.992188 (1 disagree of 128); non-comparable positions: []
+  Verdict: MEASURED  (E2 and E3 measured)

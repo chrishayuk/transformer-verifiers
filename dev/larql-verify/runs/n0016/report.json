@@ -1,0 +1,444 @@
+{
+  "created": "2026-11-01T23:27:26.053769+00:00",
+  "designation": "DEVELOPMENT ONLY (D15). Not blind acceptance evidence for LARQL-VERIFY-001. Ingestion is content_valid only, not execution_authenticated.",
+  "host": {
+    "machine": "arm64",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.12.11"
+  },
+  "kl_direction": "D_KL(P_reference || P_candidate), nats; candidate is LARQL (E2, E3) or the decoded-Q8_0 reference (drift)",
+  "n_tokens": 16,
+  "refcheck": {
+    "checker_commit": "c2070c30ce53521becae8762c8a9e8548255d81c",
+    "refcheck_tree": "5be9d3612216ded1db99be11e9dde69380cb0a6e"
+  },
+  "schema": "larql-verify-dev-report/1",
+  "stages": {
+    "E2": {
+      "headline": {
+        "kl_max": 5.043124092029826e-10,
+        "kl_mean": 9.031983004135201e-11,
+        "max_abs_diff_max": 0.00014865398406982422,
+        "max_abs_diff_median": 6.914138793945312e-05,
+        "n_comparable_positions": 16,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 2.8542796010100112e-05,
+        "rms_diff_mean": 1.5852084605243347e-05,
+        "top1_agreement": 1.0
+      },
+      "per_position": [
+        {
+          "kl": 2.0296866576809006e-10,
+          "max_abs_diff": 0.00012302398681640625,
+          "rms_diff": 2.127449048999737e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 14582,
+          "top1_candidate_ties": 1,
+          "top1_reference": 14582,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 2.7587450233152766e-11,
+          "max_abs_diff": 3.6716461181640625e-05,
+          "rms_diff": 8.228597255247346e-06,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 715,
+          "top1_candidate_ties": 1,
+          "top1_reference": 715,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 2.676142122661014e-11,
+          "max_abs_diff": 3.4809112548828125e-05,
+          "rms_diff": 6.984284197886261e-06,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 25585,
+          "top1_candidate_ties": 1,
+          "top1_reference": 25585,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 3.2552231198945424e-12,
+          "max_abs_diff": 4.9591064453125e-05,
+          "rms_diff": 9.548178089946077e-06,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 11,
+          "top1_candidate_ties": 1,
+          "top1_reference": 11,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 1.1273696911833932e-11,
+          "max_abs_diff": 3.743171691894531e-05,
+          "rms_diff": 8.355140325437567e-06,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 786,
+          "top1_candidate_ties": 1,
+          "top1_reference": 786,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 7.18400669646158e-11,
+          "max_abs_diff": 6.103515625e-05,
+          "rms_diff": 1.3254587010610957e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 353,
+          "top1_candidate_ties": 1,
+          "top1_reference": 353,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 1.0211459996232863e-13,
+          "max_abs_diff": 5.0067901611328125e-05,
+          "rms_diff": 1.0737329805938055e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 220,
+          "top1_candidate_ties": 1,
+          "top1_reference": 220,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 1.556040561035373e-14,
+          "max_abs_diff": 6.008148193359375e-05,
+          "rms_diff": 1.39646276389853e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 17,
+          "top1_candidate_ties": 1,
+          "top1_reference": 17,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 3.1729222206557216e-14,
+          "max_abs_diff": 6.914138793945312e-05,
+          "rms_diff": 1.6045359190400594e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 13,
+          "top1_candidate_ties": 1,
+          "top1_reference": 13,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 4.094216428432542e-11,
+          "max_abs_diff": 6.961822509765625e-05,
+          "rms_diff": 1.560982024776802e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 15,
+          "top1_candidate_ties": 1,
+          "top1_reference": 15,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 1.0999992222534082e-10,
+          "max_abs_diff": 9.441375732421875e-05,
+          "rms_diff": 2.201376495996438e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 11,
+          "top1_candidate_ties": 1,
+          "top1_reference": 11,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 5.043124092029826e-10,
+          "max_abs_diff": 0.00014865398406982422,
+          "rms_diff": 2.8016051678940747e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 476,
+          "top1_candidate_ties": 1,
+          "top1_reference": 476,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 1.5084018197922847e-14,
+          "max_abs_diff": 0.00012111663818359375,
+          "rms_diff": 2.8542796010100112e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 220,
+          "top1_candidate_ties": 1,
+          "top1_reference": 220,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 7.602555725362374e-12,
+          "max_abs_diff": 9.918212890625e-05,
+          "rms_diff": 1.4759832684195622e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 17,
+          "top1_candidate_ties": 1,
+          "top1_reference": 17,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 4.307339648777301e-11,
+          "max_abs_diff": 8.678436279296875e-05,
+          "rms_diff": 1.8973454542565556e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 15,
+          "top1_candidate_ties": 1,
+          "top1_reference": 15,
+          "top1_reference_ties": 1
+        },
+        {
+          "kl": 3.9533582026567345e-10,
+          "max_abs_diff": 8.505582809448242e-05,
+          "rms_diff": 1.7325039555909567e-05,
+          "status": "comparable",
+          "top1_agree": true,
+          "top1_candidate": 15,
+          "top1_candidate_ties": 1,
+          "top1_reference": 15,
+          "top1_reference_ties": 1
+        }
+      ],
+      "reasons": null,
+      "status": "comparable",
+      "summary": {
+        "aggregate_status": "computed",
+        "comparable_set_empty": false,
+        "kl": {
+          "max": 5.043124092029826e-10,
+          "mean": 9.031983004135201e-11,
+          "min": 1.5084018197922847e-14,
+          "n": 16,
+          "q0.5": 2.676142122661014e-11,
+          "q0.9": 3.9533582026567345e-10,
+          "q0.99": 5.043124092029826e-10,
+          "q0.999": 5.043124092029826e-10
+        },
+        "max_abs_diff": {
+          "max": 0.00014865398406982422,
+          "mean": 7.667019963264465e-05,
+          "min": 3.4809112548828125e-05,
+          "n": 16,
+          "q0.5": 6.914138793945312e-05,
+          "q0.9": 0.00012302398681640625,
+          "q0.99": 0.00014865398406982422,
+          "q0.999": 0.00014865398406982422
+        },
+        "n_comparable_positions": 16,
+        "n_non_comparable_positions": 0,
+        "n_positions": 16,
+        "n_top1_agree": 16,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff": {
+          "max": 2.8542796010100112e-05,
+          "mean": 1.5852084605243347e-05,
+          "min": 6.984284197886261e-06,
+          "n": 16,
+          "q0.5": 1.4759832684195622e-05,
+          "q0.9": 2.8016051678940747e-05,
+          "q0.99": 2.8542796010100112e-05,
+          "q0.999": 2.8542796010100112e-05
+        },
+        "top1_agreement": 1.0
+      }
+    },
+    "E3": {
+      "headline": {
+        "kl_max": 0.05664834125469733,
+        "kl_mean": 0.006475694266865134,
+        "max_abs_diff_max": 2.0374529361724854,
+        "max_abs_diff_median": 0.46282875537872314,
+        "n_comparable_positions": 16,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3637189461843652,
+        "rms_diff_mean": 0.1250542594160371,
+        "top1_agreement": 1.0
+      },
+      "reasons": null,
+      "status": "comparable",
+      "summary": {
+        "aggregate_status": "computed",
+        "comparable_set_empty": false,
+        "kl": {
+          "max": 0.05664834125469733,
+          "mean": 0.006475694266865134,
+          "min": 1.2038384779138506e-07,
+          "n": 16,
+          "q0.5": 0.0014962554107833565,
+          "q0.9": 0.01926577138671135,
+          "q0.99": 0.05664834125469733,
+          "q0.999": 0.05664834125469733
+        },
+        "max_abs_diff": {
+          "max": 2.0374529361724854,
+          "mean": 0.6035224795341492,
+          "min": 0.2598130702972412,
+          "n": 16,
+          "q0.5": 0.46282875537872314,
+          "q0.9": 0.8459475040435791,
+          "q0.99": 2.0374529361724854,
+          "q0.999": 2.0374529361724854
+        },
+        "n_comparable_positions": 16,
+        "n_non_comparable_positions": 0,
+        "n_positions": 16,
+        "n_top1_agree": 16,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff": {
+          "max": 0.3637189461843652,
+          "mean": 0.1250542594160371,
+          "min": 0.05540661141638622,
+          "n": 16,
+          "q0.5": 0.10351012454307354,
+          "q0.9": 0.17956216218746804,
+          "q0.99": 0.3637189461843652,
+          "q0.999": 0.3637189461843652
+        },
+        "top1_agreement": 1.0
+      }
+    },
+    "configuration": {
+      "mismatched_fields": [],
+      "reasons": [],
+      "status": "comparable",
+      "unresolved_assumptions": [],
+      "unresolved_fields": []
+    },
+    "container_integrity": {
+      "executed_tensors": 311,
+      "quantised_tensors": 196,
+      "status": "verified",
+      "warnings": []
+    },
+    "identities": {
+      "container_files": {
+        "files": 11,
+        "ok": true,
+        "problems": []
+      },
+      "container_sha256": "7309e6054bf2939396b0f9cdfa944fc0a32bbb1fa50c5bae285c030c230fcadf",
+      "executable": {
+        "larql_commit": "2536bb79b199b1115445678e3e82c400b0b3fd07",
+        "matches_l1_baseline_binary": true,
+        "path": "/Users/christopherhay/chris-source/larql-l1-2536bb79/target/release/larql",
+        "sha256": "4d80dd42c4b50dd83c35d4a3c2d273e12a95d31dd4816c51ca2323dfc8462322"
+      },
+      "snapshot": {
+        "files": 9,
+        "status": "verified"
+      },
+      "status": "verified"
+    },
+    "ingestion": {
+      "binding_problems": [],
+      "dev_overrides": [
+        {
+          "id": "DO-1",
+          "waived_reason": {
+            "clause": "spec \u00a77.3, \u00a78.3.3.2, \u00a78.3.3.5",
+            "code": "stdout_line_mismatch",
+            "message": "stdout line 'representation: Q8_0  source: stored  objects from a compiled pack: 1/4', required 'representation: Q8_0  source: stored'"
+          }
+        }
+      ],
+      "error": null,
+      "execution_authenticated": false,
+      "property": "content_valid",
+      "reasons": [],
+      "status": "accepted"
+    },
+    "larql_execution": {
+      "projection_plans": [
+        [
+          7,
+          "projection plans: FusedBf16 16 calls 4.98 GB, FusedKQuant 3136 calls 7.49 GB"
+        ]
+      ],
+      "record": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/n0016/larql.run.json",
+      "seconds": 12.3,
+      "status": "completed"
+    },
+    "reference_bf16": {
+      "errors": [],
+      "reasons": [],
+      "seconds": 21.0,
+      "status": "comparable"
+    },
+    "reference_decoded_q8_0": {
+      "errors": [],
+      "reasons": [],
+      "seconds": 31.4,
+      "status": "comparable"
+    },
+    "reference_quantisation_drift": {
+      "headline": {
+        "kl_max": 0.05664833107118871,
+        "kl_mean": 0.0064753214538447335,
+        "max_abs_diff_max": 2.0374746322631836,
+        "max_abs_diff_median": 0.462837815284729,
+        "n_comparable_positions": 16,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.36371992192476854,
+        "rms_diff_mean": 0.12505380049764164,
+        "top1_agreement": 1.0
+      },
+      "note": "context only: no LARQL involved",
+      "status": "computed",
+      "summary": {
+        "aggregate_status": "computed",
+        "comparable_set_empty": false,
+        "kl": {
+          "max": 0.05664833107118871,
+          "mean": 0.0064753214538447335,
+          "min": 1.2039874043343962e-07,
+          "n": 16,
+          "q0.5": 0.0014961088626906796,
+          "q0.9": 0.01926412099314747,
+          "q0.99": 0.05664833107118871,
+          "q0.999": 0.05664833107118871
+        },
+        "max_abs_diff": {
+          "max": 2.0374746322631836,
+          "mean": 0.603532999753952,
+          "min": 0.25980234146118164,
+          "n": 16,
+          "q0.5": 0.462837815284729,
+          "q0.9": 0.8459851741790771,
+          "q0.99": 2.0374746322631836,
+          "q0.999": 2.0374746322631836
+        },
+        "n_comparable_positions": 16,
+        "n_non_comparable_positions": 0,
+        "n_positions": 16,
+        "n_top1_agree": 16,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff": {
+          "max": 0.36371992192476854,
+          "mean": 0.12505380049764164,
+          "min": 0.05540409672961635,
+          "n": 16,
+          "q0.5": 0.1035059613346071,
+          "q0.9": 0.17956362957148708,
+          "q0.99": 0.36371992192476854,
+          "q0.999": 0.36371992192476854
+        },
+        "top1_agreement": 1.0
+      }
+    }
+  },
+  "text_source": "upstream snapshot LICENSE, first 16 tokens, no special tokens",
+  "token_ids_sha256": "15910650625456ae6e3a5cacad14238d3a8735898ff2db4305b5b3fa6ac694b5",
+  "verdict": "MEASURED",
+  "verdict_reason": "E2 and E3 measured"
+}
