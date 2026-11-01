@@ -292,3 +292,27 @@ clarification 1 (`bcd7613`, `ulp₃₂` confirmed) postdates the snapshot.
   - **The owner decides.** If it is "not a pass", the checker is corrected in a separate run.
 - **AMB-031a / reviewer question 51, "beyond the binary32 finite range".** The checker and the corpus author, working
   independently, both read it as \|ref₆₄\| > FLT_MAX. Two hidden positions depend on the reading.
+
+## Checker run 13: 2026-11-01, `b8d64ab` and `80608c3` (D12 clarification 2: the T3 outcome rule). Audited and pinned, NOT pushed
+
+**The run:** snapshot `7f1b246` (PROTOCOL.md `76504d78…`, verified; the admitted logit-dump specification inside, not
+implemented in this run), settings `c61f3ea9…`. Brief: `evidence/checker-briefs/checker-run-13-brief.md`. Log:
+`checker-run-13.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 1f82e64`) | Clean: 2 commits, no trailers, lockfile unchanged, environment matches, no new imports |
+| Scope | `refcheck/t3.py` (`summarise` and the definition string), its tests, README section 8, AMBIGUITIES. Nothing else |
+| Outcome rule | `empty_comparable_set` when no evaluated position is comparable; otherwise `fail` on any comparable violation; otherwise `incomplete` if any evaluated position is non-comparable; otherwise `pass`. The same rule applies per band and class. `coverage_complete` is in every summary. Bands and classes with no evaluated position keep `no_evaluated_positions` |
+| Representability | Non-comparable exactly when \|ref₆₄\| > FLT_MAX, compared on the binary64 value. FLT_MAX is asserted at import to equal (2 − 2⁻²³)·2¹²⁷. Tested at ±FLT_MAX (in range) and at ±(FLT_MAX + 2⁷⁵) (non-comparable) |
+| `ulp₃₂` | Unchanged, and matches clarification 1. Tested at every power of two across both branches |
+| Tests, rerun by the publisher with `-W error` | 519, OK (514 at `1f82e64`) |
+
+**Pin.** `80608c3` is the checker that corpus revision 8 is sealed and scored against. `1f82e64` is preserved.
+
+**New item, for the owner: AMB-032.**
+- **The tension:** clarification 2 names "incomplete inputs" as a per-position reason, while D12 requires an incomplete
+  triple to be refused before any verdict. The checker refuses at triple level, so no accepted triple can have a
+  per-position incomplete input.
+- **Why it is safe:** either reading avoids a false pass.
+- **Still open:** the question becomes live with the future dump reader.

@@ -1,0 +1,56 @@
+The overall T3 outcome rule in `refcheck/t3.py` is corrected to clarification 2: a non-comparable position can no longer leave a `pass`. The suite went from 514 tests to 519, all passing, and the work is in two commits, not pushed.
+
+The protocol snapshot hash matched `76504d78…5e7c` before I started.
+
+## Changes
+**`refcheck/t3.py`** (`summarise`, which builds the overall, band and class summaries):
+- **New outcome:** I added `incomplete`.
+- **New field:** every summary now has `coverage_complete`. It is true only when the group has evaluated positions and none of them is non-comparable. This makes the incomplete coverage explicit next to a `fail`, as the clarification requires; before, you could only infer it from the counts.
+- **Per-position reasons are kept:** `non_finite` (with NaN and ±inf counts for each array) and `ref64_above_binary32_range`.
+- **One small change outside the outcome rule:** the `ULP32_DEFINITION` string in the output said "proposed, awaiting owner confirmation". That is no longer true, so it now states the confirmed definition and the FLT_MAX rule. Nothing it calculates changed.
+- **Unchanged:** the reference numerics, the comparability gate, the refusal logic, the metrics and the f64 guard. I did not read or implement anything for the logit-dump specification.
+
+**`tests/test_t3.py`:**
+- Three assertions that encoded the old rule now expect `incomplete`: the non-finite test, the `early` band test and the native class.
+- Five new tests:
+  - every outcome, checked directly through `summarise`;
+  - a violation alongside a non-comparable position gives `fail`;
+  - representability at ±FLT_MAX and at the next binary64 value;
+  - both branches of the ulp₃₂ definition at every power of two;
+  - FLT_MAX equals (2 − 2⁻²³)·2¹²⁷ exactly.
+
+## Outcome values (overall, and for every band and class)
+| Value | When |
+|---|---|
+| `pass` | every evaluated position is comparable, and every logit satisfies T3 |
+| `fail` | any comparable evaluated logit violates T3, even if other positions are non-comparable (then `coverage_complete` is false and those positions are listed) |
+| `incomplete` | no comparable violation, but at least one evaluated position is non-comparable; not a pass |
+| `empty_comparable_set` | no evaluated position is comparable; never a pass |
+| `no_evaluated_positions` | bands and classes only, unchanged: no evaluated position falls in that band or class |
+
+## Representability and ulp₃₂
+- **Representability:** a position is non-comparable exactly when |ref₆₄| > FLT_MAX, compared on the binary64 value without converting it to binary32. It is checked after the non-finite check and before any part of the inequality. The code already did this.
+  - ±FLT_MAX is in range and passes.
+  - The next binary64 value, ±(FLT_MAX + 2⁷⁵), is non-comparable with reason `ref64_above_binary32_range`.
+- **ulp₃₂** already matched clarification 1, so its calculation did not change. It computes 2^(max(e−1, −126) − 23), where e comes from `frexp`, which is exact. That gives 2⁻¹⁴⁹ for |x| < 2⁻¹²⁶ (±0 included) and 2^(⌊log₂|x|⌋ − 23) otherwise. It uses only ref₆₄ and never a platform logarithm.
+
+## Test counts
+- Before: 514 tests, OK.
+- After: 519 tests, OK. The T3 test file went from 34 to 39.
+- One of my new assertions failed on the first run: I had wrongly expected the `late` band to show incomplete coverage, but the non-comparable row is in the `early` band. I corrected the test, not the code.
+
+## Records
+- **README section 8:** the outcome table, `coverage_complete`, the exact FLT_MAX rule, the confirmed ulp₃₂ and the new test coverage.
+- **AMBIGUITIES.md:**
+  - AMB-031a (ulp₃₂ and representability) is decided by clarifications 1 and 2.
+  - AMB-031b (the overall outcome) is decided by clarification 2.
+  - The old entries (a) and (b) are kept as the run 12 record and marked superseded.
+
+## Commits
+- `b8d64ab`: the code and tests.
+- `80608c3`: the README and AMBIGUITIES.md records.
+
+The working tree is clean. The `xcrun`/`.config/git/ignore` warnings in the git output come from the sandbox; both commits were made.
+
+## New ambiguity: AMB-032
+Clarification 2 lists "incomplete inputs" as one of the per-position reasons. But D12 says an incomplete triple must be refused before any verdict, and that is what the checker does: a missing row, a short array, a position outside the rows or a missing record refuses the whole evaluation. So an accepted triple can never have a position with incomplete inputs. I kept refusal at the triple level and changed nothing. Either reading avoids a false pass. The question for the owner is whether a future dump reader should report "incomplete" per position instead of refusing the whole dump.
