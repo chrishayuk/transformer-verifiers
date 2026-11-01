@@ -1259,6 +1259,47 @@ unchanged. D11 remains a proposal.
   - **Applies to:** the future Phase 3 ingestion implementation. Checker `80608c3` already refuses incomplete triples
     as a whole, and needs no change.
 
+### Decision revision D13 (2026-11-01): T3 validated on hidden cases; calibration review and Phase 3 ingestion authorised
+
+Decided by the protocol owner on scoring run 9 (`evidence/REVIEWER-CORPUS-SEAL.md`): checker `80608c3` against sealed
+corpus revision 8 gave 43/43 complete passes, 1,455/1,455 logit decisions, 23/23 refusals and 0 `checker_error`.
+D1–D12, all scoring runs and all seals are unchanged. D11 remains a proposal.
+
+- **T3's numerical decision procedure is validated on hidden synthetic cases.**
+  - **What stays closed:** the feature cutoff holds. T3's inequality, `ulp₃₂`, the outcome rule and the run 9 results
+    are not reopened.
+  - **Documented trust limitations of run 9:**
+    - some refusal cases used modified harness record fields rather than genuinely invalid executions;
+    - the f64 guard was tested in the checker suite only, not in the hidden corpus.
+  - **What this is:** synthetic checker-correctness evidence, not Stage A evidence.
+- **Workstream 1: an independent T3 calibration review.** It assesses whether the ladder and pilot procedure give a
+  meaningful empirical agreement criterion for the limited claim made, not a universal guarantee.
+  - **Issues to challenge:**
+    - self-calibration absorbing deviations shared by pilot and subject;
+    - long-position sensitivity from ref₃₂'s RoPE angle error;
+    - the representativeness of Qwen3-1.7B, with its different hidden and intermediate dimensions.
+  - **What it inspects:** the deterministic ladder, the margin rule, the saturation outcome, pilot/held-out separation
+    and position-band coverage.
+  - **Limits:** no pilot is run, and no real LARQL logit is inspected.
+- **Workstream 2: Phase 3 ingestion, in a narrow isolated checker run.** It turns the admitted logit-dump format (D12
+  clarification 2) into authenticated checker inputs.
+  - **Verify before extracting:** the run record, the sidecar and the dump are verified completely before any row is
+    extracted.
+  - **Refuse whole:** a partial, stale or otherwise invalid dump is refused as a whole (D12 clarification 3).
+  - **Bind every row:** each extracted row is bound to the correct frozen token sequence and position.
+  - **No substitution:** the resulting record cannot be substituted from a different execution.
+  - **Positions:** selection uses the preregistered positions.
+  - **Output:** feeds the T3 evaluator without changing its semantics.
+  - **Fixtures:** synthetic only. LARQL is never invoked on the real Qwen3 subject.
+- **Afterwards:** the freeze evidence:
+  - the cross-repository manifest;
+  - the pinned LARQL baseline;
+  - the A4 suite;
+  - the corpus handover and licences;
+  - the external approval record;
+  - the tamper tests;
+  - the second independent G1–G9 review.
+
 ### Stage A falsified if
 
 Any of:
