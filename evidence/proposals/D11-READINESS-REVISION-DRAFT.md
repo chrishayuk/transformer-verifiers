@@ -79,6 +79,21 @@ identifier:
 - **The verifier checks the in-repository files.** The external bindings are checked at the start of each Phase 3 run
   by re-hashing each named artefact. A mismatch makes the run invalid.
 
+### 2a. Who may write and approve Phase 3 provenance records (owner's point, 2026-11-01)
+
+The logit dump carries no embedded token ids or cryptographic identity. Its integrity therefore rests on the external
+provenance record that the ingestion runner writes. Anyone able to replace both a dump and its record could create a
+self-consistent false record. The freeze package must therefore specify:
+- **who or what writes** provenance records: the frozen runner only, run by a named Phase 3 agent with no write access
+  to the frozen tree;
+- **where they are stored**, and with what write protection: for example an append-only location outside every agent's
+  write scope;
+- **how each record is bound** before any comparison is read:
+  - its SHA-256, and the dump's, are published at a location outside the run's own write scope, such as the
+    timestamped location of §2, or a signed commit by the freeze owner;
+  - this happens as soon as each run ends.
+- **who approves** a run's record set before its E2 result is computed.
+
 ## 3. Verbatim checker briefs (review change 8)
 
 - **From now on:** every brief given to the reference-checker agent is committed verbatim under
