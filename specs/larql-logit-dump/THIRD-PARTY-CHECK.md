@@ -142,3 +142,78 @@ All four dumps (N=200, 16,000,000 bytes) are bit-identical. All four ran `FusedB
 - The fixture is not the subject. The subject-specific values (V = 151936, 28 layers, head `FusedBf16` on this host, and the KV and dump sizes at N = 40,960) are confirmed only as consequences of the confirmed code paths, not by observation.
 - I built the binary myself from the pinned commit. The subject run's binary must be identified by its own hash.
 - The independent float64 forward (`ref_forward.py`) was written from the Qwen3 architecture for this check, only to fix the axes. It is not a numerical reference, and the agreement (correlation about 0.9999, max abs about 0.4 against the Q8_0 decoder) is not a tolerance claim.
+
+## Confirmation of revision 2
+
+| Field | Value |
+|---|---|
+| Date | 2026-11-01 |
+| Revision checked | `specs/larql-logit-dump/SPEC.md` revision 2, commit `bd603c1`, SHA-256 `eb6407d8bc54309311e0a4c7b1f20e6fc70d94ce708c175ba125d0931f1e339f`. I compared it with revision 1 (`0e6de8f`) using `git diff 0e6de8f bd603c1`. I did not edit it |
+| Re-runs | `~/chris-source/logit-dump-check`, commit `8ac4338`, with the same binary, fixture and rules as before. `failure_modes.sh` §8 is new. The LARQL worktree is still clean |
+
+### Verdict
+
+**REMAINING DEFECTS (D1–D4); the rest is confirmed.** C1, C3 and C4 are applied correctly and completely. No statement about the byte format changed: §3, §4, §5 and §7.1 are textually unchanged, and §6 only gains a fixture note. C2 and C5 each contain one wrong statement, and §8.3 does not yet require two checks that its own fixture note claims. One attribution is overstated (M1).
+
+### 1. C1–C5
+
+| | Result |
+|---|---|
+| C1 (§7.2) | **Confirmed.** Status 2 for clap rejections and for the trampoline refusal; a reader requires 0 and gives no meaning to particular non-zero values. The citations `MAIN:371-376`, `MAIN:378` and `trampoline.rs:54-56` are correct. The constant `= 2` is at line 56 |
+| C2 (§2.2) | **Defect D1.** The new row states that `--repeat`, `--warmup`, `--unquiet-ok` and `--expert-access` are, "by the same mechanism", not rejected when `--logit-dump` is present. **Observed (re-run, `failure_modes.sh` §8):** each of the four, passed alone with `--logit-dump`, is **rejected with exit 2** ("the following required arguments were not provided: --generate, --residency-curve"). They are accepted (exit 0, dump bit-identical) only together with `--residency-curve`. The mechanism: clap skips the `requires` check of an argument whose required argument conflicts with `--logit-dump` (`--residency-curve`, `--speculate`, `--stop-at-eos` and `--profile` all require `--generate`). It still enforces `requires = "residency_curve"`, because `--residency-curve` conflicts with nothing. *Fix:* "the four `residency_curve`-dependent flags are rejected (exit 2) unless `--residency-curve` is also passed, in which case they are accepted and ignored (third-party fixture)". The new §2.2.0 exact-argv rule is correct, sufficient and unaffected. The claim that `run_teacher_force` returns before any code reading these flags is correct: they are read only at `CLI/exec.rs:250-261` and in `lowered/run.rs:105-116` |
+| C3 (§7.3) | **Confirmed.** The print conditions, the citations (`CLI/exec.rs:94-102, 155-180, 195-210`) and the `production`/`production-q8` distinction match the source and my runs. The new §7.3.4 (a missing `projection plans:` line fails the check) is right |
+| C4 (§8.1) | **Confirmed.** All four observed bullets and the signal note in §8.1.5 match my records. They are correctly tagged **[I]** |
+| C5 (§11.4) | **Defect D2.** "a fixture used to test the acceptance procedure needs a head whose **BF16** image is at least the host's L2" is wrong. What the procedure's positive path needs is an **f32 image** of at least L2: that is the condition at `projection.rs:207-209`, which selects `FusedBf16` over `BlasF32`. My accepted fixture shows this: V = 20000, H = 256, a BF16 head of 10.24 MB, **below** the 16 MiB L2, ran `FusedBf16` and was accepted. A BF16 image of at least L2 is needed only to make the bf16 cap visible in `projection plans:` (`FusedQ8` without the cap, `:218`). *Fix:* "needs a head whose f32 image is at least the host's L2 (so it runs `FusedBf16`, not `BlasF32`). A BF16 image of at least L2 is additionally needed if the fixture must show the cap's effect. On the third party's fixture (BF16 head below L2), removing the cap changed no value." The rest of §11.4 is correct (155,582,464 elements; about 622 MB as f32 and about 311 MB as BF16) |
+
+### 2. Attributions labelled "(third-party fixture)"
+
+I checked every one against `records/` and `records/failure_modes.log`. These are correct:
+- §2.3.3, §6.3, §7.2.1, §7.2.3, §7.3.1, §7.3.3, §8.1.2 (four bullets), §8.1.5, §10.2.6, §11.4 (the observed `BlasF32` rejection), §12.3;
+- OI-4, -5, -6, -7, -9, -10, -11, -13, -14, -16.
+
+Exceptions:
+- the C2 row's claim about the four untested flags (D1). It is not attributed to me, but it is now refuted;
+- **M1 (minor), the §8.3 [I] note.** It says "In the stale cases only exit status, stdout and a no-slack modification-time check distinguished old files from a new success". That holds only for the stale case where deletion was skipped and the old dump and sidecar were **intact** (a parse failure after a good run). In the mid-run stale case, size and `positions` also failed. *Fix:* "In the stale case with deletion skipped and the old files intact, …".
+
+### 3. Byte format
+
+**Confirmed unchanged:**
+- no header, little-endian binary32, [N, V] row-major, size 4·N·V, V from the first row;
+- the vocabulary order;
+- row i = position i;
+- the sidecar template and keys;
+- the file paths and the order in which they are written.
+
+### 4. §8.3 reader procedure against what `accept.py` enforced
+
+| Condition | `accept.py` | Rev 2 §8.3 | Assessment |
+|---|---|---|---|
+| Delete dump and sidecar before the run, and confirm absent | yes | §8.3.1 MUST (unchanged) | Matches |
+| Exact conforming argv | yes ("no flags beyond the conforming set") | §2.2.0, §8.3.3.6 | Matches, and sufficient |
+| `representation: Q8_0  source: stored` | yes (prefix match, exactly one such line) | §8.3.3.5 | Matches |
+| `runtime compile: 0 tensor(s)` | yes | §8.3.3.5 | Matches |
+| `projection plans:` present, only `FusedKQuant`/`FusedBf16` | yes | §8.3.3.5, §7.3.4 | Matches |
+| exit 0; `positions:` and `wrote [` lines; sidecar fields; size 4·N·V | yes | §8.3.3.1-4 | Matches |
+| **Canonical `--tokens`** (the string equals the canonical form of the recorded ids) | yes | §2.3.4 is only **SHOULD**; not in §8.3 | **Defect D3.** None of §8.3.3.1-6 rejects `+5,007,9` or `5,7,9,`: exit 0, `positions == 3`, size correct. Yet the §8.3 note says a procedure "implementing these checks" rejected non-canonical `--tokens`. It was my extra check that did. D12 requires the recorded token sequence and the command arguments to be consistent. *Fix:* make §2.3.4 a MUST, and add to §8.3.3 "the recorded `--tokens` string is exactly the canonical form of the recorded id list". Otherwise drop that case from the note |
+| **Modification time with zero tolerance** (dump and sidecar `mtime` ≥ run start) | yes (slack removed after my first draft) | mentioned only in the [I] note; not a condition | **Defect D4 (minor).** With §8.3.1 (delete and confirm absent) the check is redundant, so the procedure is sufficient without it. It was, however, the only extra signal in the intact-stale case. *Fix:* add as §8.3.3.7 (SHOULD) "the dump and sidecar modification times are not earlier than the run's start, with no tolerance", or state in the note that §8.3.1 makes it redundant |
+| Environment exactly the Baseline set | yes | not in §8.3 (required by PROTOCOL "Baseline"; only `max_format_env` is checked via the sidecar) | Advisory: add a cross-reference in §8.3.2 ("record the full environment; a run outside the Baseline set is rejected") |
+| `engine:` stdout line, sidecar `engine`, sidecar key set, `wrote provenance to` line | yes | no | Advisory only. Redundant given the exact argv and the other checks |
+
+**Sufficiency:** with D3 applied, conditions §8.3.1 and §8.3.3.1-6 reject every failure mode in my check, and the reject set does not depend on the advisory checks. Each failure mode is caught by at least one listed condition:
+- an out-of-range id: exit status and size;
+- `5,,9`: `positions` and size;
+- `+5,007,9` and `5,7,9,`: D3;
+- stale files: §8.3.1, then exit status;
+- `--bank`, `--draft-depth`, `--speculate`, `--residency-curve …`: exact argv;
+- a missing or malformed cap: the sidecar's `max_format_env`, or invalid JSON;
+- a repeated flag: exit status;
+- the `BlasF32` head: `projection plans:`.
+
+### Remaining defects to fix before admission
+
+1. **D1 (§2.2 C2 row):** the four `residency_curve`-dependent flags are rejected (exit 2) unless `--residency-curve` is also passed.
+2. **D2 (§11.4 C5):** the fixture needs an f32 head image of at least L2, not a BF16 image.
+3. **D3 (§2.3.4, §8.3):** require the canonical `--tokens` string, or drop the claim from the §8.3 note.
+4. **D4 (§8.3, minor):** make the zero-tolerance modification-time check a SHOULD condition, or state that it is redundant given §8.3.1.
+
+Also: M1 (wording in the stale-case note), and the advisory environment cross-reference.
