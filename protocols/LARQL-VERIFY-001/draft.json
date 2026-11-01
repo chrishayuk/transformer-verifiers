@@ -228,6 +228,10 @@
     "D13": {
       "date": "2026-11-01",
       "summary": "scoring run 9 (43/43, 1455/1455, 23/23 refusals, 0 checker_error): T3 decision procedure validated on hidden synthetic cases, feature cutoff holds, run 9 trust limitations documented; independent T3 calibration review authorised (self-calibration, long-position sensitivity, Qwen3-1.7B representativeness; ladder, margin, saturation, separation, band coverage; no pilot, no LARQL logits); narrow isolated ingestion checker run authorised (verify record, sidecar and dump before extracting, refuse partial or stale dumps whole, bind rows to frozen token sequence and positions, resist substitution, preregistered positions, feed T3 unchanged, synthetic fixtures only); then the freeze evidence"
+    },
+    "D14": {
+      "date": "2026-11-01",
+      "summary": "T3 calibration diagnosis accepted (per-logit yardstick makes all-logits-pass disproportionately strict; simulation evidence, not LARQL); T3 not frozen in current form; checker 80608c3 and scoring run 9 kept as historical evidence; second independent T3 methodology review authorised (R1-R5 against per-band and norm-based alternatives; acceptance and fault detection assessed separately, by band; permissiveness trade-off quantified; no pilot or LARQL logits; replacement chosen on justified properties, not pass counts; new decision revision, checker run and hidden tests for any revised contract; D11 and freeze wait); ingestion readings Q59 both hashes MUST, Q60 different execution refused, Q61 engine must agree, Q62 V pinned 151936, Q63 subset rule for rev 9 with head-binding evidence question before freeze, Q65 prior absence recorded, Q66 content validation allowed, Q67 independent identities for synthetic tests, Q64/68/69/70 gaps recorded; content_valid distinct from execution_authenticated, only both may be acceptance evidence; rev 9 re-derive, seal against c2070c3, rules before run, score once, report separately with SHOULD-only cases identified"
     }
   }
 }

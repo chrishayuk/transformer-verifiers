@@ -1300,6 +1300,71 @@ D1–D12, all scoring runs and all seals are unchanged. D11 remains a proposal.
   - the tamper tests;
   - the second independent G1–G9 review.
 
+### Decision revision D14 (2026-11-01): the T3 calibration finding; ingestion readings for corpus revision 9
+
+Decided by the protocol owner on the independent T3 calibration review (`evidence/t3-calibration-review/REPORT.md`,
+review commit `21d630a`: NOT SUITABLE as proposed) and on reviewer questions 59–70. D1–D13, all scoring runs and all
+seals are unchanged. D11 remains a proposal.
+
+- **The calibration diagnosis is accepted. T3 is not frozen in its current form.**
+  - **The mechanism:** T3 uses each logit's own |ref₃₂ − ref₆₄| as its yardstick. With 151,936 logits per position,
+    some yardsticks are near zero, so the rule that every logit must pass becomes disproportionately strict.
+  - **In simulation:**
+    - at the top rung (32, 64), every one of 830 positions failed, with about 317 failing logits each;
+    - with noise reduced 10× and 100×, 97% and 76% of positions still failed;
+    - the proposed margin rule could tighten the tolerance instead of loosening it.
+  - **What this is:** simulation evidence, not a measurement of LARQL. It is enough to challenge the protocol before
+    the freeze.
+  - **What stays:** checker `80608c3` and scoring run 9 are kept unchanged, as historical evidence that the
+    per-logit inequality was implemented correctly. The verifier does what was specified. What was specified is what
+    is in question.
+- **A second, independent review of the T3 methodology is authorised.**
+  - **Its subject:** R1–R5 from the first review, compared with alternatives such as a per-band envelope or a
+    norm-based criterion, using synthetic examples and independent arithmetic analysis.
+  - **Two properties, assessed separately:**
+    - **acceptance:** can correct implementations plausibly pass?
+    - **detection:** do meaningful injected faults stay detectable, by band, and in particular at long positions?
+  - **The trade-off to quantify:** the proposed per-position maximum is not adopted automatically. It may cure false
+    rejection by becoming too permissive.
+  - **No pilot, no LARQL logits.**
+  - **Choosing the replacement:** it is chosen on independently justified acceptance and fault-detection properties,
+    not on whichever threshold gives the most passes.
+  - **What a revised contract needs:** its own decision revision, a new checker implementation and fresh hidden tests.
+  - **Until then:** D11, the freeze-readiness work and Phase 3 wait on this choice.
+- **Ingestion readings for corpus revision 9.** These are protocol rules; the scorer maps names from the checker's
+  README.
+  - **Q59:** both the dump's and the sidecar's SHA-256 are bound in the run record. This is a MUST.
+  - **Q60:** a record from a different execution is refused, even when the dump bytes are identical.
+  - **Q61:** the sidecar `engine` must agree with the admitted profile and the recorded execution.
+  - **Q62:** the vocabulary size is pinned to 151,936. It is never taken from the run.
+  - **Q63:** the Baseline's permitted-kernel subset rule is kept for revision 9, the declared contract. Before the
+    freeze, the reviewer decides whether merely permitting `FusedBf16` establishes that the pinned execution used it
+    for the BF16 output head. If it does not, the run-acceptance rule needs explicit evidence of the head binding.
+  - **Q65:** the record must show that both old files were absent before execution.
+  - **Q66:** externally supplied records may be validated on their content.
+  - **Q67:** the expected executable and container identities may be supplied independently for synthetic tests.
+  - **Q64, Q68, Q69, Q70:** the existing protocol rules stay authoritative. The coverage gaps are recorded; no case
+    depends on them.
+- **Content validity is not authenticated execution (Q60, Q66).**
+  - **What a valid hash shows:** the bytes match the record. It does not show that a trusted runner produced them.
+  - **Two properties:** ingestion acceptance establishes `content_valid` only. `execution_authenticated` requires
+    the independently controlled Phase 3 custody requirements (D11 draft §2a).
+  - **What may be acceptance evidence:** only records that are both content-valid and execution-authenticated.
+- **Corpus revision 9.**
+  - **The order:**
+    1. The independent reviewer re-derives any affected expectations.
+    2. The corpus is sealed against checker `c2070c3`.
+    3. Eligibility, rules and field mapping are committed before the 66 cases run once.
+  - **Reported separately:**
+    - acceptance of valid controls;
+    - rejection before extraction;
+    - correct refusal reasons;
+    - extracted-row identity;
+    - substitution resistance;
+    - complete-case outcomes.
+
+    The four refusals that only a SHOULD check catches are identified separately.
+
 ### Stage A falsified if
 
 Any of:
