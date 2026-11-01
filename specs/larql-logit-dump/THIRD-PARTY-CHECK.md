@@ -217,3 +217,42 @@ Exceptions:
 4. **D4 (§8.3, minor):** make the zero-tolerance modification-time check a SHOULD condition, or state that it is redundant given §8.3.1.
 
 Also: M1 (wording in the stale-case note), and the advisory environment cross-reference.
+
+## Confirmation of revision 3
+
+| Field | Value |
+|---|---|
+| Date | 2026-11-01 |
+| Revision checked | `specs/larql-logit-dump/SPEC.md` revision 3, commit `7043f02`, SHA-256 `5ad44e331be364300597692ec69e1fd5aafb35190275cfdb488e4d1bb91ad2ec`. Compared with revision 2 by `git diff bd603c1 7043f02`. Commit `7043f02` touches only `SPEC.md`; this file was not altered by anyone else (`git diff bc063f2 7043f02` on it is empty). I did not edit the spec |
+| Evidence | My existing fixture records in `~/chris-source/logit-dump-check`, commits `d53d34c`, `00e071d` and `8ac4338`. No new LARQL run was needed. The LARQL worktree is still clean |
+
+### Verdict
+
+**CORRECTIONS CONFIRMED.** D1–D4, M1 and the environment advisory are each fixed as I intended. No statement about the byte format changed. Revision 3 changes the header, §2.2, §2.3, §8.3, §11.4, OI-10, §14.1 and the revision history. §3, §4, §5, §6 and §7 are textually unchanged.
+
+### Item by item
+
+| Item | Result |
+|---|---|
+| D1 (§2.2) | **Confirmed.** The first row now covers only `--speculate`, `--stop-at-eos`, `--residency-curve` and `--profile`, which are accepted and ignored. That matches `failure_modes.sh` §7: exit 0 and a dump bit-identical to the run without them. The second row covers `--repeat`, `--warmup`, `--unquiet-ok` and `--expert-access`: rejected with exit 2 alone, and accepted and ignored only with `--residency-curve`. That matches §8 (each alone exits 2; all four together with `--residency-curve` exit 0 with a bit-identical dump). The citations are right: `CLI/args.rs:245, 251, 259, 266-283, 329`; the flags are read only at `CLI/exec.rs:250-261` and `CLI/lowered/run.rs:105-116`. The causal explanation in the rows (clap does not enforce a requirement on `--generate` because it conflicts with `--logit-dump`) is consistent with every observation. It is an inference about clap, not a LARQL property, and it does not affect the MUST NOT or the exact-argv rule |
+| D2 (§11.4) | **Confirmed.** The fixture requirement is now an **f32** image of at least L2 (`projection.rs:207-209`). A BF16 image of at least L2 is needed only to show the cap's effect (`:218`). Both fixture notes are accurate. The V = 20000 fixture (BF16 10.24 MB, f32 20.48 MB) ran `FusedBf16` and was accepted, and removing the cap left the dump bit-identical (`d36dd11a…`). The V = 10000 fixture ran `BlasF32` and was rejected |
+| D3 (§2.3.4, §2.3.5, §8.3.3.7) | **Confirmed.** Canonical `--tokens` is now a MUST with a precise definition, compared byte for byte against the canonical rendering of the manifest, and is reader condition 7. That definition is the one `accept.py` enforced (`",".join(str(i) for i in ids)`). I applied condition 7 to every non-canonical string my failure modes tried, and it rejects all eleven: `5,,9`, `+5,007,9`, `5,7,9,`, ` 5 , 7 ,9 `, `5,<NBSP>7`, `1,abc`, `5,+,9`, `5,-1`, `0x10`, `5 7` and `,,`. The cases LARQL itself refuses are rejected twice over (exit status and condition 7). §2.3.5's statement, that the other checks catch only the shorter-sequence case, is correct |
+| D4 (§8.3.3.8) | **Confirmed as intended.** It is a SHOULD and covers both files. It has no tolerance. It is stated to be redundant when §8.3.1 is followed, and that it does not replace §8.3.1 |
+| M1 (§8.3 note) | **Confirmed.** The sentence is now limited to the case with deletion skipped and the old files intact, and the mid-run case (where size and `positions` also fail) is stated separately |
+| Advisory (§8.3.2) | **Confirmed.** The full argv and environment are recorded, with a cross-reference to the PROTOCOL "Baseline" exact-environment rule, and a note that `max_format_env` checks only one variable |
+
+### Sufficiency of §8.3 as revised
+
+Conditions §8.3.1 and §8.3.3.1–7 now reject, on their own, every failure mode in my check, without relying on any advisory check:
+
+| Failure mode | Rejected by |
+|---|---|
+| Out-of-range id | exit status (1), size (4) |
+| Non-canonical or shorter `--tokens` | 7 (and also 2, 3 and 4 for `5,,9`) |
+| Stale files | §8.3.1, then exit status (1), or 8 as a backstop |
+| `--bank`, `--draft-depth`, `--speculate`, `--residency-curve …`, a repeated flag | exact argv (6) |
+| Wrong environment | §8.3.2 by way of PROTOCOL "Baseline", and `max_format_env` (3) for the cap |
+| Malformed cap value | invalid JSON (3) |
+| `BlasF32` head | `projection plans:` (5) |
+
+Nothing further is required from the third-party check for admission of the format, within the limits stated in "Limits of this check" above.
