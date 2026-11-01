@@ -1204,6 +1204,51 @@ unchanged. D11 remains a proposal.
   - **Logit-dump completeness, emphasised.** The format has no internal checksum, token ids or end marker. The
     harness establishes completeness through its own trusted input manifest, successful process completion, exact byte
     length and output hashing. A valid-looking file left behind by a failed run never becomes accepted evidence.
+- **Clarification 2 (2026-11-01, before corpus revision 8 is sealed): logit-dump admission, the overall T3 outcome,
+  binary32 representability.** Decided by the protocol owner.
+  - **The logit-dump specification revision 3 is admitted.**
+    - **The exact content:** `specs/larql-logit-dump/SPEC.md`, commit `7043f02`, sha256
+      `5ad44e331be364300597692ec69e1fd5aafb35190275cfdb488e4d1bb91ad2ec`. The third party returned CORRECTIONS
+      CONFIRMED (`specs/larql-logit-dump/THIRD-PARTY-CHECK.md`, `50b71a9`). The record is
+      `specs/larql-logit-dump/ADMISSION.md`.
+    - **Scope:**
+      - the little-endian f32 logit representation and the row and vocabulary ordering;
+      - the tested metadata and stdout contract;
+      - the external completeness and provenance procedure;
+      - fail-closed rejection of stale files, partial files, invalid token arguments and incompatible execution
+        settings;
+      - determinism, as shown on the small non-subject fixture.
+    - **What it does not establish:** correctness for every model, execution mode or sequence length. The
+      extended-context and resource limitations stay recorded.
+    - **Delivery:** the checker receives it through a new immutable protocol snapshot.
+  - **The overall T3 outcome has three values:**
+
+    | Condition | Overall T3 result |
+    |---|---|
+    | Every evaluated position is comparable, and every logit satisfies T3 | `pass` |
+    | Any comparable evaluated logit violates T3 | `fail` |
+    | No comparable violation, but one or more evaluated positions cannot be compared | `incomplete` (not a pass) |
+
+    - **No comparable position at all:** the result is the explicit empty status, never a pass.
+    - **A violation is never hidden** by a non-comparable position. If both occur, the result is `fail`, and the
+      incomplete coverage is reported too.
+    - **Per-position reasons are kept:** non-finite values, representability failure, incomplete inputs.
+    - **The same rule applies** to every band and class summary.
+    - **The basis:** an unevaluated position cannot establish numerical agreement (D12, D1 OQ6). This replaces the rule
+      in the run 12 brief, under which non-comparable positions did not block a pass. That rule came from the
+      coordinating session's brief, not from the protocol.
+  - **Binary32 representability:** a triple is non-comparable when |ref₆₄| > FLT_MAX, where FLT_MAX = (2 − 2⁻²³)·2¹²⁷
+    is the largest finite binary32 value.
+    - **How it is applied:** to the actual finite native-ref₆₄ value, by exact comparison, without first converting to
+      binary32.
+    - **The boundary:** equality with FLT_MAX is in range.
+    - **What kind of rule it is:** a precondition, not a T3 numerical failure. Such a triple is non-comparable even if
+      part of the inequality could be evaluated.
+  - **Order of work:**
+    1. A narrow checker run corrects the overall-outcome rule. Checker `1f82e64` is preserved.
+    2. The corrected checker is audited and pinned.
+    3. Corpus revision 8 is sealed against it and scored once, with rules fixed beforehand.
+    4. Then come the independent T3 calibration review and the remaining freeze evidence.
 
 ### Stage A falsified if
 

@@ -1,6 +1,8 @@
 # LARQL logit-dump specification: admission record
 
-**Status: ELIGIBLE FOR ADMISSION, awaiting the protocol owner's admission.** Not yet given to the reference checker.
+**Status: ADMITTED by the protocol owner on 2026-11-01 (PROTOCOL.md, D12 clarification 2),** at the exact content below. The admission covers the independently tested interface and its documented acceptance procedure only.
+
+**Full digest:** `5ad44e331be364300597692ec69e1fd5aafb35190275cfdb488e4d1bb91ad2ec`.
 
 | Item | Value |
 |---|---|
