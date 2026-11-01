@@ -416,3 +416,50 @@ The coordinating session has not read the held-out contents.
 | Digest | `28af030c32a451a5ad118490dea42672ed52b3e1bd94b214d28043df86995ff6`, reproduced by the coordinating session from the git objects |
 | Content | 43 fresh T3 cases: 9 verdict, 5 aggregate, 5 non-finite and representability, 1 selective-evaluation, 23 refusal. Expectations were derived from D12 and its clarifications 1–2, decided exactly with rationals, and cross-checked by a second route (1,455 logits, 0 mismatches). Outcomes are matched by documented meaning, never by literal label |
 | Checker | `80608c3`, pinned before this seal |
+
+## Scoring run 9 (2026-11-01): corpus revision 8 against checker 80608c3, aggregates only
+
+- **Inputs:**
+  - checker `80608c3`, a clean clone in the separate evaluation directory (`~/chris-source/transformer-verifiers-eval/run-9/`);
+  - corpus `6403c82`, unchanged since the seal;
+  - decision revision D12 with clarifications 1–3.
+- **Order of commits:** eligibility, frozen rules and an adapter with a synthetic self-test (`779e08d`), then the
+  README-derived field and outcome mapping (`d544446`), then the run (`0f578ee`). One pass, no rerun. The scorer read
+  only the checker README and the `evaluate_t3` signature and docstring.
+- **Tallies:** recounted by the coordinating session from `RESULTS.json`. All match.
+
+| Tally | Result |
+|---|---|
+| Per-logit verdicts | 1455/1455 |
+| — exactly on the boundary | 63/63 |
+| — one binary32 step either side or off-grid | 129/129 |
+| — logits where naive binary64 evaluation gives the wrong verdict | 6/6 (decided `fail`, correctly) |
+| — c branch / k branch / tie | 109/109, 1334/1334, 12/12 |
+| Counts | 20/20 evaluated cases |
+| Non-comparable handling, including representability | 5/5 cases |
+| Representability | ±FLT_MAX comparable; ±(FLT_MAX + 2⁷⁵) and other out-of-range values non-comparable (`ref64_above_binary32_range`), never a T3 failure |
+| Empty comparable set, overall / empty band and class groups | 1/1, 72/72 |
+| `incomplete`, overall / `fail` with incomplete coverage reported | 3/3, 1/1 |
+| Refusals before any verdict (verdict null, no summary), reason present, preregistered condition code | 23/23 each |
+| Band summaries / class summaries (native and extended separately) | 20/20, 20/20 |
+| Overall outcome | 20/20 (`pass` 3, `fail` 13, `incomplete` 3, `empty_comparable_set` 1; 23 refused) |
+| Selective evaluation (failing and non-finite values in non-evaluated rows ignored, including 40,960-row arrays) | 20/20 |
+| **Complete-case pass** | **43/43** (verdict 9, aggregate 5, non-finite 5, selective 1, refusal 23) |
+| `checker_error` / exclusions | 0 / none |
+
+- **Rule specifics disclosed in the frozen rules** (made after reading the README, before the run):
+  - **Records:** abstract records were translated into real harness records, run on synthetic non-corpus containers,
+    with the sealed arrays substituted for their logits.
+  - **Properties the harness cannot produce:** set in their documented record fields. One substitution: a native-f64
+    record stands in for a bfloat16 ref₃₂. So those refusal cases show that the checker reads the documented fields.
+    They do not show how it behaves on genuinely produced runs of those kinds.
+  - **Refusal codes:** matched against a preregistered acceptable set.
+  - **Per-logit verdicts:** derived from the documented failing-token list. No position exceeds that list's limit of 20.
+- **Extra refusal codes:** four refusal cases also gave a second code, each following from a documented check. They
+  were recorded and not scored.
+- **Not exercised:** the f64 guard (audit m3), which is tested in the checker suite only (reviewer question 57).
+- **Still open:** reviewer questions 52–56 and part of 58. No case depends on them.
+- **The scorer's report:** the harness refused its own write. It was transcribed verbatim into the reviewer
+  repository, `scoring/run-9/REPORT.md`.
+- **What this is:** synthetic checker-correctness evidence for the T3 decision procedure. It is not Stage A evidence,
+  and no LARQL logits were involved.
