@@ -1402,6 +1402,30 @@ rewritten. D11 remains a proposal.
     intermediate activations.
 - **What does not change.** The research programme (T3 redesign under D14, D11, the freeze gates G1–G9) continues
   separately and does not block this workstream. This workstream does not close any gate.
+- **Clarification 1 (2026-11-01): the `representation:` stdout line follows the admitted specification's "contains"
+  reading (DO-1).**
+  - **The finding.** The first development run of pinned LARQL was refused by checker `c2070c3` with
+    `stdout_line_mismatch`. The checker requires that line to equal `representation: Q8_0  source: stored` exactly
+    (AMB-033). The admitted specification §8.3.3.5 requires stdout to *contain* that text. The real line carries a
+    suffix, `  objects from a compiled pack: <k>/<n>`, which the third-party fixture also recorded
+    (`specs/larql-logit-dump/THIRD-PARTY-CHECK.md`, §7.3 row). The checker's stub was written from the
+    specification's text and never printed the suffix. The development harness waives that one exact line as DO-1.
+  - **The rule.** The single `representation:` line is accepted when it begins with exactly
+    `representation: Q8_0  source: stored`, and that text is followed either by the end of the line or by a space.
+    Anything after that space is not interpreted. Everything else about the line stays as it is: it must be present
+    and appear only once, and its position in §7.3's order is unchanged. Every other stdout line keeps its current
+    reading.
+  - **What must still be refused:** a missing line; a different representation (for example `Q4_K` or `BF16`); a
+    different source (for example `source: synthesized`); a source token that runs on (for example `storedX`); a
+    changed separator (one space instead of two); a repeated line.
+  - **The process.** This is a checker change, made by the reference-checker agent in a checker run under the usual
+    isolation and brief. The agent must not read LARQL, its source or development outputs; this clarification is its
+    source. It is then audited and pinned by the publisher. The independent reviewer authors hidden cases that use the
+    real line form, including the suffix, and negative cases from the list above. Corpus revision 9 is sealed against
+    the corrected checker instead of `c2070c3`, then scored once. Only after that is DO-1 removed from
+    `dev/larql-verify/`, and the 16-token development diagnostic rerun without overrides.
+  - **Unchanged:** the D15 prohibition on modifying `checker/` from the development workstream. T3, the reference
+    numerics, the gate, the metrics and every other ingestion reason.
 
 ### Stage A falsified if
 
