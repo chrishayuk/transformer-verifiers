@@ -223,3 +223,17 @@ Settings are now sha256 `fb08761d…`; the only change is the snapshot path.
 - **Allowed:** the new snapshot and its specification copy.
 - **Blocked:** everything blocked in part 12.
 - **Blocked, new probe:** the separate evaluation directory.
+
+## Part 14: protocol snapshot 8b3663a (2026-11-01)
+
+The snapshot moves to `isolation/snapshots/8b3663a/`. It holds:
+- D1–D15, with D15 clarification 1 (DO-1): `PROTOCOL.md` `927c0cb9…`, `draft.json` `125e4ad3…`;
+- the admitted logit-dump specification, `LARQL-LOGIT-DUMP-SPEC.md` `5ad44e33…`, unchanged.
+
+Settings are now sha256 `22829887…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-14.log`):
+- **Allowed:** the new snapshot and its specification copy.
+- **Blocked:** everything blocked in part 13.
+- **Blocked, new probes:** the development harness `dev/larql-verify/`, its real-run records, and the T3 calibration
+  review repository.
