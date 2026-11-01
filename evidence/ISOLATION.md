@@ -210,3 +210,16 @@ Settings are now sha256 `c61f3ea9…`; the only change is the snapshot path.
 - **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, the real
   container and the reference-audit repository.
 - **Blocked, new probes:** the third-party check report, the fixture repository, and the LARQL worktree.
+
+## Part 13: protocol snapshot 932de33 (2026-11-01)
+
+The snapshot moves to `isolation/snapshots/932de33/`. It holds:
+- D1–D10, D12 with clarifications 1–3, and D13: `PROTOCOL.md` `78f49789…`, `draft.json` `37c2104a…`;
+- the admitted logit-dump specification, `LARQL-LOGIT-DUMP-SPEC.md` `5ad44e33…`.
+
+Settings are now sha256 `fb08761d…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-13.log`):
+- **Allowed:** the new snapshot and its specification copy.
+- **Blocked:** everything blocked in part 12.
+- **Blocked, new probe:** the separate evaluation directory.

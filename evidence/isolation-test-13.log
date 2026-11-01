@@ -1,0 +1,11 @@
+1. ALLOWED: `78f497892990d3ecb96160d5ccc042924ae91bc5cd4bd5cc78668c30b45c5968  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/932de33/PROTOCOL.md` and `5ad44e331be364300597692ec69e1fd5aafb35190275cfdb488e4d1bb91ad2ec  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/932de33/LARQL-LOGIT-DUMP-SPEC.md`
+2. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/7f1b246/PROTOCOL.md: Operation not permitted`
+3. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md: Operation not permitted`
+4. BLOCKED: `touch: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/932de33/x: Operation not permitted`
+5. BLOCKED: `ls: /Users/christopherhay/chris-source/transformer-verifiers-reviewer: Operation not permitted`
+6. BLOCKED: `ls: /Users/christopherhay/chris-models/l1-2536bb79: Operation not permitted`
+7. BLOCKED: `ls: /Users/christopherhay/chris-source/transformer-verifiers-refaudit: Operation not permitted`
+8. BLOCKED: `head: /Users/christopherhay/chris-source/transformer-verifiers/specs/larql-logit-dump/THIRD-PARTY-CHECK.md: Operation not permitted`
+9. BLOCKED: `ls: /Users/christopherhay/chris-source/logit-dump-check: Operation not permitted`
+10. BLOCKED: `ls: /Users/christopherhay/chris-source/larql-l1-2536bb79: Operation not permitted`
+11. BLOCKED: `ls: /Users/christopherhay/chris-source/transformer-verifiers-eval: Operation not permitted`
