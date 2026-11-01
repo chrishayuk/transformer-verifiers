@@ -196,3 +196,17 @@ snapshot path.
 - **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository and the real
   container.
 - **Blocked, new probes:** the reference-audit repository, and the unadmitted logit-dump specification.
+
+## Part 12: protocol snapshot 7f1b246, with the admitted logit-dump specification (2026-11-01)
+
+The snapshot moves to `isolation/snapshots/7f1b246/`. It holds:
+- D1–D10, and D12 with clarifications 1–2: `PROTOCOL.md` `76504d78…`, `draft.json` `82b7bc89…`;
+- the admitted logit-dump specification revision 3, copied in as `LARQL-LOGIT-DUMP-SPEC.md` `5ad44e33…`.
+
+Settings are now sha256 `c61f3ea9…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-12.log`):
+- **Allowed:** the new snapshot, and the specification copy inside it (both hashes match).
+- **Blocked:** the old snapshot, the live protocol, writes to the snapshot, the reviewer repository, the real
+  container and the reference-audit repository.
+- **Blocked, new probes:** the third-party check report, the fixture repository, and the LARQL worktree.
