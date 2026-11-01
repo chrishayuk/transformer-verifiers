@@ -1365,6 +1365,44 @@ seals are unchanged. D11 remains a proposal.
 
     The four refusals that only a SHOULD check catches are identified separately.
 
+### Decision revision D15 (2026-11-01): Qwen3-0.6B retired as the blind subject; development verification workstream
+
+Decided by the protocol owner. D1–D14, all scoring runs, all seals and the review history are unchanged and are not
+rewritten. D11 remains a proposal.
+
+- **Qwen3-0.6B is retired as the blind subject of LARQL-VERIFY-001.**
+  - From this decision on, Qwen/Qwen3-0.6B (HF `c1899de2…`), its Q8_0 container and every corpus drawn for it are
+    no longer eligible as unseen evaluation material.
+  - It becomes the **development reference model** for the workstream below.
+  - Nothing produced by that workstream may ever be presented as blind acceptance evidence for LARQL-VERIFY-001:
+    development outputs, logits, numerical differences, prompts, token sequences, or any threshold, tolerance or
+    `(c, k)` informed by them.
+  - A future blind campaign uses a separately pinned, unexposed checkpoint, with its own independently reviewed
+    container and logit-dump specifications, and a new decision revision.
+- **Qwen3-1.7B stays the calibration candidate.** It is not run in this workstream.
+- **The development workstream is authorised.**
+  - **Purpose:** get one real model through the complete verifier: container integrity, configuration
+    comparability, real LARQL logits through the admitted ingestion path, the independent reference on the same
+    decoded weights, and a numerical comparison.
+  - **Where:** `dev/larql-verify/`, outside `checker/`. It imports `refcheck` at a pinned checker commit.
+    **Modifying `checker/` is prohibited in this workstream.**
+  - **The diagnostic ladder:** 16, then 128, 512 and 1,024 tokens. A step is not escalated past an ingestion,
+    configuration or execution problem; that problem is diagnosed first.
+  - **Two comparisons, kept separate:**
+    - **E2:** LARQL against the reference on the same decoded Q8_0 weights (execution agreement);
+    - **E3:** LARQL against the reference on the original BF16 checkpoint (end-to-end drift, which a correct
+      quantised execution may legitimately show).
+  - **Reported per sequence length:** maximum absolute logit difference, RMS difference, KL divergence with its
+    direction stated, top-1 agreement, and any non-comparable positions.
+  - **Verdict:** `MEASURED`, or `INCOMPLETE` / `EXECUTION_ERROR` when a stage fails. There are no acceptance
+    thresholds, and T3 is not used as a gate.
+  - **Ingestion status:** a run accepted by `refcheck.ingest` is `content_valid` only (D14). The development runner
+    is not independently controlled Phase 3 custody, so no development run is `execution_authenticated`.
+  - **Out of scope:** locating the first layer or operation responsible for a difference, until LARQL can capture
+    intermediate activations.
+- **What does not change.** The research programme (T3 redesign under D14, D11, the freeze gates G1–G9) continues
+  separately and does not block this workstream. This workstream does not close any gate.
+
 ### Stage A falsified if
 
 Any of:
