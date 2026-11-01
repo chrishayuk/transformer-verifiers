@@ -405,3 +405,14 @@ The coordinating session has not read the held-out contents.
   - write the BOS policy out in words;
   - define the handover procedure (question 48);
   - complete the licence record.
+
+## Corpus revision 8: seal (2026-11-01)
+
+| Item | Value |
+|---|---|
+| Commit | `6403c82a78e3ade9c22b3d5deb1b018b28416940` (seal record in `4726e49`) |
+| Tree | `908b3283ce09c2b8e521af1ed969ef508781d2b7` |
+| Files | 3286 |
+| Digest | `28af030c32a451a5ad118490dea42672ed52b3e1bd94b214d28043df86995ff6`, reproduced by the coordinating session from the git objects |
+| Content | 43 fresh T3 cases: 9 verdict, 5 aggregate, 5 non-finite and representability, 1 selective-evaluation, 23 refusal. Expectations were derived from D12 and its clarifications 1–2, decided exactly with rationals, and cross-checked by a second route (1,455 logits, 0 mismatches). Outcomes are matched by documented meaning, never by literal label |
+| Checker | `80608c3`, pinned before this seal |
