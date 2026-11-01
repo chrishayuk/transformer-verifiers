@@ -1249,6 +1249,15 @@ unchanged. D11 remains a proposal.
     2. The corrected checker is audited and pinned.
     3. Corpus revision 8 is sealed against it and scored once, with rules fixed beforehand.
     4. Then come the independent T3 calibration review and the remaining freeze evidence.
+- **Clarification 3 (2026-11-01, AMB-032): an incomplete or damaged logit dump is refused as a whole.**
+  - **Refused before evaluation:** a partial, stale or otherwise invalid dump is not a valid T3 input. It fails the
+    ingestion and completeness gate (the admitted logit-dump specification's fail-closed acceptance procedure, and
+    D12's triple refusal) before any per-position evaluation. It never becomes a partially accepted comparison.
+  - **What `incomplete` is for:** an otherwise valid evaluation in which some evaluated positions are legitimately
+    non-comparable, such as non-finite values or the binary32 representability exclusion. The "incomplete inputs" reason
+    in clarification 2 is therefore realised as a whole-input refusal, not as a per-position reason.
+  - **Applies to:** the future Phase 3 ingestion implementation. Checker `80608c3` already refuses incomplete triples
+    as a whole, and needs no change.
 
 ### Stage A falsified if
 
