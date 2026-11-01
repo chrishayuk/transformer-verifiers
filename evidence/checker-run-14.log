@@ -1,0 +1,87 @@
+I've built the Phase 3 ingestion module (`refcheck/ingest.py`), a stub LARQL executable and 41 tests. Everything is committed and nothing is pushed. The full suite went from 519 tests to 560, all passing (`.venv/bin/python -I -m unittest discover -s tests -v`).
+
+Both snapshot hashes matched before I read anything: PROTOCOL.md `78f49789…` and LARQL-LOGIT-DUMP-SPEC.md `5ad44e33…`. Phase 1 rules held: no real LARQL binary, no LARQL source, no real container, logits or held-out data.
+
+## Changes, file by file
+- **`refcheck/ingest.py`** (new): the runner (`run`, with the mechanics in `launch`), the verifier and extractor (`verify_and_extract`), a check that an array and record come from one ingestion (`check_ingested`), a helper that takes the configuration from a reference run (`configuration_from_reference`), and canonical-tokens and sidecar-path helpers.
+- **`tests/stub_larql.py`** (new): the stub, written from the specification alone. It covers good runs, a non-zero exit, a failed sidecar write, a partial file ending on a row boundary, one ending mid-row, a short file with every other success signal, stale files left in place, a missing stdout line, a `BlasF32` plan, a wrong sidecar, the ignored-but-accepted flags, `--bank`, `--draft-depth`, exit 2 for parser rejections, lenient `--tokens` parsing, and `FusedQ8` when the bf16 cap is missing.
+- **`tests/test_ingest.py`** (new): 41 tests.
+- **`README.md`**: a new §9 and a status row. **`AMBIGUITIES.md`**: a new AMB-033, and a note on AMB-032 that clarification 3 closes its open point.
+- Nothing else changed: T3, `ulp₃₂`, the outcome rule, the reference numerics, the comparability gate, the metrics and the f64 guard are untouched.
+
+## Provenance record fields (`larql-run-record/1`)
+- **Identity:** `schema`, `spec_sha256`, `run_id`; `executable` (path and SHA-256); `container` (path, and its digest before and after the run); `model`.
+- **Tokens:** `token_manifest` (ids, their SHA-256, count) and `tokens_argument`, the exact `--tokens` string passed.
+- **Command:** `argv`, `environment`, `cwd`.
+- **Files:** `output` (dump and sidecar paths); `pre_run` (files deleted, both confirmed absent); `dump` and `sidecar` (exists, regular file, size, SHA-256, modification time; the sidecar also keeps its text and parsed JSON).
+- **Timing:** `start` and `end`, each on the wall clock and on the file system's own clock.
+- **Outcome:** `exit_status`, `timed_out`, `launch_error`.
+- **Output:** `stdout` and `stderr` in full with the SHA-256 of their raw bytes, and `stdout_lines`, the acceptance lines by kind.
+
+The record is written as canonical JSON.
+
+## Refusal codes and the clause each enforces
+| Code | Clause |
+|---|---|
+| `record_invalid` | D12; spec §8.3.2 |
+| `manifest_invalid` | D12; §6.5 |
+| `token_ids_mismatch` | D13; §6.5 |
+| `token_ids_sha256_mismatch` | D12 |
+| `tokens_not_canonical` | §2.3.4, §8.3.3.7 |
+| `argv_not_conforming` | §2.1, §2.2.0, §8.3.3.6; Baseline |
+| `path_mismatch` | §3.1–§3.3 |
+| `environment_not_pinned` | Baseline; §8.3.2 |
+| `pre_run_deletion_not_confirmed` | §8.3.1; D12 |
+| `nonzero_exit` | §7.2.2, §8.3.3.1 |
+| `stdout_line_missing`, `stdout_line_mismatch`, `stdout_line_repeated`, `stdout_line_order` | §7.3, §8.3.3.2, §8.3.3.5 |
+| `projection_plans_missing`, `projection_plans_unparseable`, `projection_plan_not_permitted` | §7.3.4, §8.3.3.5; Baseline "Run acceptance" |
+| `sidecar_missing`, `sidecar_invalid`, `sidecar_mismatch` | §7.1, §8.3.3.3 |
+| `sidecar_sha256_mismatch`, `dump_sha256_mismatch` | D12 |
+| `dump_missing` | §8.3.3.4 |
+| `dump_size_not_4NV` | §4.4, §8.3.3.4, §8.3.4; D12 clarification 3 |
+| `vocab_mismatch` | §8.3.5 |
+| `container_mismatch`, `model_mismatch` | D12 |
+| `executable_mismatch` | Baseline (only when an expected executable hash is given) |
+| `modified_before_run_start` | §8.3.3.8 |
+| `positions_invalid` | D13; §4.4, §6.3 |
+| `token_id_out_of_range` | §2.3.6 |
+| `configuration_invalid` | D12 |
+| `dump_changed_during_ingestion` | D13 |
+
+## Extractor output
+Every check runs before any row is read. The dump is hashed once; that same pass also hashes each preregistered row. Rows are then read through the same open file and each is checked against its digest, so a change in between is refused.
+
+An accepted run returns:
+- **`logits`:** a little-endian f32 array of shape (N, V); row i is position i, column j is token id j. The preregistered rows hold the dump's exact bits. Every other row is NaN, so it can never pass T3.
+- **`positions`:** the preregistered positions, sorted.
+- **`candidate_record`:** every field `check_candidate` needs, plus `token_ids_sha256` and an `ingestion` block. That block binds the run id, the record's hash, the token-id hash, the positions, the container, the model, the dump and sidecar hashes and each row's hash.
+
+`evaluate_t3` and `check_comparable` accept the result unchanged. A refused run returns only the reasons: no array and no record.
+
+## Substitution tests (all refused)
+- A dump, a sidecar, or both from a different run with the same tokens.
+- A record from a different run, offered either for another run's files or for an earlier run's files put back at the same path.
+- A record whose token manifest differs: three variants.
+- Dump bytes altered after the record was written, including with the old modification time restored.
+- An array and a record from two different ingestions (`check_ingested` flags it).
+
+The end-to-end test goes stub run → ingest → `evaluate_t3` against real ref32 and native ref64 records on a synthetic container. A candidate one f32 ulp off ref32 gives `pass`. A real disagreement gives `fail`. Evaluating a position that wasn't extracted gives `incomplete`, never `pass`.
+
+## Commits
+- `6c92aa7`: module, stub and tests.
+- `c2070c3`: README §9 and AMB-033.
+
+## New ambiguity: AMB-033 (fail-closed readings)
+The points you most need to decide or know about:
+- **Configuration fields LARQL never reports (b).** `check_comparable` needs `model_config`, `positional_encoding`, `attention` and `quantised_tensors` on the candidate side, but LARQL's output contains none of them. I take them as an explicit input tied to the expected container hash, sourced from a reference run whose D7 gate passed. So on the candidate side their equality is asserted, not observed. What actually ties LARQL to them is the container hash plus D7.
+- **Forged records (j).** LARQL writes no token ids anywhere (spec OI-1), so someone who rewrites a record consistently to claim a different token sequence of the same length cannot be detected from the files. Protection rests on custody of the record hash, and on T3 itself, which would return `fail` for rows computed from other tokens.
+- **Memory (h).** Because T3 takes full (N, V) arrays, the candidate array at N = 40,960 is about 24.9 GB in memory. A per-position T3 interface would avoid this, but that would change T3.
+- **Strictness.** Matching of stdout lines and sidecar fields is strict (d, f), and the expected layer count is 28, which the spec lists as expected but not observed. If real LARQL output differs in any detail, every run will be refused. That is the safe direction, but the first subject run should be checked against these choices.
+- **Smaller points.**
+  - The manifest's form and hash convention (a).
+  - Paths must be absolute `<stem>.f32` (c).
+  - The projection-plan rule is a subset rule (e). Whether `FusedBf16` and `FusedKQuant` must both appear is left to you.
+  - The modification-time check is enforced with no tolerance, against the file system's clock (g).
+  - Non-finite values are passed through to T3 rather than refused (i).
+  - The executable's hash is checked only if you supply one (k); the freeze should provide it.
+  - Timeouts count as a non-zero exit (l).

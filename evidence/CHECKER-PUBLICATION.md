@@ -316,3 +316,28 @@ implemented in this run), settings `c61f3ea9…`. Brief: `evidence/checker-brief
   per-position incomplete input.
 - **Why it is safe:** either reading avoids a false pass.
 - **Still open:** the question becomes live with the future dump reader.
+
+## Checker run 14: 2026-11-01, `6c92aa7` and `c2070c3` (D13 workstream 2: Phase 3 ingestion). Audited and pinned, NOT pushed
+
+**The run:** snapshot `932de33` (PROTOCOL.md `78f49789…`; the admitted logit-dump specification `5ad44e33…` inside),
+settings `fb08761d…`. Brief: `evidence/checker-briefs/checker-run-14-brief.md`. Log: `checker-run-14.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 80608c3`) | Clean: 2 commits, no trailers, lockfile unchanged, environment matches, no new imports beyond the standard library (`subprocess`) |
+| Scope | The new `refcheck/ingest.py`, `tests/stub_larql.py` (a stub written from the admitted specification), `tests/test_ingest.py`, README section 9, AMBIGUITIES. T3, `ulp₃₂`, the outcome rule, the reference numerics, the comparability gate, the metrics and the f64 guard are untouched |
+| Runner | `subprocess.run` with an explicit environment, no shell, stdin closed, and a timeout. A timeout counts as a non-zero exit. A launch failure is recorded |
+| Verifier | Every condition of the specification's §8.3, the Baseline plan rule, identity and hashes are checked before any row is read. It refuses the whole input with coded reasons, each mapped to a specification or protocol clause. An unexpected exception gives `checker_error`, never an acceptance |
+| Extractor | Reads only the preregistered rows, from the bytes that were verified, with per-row hashes taken in the same pass. Unextracted rows are NaN, so they can never pass T3 |
+| Tests, rerun by the publisher with `-W error` | 560, OK (519 at `80608c3`) |
+
+**Pin.** `c2070c3` is the checker that the hidden ingestion corpus is sealed and scored against.
+
+**New item, for the owner: AMB-033, the fail-closed readings.** The points that matter most:
+- **(b)** The candidate's configuration fields, which LARQL never reports, are supplied as an input tied to the
+  container hash and a D7-passing reference. On the candidate side they are asserted, not observed.
+- **(j)** A consistently forged record claiming a different token sequence of the same length cannot be detected from
+  the files. Protection rests on custody of the record (D11 draft §2a) and on T3 itself.
+- **(h)** T3 takes full (N, V) arrays, so about 24.9 GB is held in memory at N = 40,960.
+- **Strict matching** of stdout and sidecar, including the expected-not-observed 28 layers. A real-output detail could
+  refuse every run, which is the safe direction. The first subject run must be checked against these choices.
