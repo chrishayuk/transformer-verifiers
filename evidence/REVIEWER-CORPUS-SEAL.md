@@ -499,3 +499,36 @@ The coordinating session has not read the held-out contents.
   identity, the token-digest width and two H-mode translations were derived through documented interfaces.
 - **What this is:** synthetic checker-correctness evidence. Acceptance would mean `content_valid` only. No LARQL was
   involved.
+
+## Scoring run 11 (2026-11-02): the 13 accepted controls of corpus revision 9 against checker e505afc
+
+- **Why it exists:** in run 10 the scorer's own adapter crashed on the 13 accepted controls, so they were never
+  measured. The owner authorised a recovery run on four conditions:
+  1. both pins stay unchanged;
+  2. only the adapter is fixed;
+  3. a self-test runs the complete path with a real ndarray first;
+  4. the 13 are scored once, run 10's results stand, and coverage is reported per run.
+
+  This is a recovery from a failure in the evaluation infrastructure. It is not a rerun of anything already
+  observed.
+- **Checks by the coordinating session:**
+  - commits `64c1d55` (adapter fix and both self-tests: 44 synthetic checks, 24 complete-path checks), `9c8dd17` (the
+    single run) and `e457c4e` (`COVERAGE.md`), with no trailers;
+  - `scoring/run-10/` is unchanged and `fieldmap.json` is byte-identical to run 10's;
+  - the scorer's tool log has 33 calls, with no checker source or tests, no `dev/` and no LARQL;
+  - the recount from `RESULTS.json` is 13/13 accepted and complete.
+
+| Tally | Run 10 (66 refusals) | Run 11 (13 acceptances) | Combined |
+|---|---|---|---|
+| Rejection before extraction (P1) | 66/66 | – | 66/66 |
+| Acceptance of valid controls (P2) | – | 13/13 | 13/13 |
+| Extracted-row identity and binding (P3) | – | 13/13 (28 rows bit-identical) | 13/13 |
+| Correct refusal reason (P4) | 66/66 | – | 66/66 |
+| Substitution resistance (P6) | 14/14 | – | 14/14 |
+| `d15_c1` representation-line cases | 9/9 | 4/4 (the real suffix and 3 other forms) | 13/13 |
+| Complete case (P5) | 66/66 | 13/13 | **79/79** |
+| `checker_error` / adapter errors | 0 / 13 | 0 / 0 | – |
+
+- **What this is:** synthetic checker-correctness evidence that checker `e505afc` meets D15 clarification 1 and the
+  revision 9 ingestion contract. Acceptance means `content_valid` only, and no LARQL was involved. The scorer's
+  report is in the reviewer repository.
