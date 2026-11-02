@@ -1426,6 +1426,24 @@ rewritten. D11 remains a proposal.
     `dev/larql-verify/`, and the 16-token development diagnostic rerun without overrides.
   - **Unchanged:** the D15 prohibition on modifying `checker/` from the development workstream. T3, the reference
     numerics, the gate, the metrics and every other ingestion reason.
+- **Clarification 2 (2026-11-02): checker maintenance 16, tests only.**
+  - **The two items.** (a) `Substitution.test_a_record_from_a_different_run` fails intermittently at `c2070c3` and
+    `e505afc` (`evidence/CHECKER-PUBLICATION.md`, run 15). (b) AMB-034 lists other exact-match stdout lines that could
+    mismatch real output.
+  - **The exception to "tests are synthetic only".** For item (b), the snapshot admits
+    `REAL-STDOUT-FIXTURES.json`: the stdout text of real development runs at N = 2, 1,024 and 2,048, with each run's
+    N, V and output paths. The checker may read that file and copy it into its tests. It holds no logits, no weights
+    and no token ids. The checker still must not read LARQL, its source, development outputs or anything else outside
+    its isolation. Qwen3-0.6B is already retired as the blind subject, so this exposes no blind data.
+  - **The scope.** Tests and records only. `refcheck/` must not change, and the commit that ends the run must have the
+    same `refcheck` tree as `e505afc` (`e82a4425…`). If a fixture is refused by the pinned code, the agent stops and
+    reports it. It does not change the reading.
+  - **The repair.** The test keeps every refusal code it requires today. No retry, skip, sleep, or removal of an
+    assertion. The failure history stays on record, in AMB-034 and `evidence/CHECKER-PUBLICATION.md`.
+  - **What follows from an unchanged tree.** Because the verifier is byte-identical, corpus revision 9's result still
+    applies to it and is not rescored, and `dev/larql-verify/` does not change its pin. If the tree differs, this
+    paragraph does not apply.
+  - **Unchanged:** the D15 prohibition on modifying `checker/` from the development workstream.
 
 ### Stage A falsified if
 
