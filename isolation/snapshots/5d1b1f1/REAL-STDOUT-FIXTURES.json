@@ -1,0 +1,40 @@
+{
+  "schema": "real-stdout-fixtures/1",
+  "note": "stdout of real development runs, D15 clarification 2. No logits, weights or token ids.",
+  "larql_binary_sha256_prefix": "4d80dd42",
+  "fixtures": [
+    {
+      "id": "n2",
+      "n": 2,
+      "v": 151936,
+      "stdout": "representation: Q8_0  source: stored  objects from a compiled pack: 1/4\nengine: vindex3-production-larql-compute\npositions: 2  vocab: 151936\nteacher-forced 2 positions in 0.1 s (54 ms/position)\nwrote [2, 151936] f32 to /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/short-2/larql.f32\nwrote provenance to /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/short-2/larql.meta.json\nruntime compile: 0 tensor(s)  — served entirely from stored bytes\nprojection plans: FusedBf16 2 calls 0.62 GB, FusedKQuant 392 calls 0.94 GB\n",
+      "stdout_sha256": "fa62f580bc2d3632f723cb5e0d712010b82c3a3695d9dbb5cd9ef35ac12cb51d",
+      "output": {
+        "dump_path": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/short-2/larql.f32",
+        "sidecar_path": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/short-2/larql.meta.json"
+      }
+    },
+    {
+      "id": "n1024",
+      "n": 1024,
+      "v": 151936,
+      "stdout": "representation: Q8_0  source: stored  objects from a compiled pack: 1/4\nengine: vindex3-production-larql-compute\npositions: 1024  vocab: 151936\nteacher-forced 1024 positions in 88.0 s (86 ms/position)\nwrote [1024, 151936] f32 to /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/n1024/larql.f32\nwrote provenance to /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/n1024/larql.meta.json\nruntime compile: 0 tensor(s)  — served entirely from stored bytes\nprojection plans: FusedBf16 1024 calls 318.63 GB, FusedKQuant 200704 calls 479.16 GB\n",
+      "stdout_sha256": "552e1f04fa62fb86dc4a63c27534b01d086605e7e4eb7bd300f0baa19f7a7146",
+      "output": {
+        "dump_path": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/n1024/larql.f32",
+        "sidecar_path": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/n1024/larql.meta.json"
+      }
+    },
+    {
+      "id": "n2048",
+      "n": 2048,
+      "v": 151936,
+      "stdout": "representation: Q8_0  source: stored  objects from a compiled pack: 1/4\nengine: vindex3-production-larql-compute\npositions: 2048  vocab: 151936\nteacher-forced 2048 positions in 268.3 s (131 ms/position)\nwrote [2048, 151936] f32 to /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/long-2048/larql.f32\nwrote provenance to /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/long-2048/larql.meta.json\nruntime compile: 0 tensor(s)  — served entirely from stored bytes\nprojection plans: FusedBf16 2048 calls 637.27 GB, FusedKQuant 401408 calls 958.31 GB\n",
+      "stdout_sha256": "ebaa822a05df648134ba854a0f3b1d67e0cacfa975c25e34e7ffb77ebc0b906a",
+      "output": {
+        "dump_path": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/long-2048/larql.f32",
+        "sidecar_path": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/long-2048/larql.meta.json"
+      }
+    }
+  ]
+}

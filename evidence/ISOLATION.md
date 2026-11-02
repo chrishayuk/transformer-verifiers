@@ -237,3 +237,18 @@ Settings are now sha256 `22829887…`; the only change is the snapshot path.
 - **Blocked:** everything blocked in part 13.
 - **Blocked, new probes:** the development harness `dev/larql-verify/`, its real-run records, and the T3 calibration
   review repository.
+
+## Part 15: protocol snapshot 5d1b1f1 (2026-11-02)
+
+The snapshot moves to `isolation/snapshots/5d1b1f1/`. It holds:
+- D1–D15, with D15 clarification 2 (checker maintenance 16): `PROTOCOL.md` `411a6922…`, `draft.json` `6e97a9cb…`;
+- the admitted logit-dump specification, `LARQL-LOGIT-DUMP-SPEC.md` `5ad44e33…`, unchanged;
+- **new:** `REAL-STDOUT-FIXTURES.json` `b68901ab…`, the stdout of three real development runs, which clarification 2
+  admits as the one exception to synthetic-only tests. It holds no logits, weights or token ids.
+
+Settings are now sha256 `d9a158e9…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-15.log`):
+- **Allowed:** the new snapshot, its specification copy and the fixture file; the pinned ggml source in `inputs/`, as before.
+- **Blocked:** everything blocked in part 14, with the previous snapshot now blocked too, and writing to the new snapshot.
+- **Blocked, new probes:** the development baseline `runs/suite-v1` and the attribution results `runs/attribution-v1`.

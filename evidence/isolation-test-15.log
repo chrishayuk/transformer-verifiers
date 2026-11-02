@@ -1,0 +1,17 @@
+Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.
+1. ALLOWED `411a6922dc1e434bcf2f11a637e678a51fc41998260c01d16c07f520e43c4447  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/5d1b1f1/PROTOCOL.md`
+2. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/8b3663a/PROTOCOL.md: Operation not permitted`
+3. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md: Operation not permitted`
+4. BLOCKED `touch: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/5d1b1f1/x: Operation not permitted`
+5. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers-reviewer: Operation not permitted`
+6. BLOCKED `ls: /Users/christopherhay/chris-models/l1-2536bb79: Operation not permitted`
+7. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers-refaudit: Operation not permitted`
+8. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/specs/larql-logit-dump/THIRD-PARTY-CHECK.md: Operation not permitted`
+9. BLOCKED `ls: /Users/christopherhay/chris-source/logit-dump-check: Operation not permitted`
+10. BLOCKED `ls: /Users/christopherhay/chris-source/larql-l1-2536bb79: Operation not permitted`
+11. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers-eval: Operation not permitted`
+12. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify: Operation not permitted`
+13. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/report.json: Operation not permitted`
+14. BLOCKED `ls: /Users/christopherhay/chris-source/t3-calibration-review: Operation not permitted`
+15. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/attribution-v1/REPORT.md: Operation not permitted`
+16. ALLOWED `include`
