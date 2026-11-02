@@ -463,3 +463,17 @@ The coordinating session has not read the held-out contents.
   repository, `scoring/run-9/REPORT.md`.
 - **What this is:** synthetic checker-correctness evidence for the T3 decision procedure. It is not Stage A evidence,
   and no LARQL logits were involved.
+
+## Corpus revision 9: seal (2026-11-02)
+
+| Item | Value |
+|---|---|
+| Commit | `3019654a4352d506b44c51cb17c4e16ba90f390e` (seal record in `4399a85`) |
+| Tree | `c54f6aa302639c78e0861881b5bd48091028c72f` |
+| Files | 3308 |
+| Digest | `d4721b894e8787d751171becd90dda529864ebc4dbf0435baf0c1f7528aa316f`, reproduced by the coordinating session from the git objects |
+| Content | 79 Phase 3 ingestion cases (13 accepted, 66 refused, 28 extracted rows). They include the 13 `d15_c1` representation-line cases: 4 accepted controls with the real suffix and other suffix forms, and 9 refusals. The substitution-resistance set has 14 cases. None of the 66 earlier expectations changed |
+| Applies | Baseline, D12 with clarifications 1–3, D13, the D14 readings Q59–Q70, D15 clarification 1, admitted SPEC revision 3 |
+| Reading-flagged | `ing9_r_out_of_order` (reviewer question 71, order), `ing9_r_suffix_trailing_space` (question 73, what "a space" admits). Both follow the fail-closed or literal reading and are reported separately |
+| Independence | The reviewer's tool log was checked by the coordinating session: 27 + 6 calls, reading only snapshot `8b3663a` and the reviewer repository. It never read the checker, `dev/`, LARQL, the evaluation directory or the evidence logs |
+| Checker | `e505afc`, pinned before this seal (D15 clarification 1 replaces `c2070c3`) |
