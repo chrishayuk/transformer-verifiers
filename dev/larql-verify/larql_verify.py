@@ -31,7 +31,7 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REFCHECK_COMMIT = "c2070c3"
+REFCHECK_COMMIT = "e505afc"
 VENDOR = os.path.join(HERE, "vendor", f"refcheck-{REFCHECK_COMMIT}")
 sys.path.insert(0, VENDOR)
 
@@ -57,28 +57,9 @@ TEXT_SOURCE = "LICENSE"  # a pinned file of the upstream snapshot; the token lad
 
 MEASURED, INCOMPLETE, EXECUTION_ERROR = "MEASURED", "INCOMPLETE", "EXECUTION_ERROR"
 
-# Development override DO-1 (dev only; checker/ unchanged). Checker c2070c3 requires the `representation:` stdout line
-# to equal `representation: Q8_0  source: stored` exactly (AMB-033). The admitted spec (§8.3.3.5) requires stdout to
-# *contain* it, and pinned LARQL always appends the stored-object count (exec.rs:97), as the third-party fixture also
-# recorded (THIRD-PARTY-CHECK.md §7.3). DO-1 accepts exactly the one full line below for this profile and nothing else;
-# every other ingestion reason is kept. To be resolved in the checker by the owner.
-DO1_LINE = "representation: Q8_0  source: stored  objects from a compiled pack: 1/4"
-DO1_MESSAGE = f"stdout line {DO1_LINE!r}, required 'representation: Q8_0  source: stored'"
+# No development overrides. DO-1 (the `representation:` line) was retired when the checker moved to e505afc
+# (D15 clarification 1); refcheck.ingest is used exactly as pinned.
 DEV_OVERRIDES_APPLIED: list = []
-_orig_check_stdout = I._check_stdout
-
-
-def _check_stdout_do1(rec, n, v, reasons):
-    mine: list = []
-    _orig_check_stdout(rec, n, v, mine)
-    for r in mine:
-        if r["code"] == "stdout_line_mismatch" and r["message"] == DO1_MESSAGE:
-            DEV_OVERRIDES_APPLIED.append({"id": "DO-1", "waived_reason": r})
-            continue
-        reasons.append(r)
-
-
-I._check_stdout = _check_stdout_do1
 
 
 def sha256_file(path):

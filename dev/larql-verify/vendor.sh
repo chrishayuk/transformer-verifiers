@@ -1,7 +1,7 @@
 #!/bin/sh
 # Export refcheck from the checker repository at a pinned commit, read-only. Nothing in checker/ is modified (D15).
 set -eu
-COMMIT=${1:-c2070c3}
+COMMIT=${1:-e505afc}
 HERE=$(cd "$(dirname "$0")" && pwd)
 CHECKER="$HERE/../../checker"
 DEST="$HERE/vendor/refcheck-$COMMIT"

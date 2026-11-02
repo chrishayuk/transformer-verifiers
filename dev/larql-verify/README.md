@@ -31,7 +31,7 @@ nested prefixes.
 ## Running it
 
 ```sh
-./vendor.sh                     # export refcheck from checker/ at c2070c3 (read-only; checker/ is never modified)
+./vendor.sh                     # export refcheck from checker/ at e505afc (read-only; checker/ is never modified)
 ../../checker/.venv/bin/python -I larql_verify.py compare --n-tokens 16
 ```
 
@@ -40,8 +40,8 @@ The rebuild on 2026-11-01 reproduced the L1 baseline binary exactly: `4d80dd42�
 
 ## Development overrides
 
-| ID | What | Why | Resolution |
-|---|---|---|---|
-| DO-1 | Accepts the stdout line `representation: Q8_0  source: stored  objects from a compiled pack: 1/4`, exactly that string and no other | Checker `c2070c3` requires whole-line equality with `representation: Q8_0  source: stored` (AMB-033). The admitted spec §8.3.3.5 requires stdout to *contain* it. Pinned LARQL always appends the count (`exec.rs:97`), and the third-party fixture recorded the same suffix (`THIRD-PARTY-CHECK.md` §7.3). Without DO-1, every real run is refused | Owner decision. The checker needs the spec's reading and a hidden test with the real line. The stub was written from the spec text, so it never printed the suffix |
+**None are active.** The harness uses `refcheck` exactly as pinned, at checker `e505afc`.
 
-Every override that is applied is recorded in `report.json` under `stages.ingestion.dev_overrides`.
+| ID | What | Status |
+|---|---|---|
+| DO-1 | Accepted the real `representation:` line suffix `  objects from a compiled pack: 1/4`, which checker `c2070c3` refused (AMB-033 whole-line reading against spec §8.3.3.5's "contains") | **Retired 2026-11-02.** The checker was fixed under D15 clarification 1 (`e505afc`, audited and pinned). Corpus revision 9 is 79/79 across scoring runs 10 and 11. The 16-token diagnostic was rerun without overrides: ingestion accepted, the dump was bit-identical to the DO-1 run (`a42f7ff6…`), and the measurements were unchanged. The ladder runs at 128, 512 and 1,024 tokens used DO-1 on `c2070c3`; their committed records say so |
