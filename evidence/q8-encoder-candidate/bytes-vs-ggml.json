@@ -1,0 +1,7 @@
+{
+ "q8_tensors": 196,
+ "q8_differ_from_ggml": [],
+ "q8_differ_from_baseline": 196,
+ "other_tensors": 115,
+ "other_differ_from_baseline": []
+}

@@ -62,6 +62,12 @@ separate LARQL's encoder from Q8_0 itself. It does not run LARQL or write a cont
 `runs/suite-v1`. Results are in `runs/attribution-v1/REPORT.md`, along with the repeated-word probe, which is
 `report --suite prompts/repetition-probe-v1.json`.
 
+## Measuring another LARQL
+
+`report` and `compare` measure the L1 baseline by default. `--larql`, `--larql-commit`, `--container` and
+`--container-hashes` point them at something else, with `--out` keeping its results apart. The first use is the corrected
+Q8_0 encoder: `evidence/q8-encoder-candidate/RECORD.md`, with results in `runs/candidate-ad82acba/`.
+
 ## Development overrides
 
 **None are active.** The harness uses `refcheck` exactly as pinned, at checker `e505afc`.

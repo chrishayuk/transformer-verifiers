@@ -1,0 +1,136 @@
+[22:52:15] preflight identities: verified
+[22:52:16] preflight container_integrity: verified
+[22:52:20] preflight configuration: comparable
+[22:52:34] E1: measured
+[22:52:50] prose-en reference_decoded_q8_0: comparable
+[22:53:00] prose-en larql_execution: completed
+[22:53:00] prose-en ingestion: accepted
+[22:53:01] prose-en E2: comparable
+[22:53:16] prose-en reference_bf16: comparable
+[22:53:16] prose-en E3: comparable
+[22:53:16] prose-en reference_quantisation_drift: computed
+[22:53:37] prose-en f64_diagnostic: computed
+[22:53:37] prose-en: MEASURED (E2, E3 and the f64 diagnostic measured)
+[22:53:56] code-python reference_decoded_q8_0: comparable
+[22:54:11] code-python larql_execution: completed
+[22:54:11] code-python ingestion: accepted
+[22:54:12] code-python E2: comparable
+[22:54:30] code-python reference_bf16: comparable
+[22:54:31] code-python E3: comparable
+[22:54:31] code-python reference_quantisation_drift: computed
+[22:54:57] code-python f64_diagnostic: computed
+[22:54:57] code-python: MEASURED (E2, E3 and the f64 diagnostic measured)
+[22:55:15] code-rust reference_decoded_q8_0: comparable
+[22:55:27] code-rust larql_execution: completed
+[22:55:27] code-rust ingestion: accepted
+[22:55:28] code-rust E2: comparable
+[22:55:44] code-rust reference_bf16: comparable
+[22:55:44] code-rust E3: comparable
+[22:55:45] code-rust reference_quantisation_drift: computed
+[22:56:07] code-rust f64_diagnostic: computed
+[22:56:07] code-rust: MEASURED (E2, E3 and the f64 diagnostic measured)
+[22:56:28] structured-json reference_decoded_q8_0: comparable
+[22:56:44] structured-json larql_execution: completed
+[22:56:44] structured-json ingestion: accepted
+[22:56:45] structured-json E2: comparable
+[22:57:04] structured-json reference_bf16: comparable
+[22:57:05] structured-json E3: comparable
+[22:57:05] structured-json reference_quantisation_drift: computed
+[22:57:33] structured-json f64_diagnostic: computed
+[22:57:33] structured-json: MEASURED (E2, E3 and the f64 diagnostic measured)
+[22:57:56] structured-table reference_decoded_q8_0: comparable
+[22:58:16] structured-table larql_execution: completed
+[22:58:17] structured-table ingestion: accepted
+[22:58:17] structured-table E2: comparable
+[22:58:39] structured-table reference_bf16: comparable
+[22:58:40] structured-table E3: comparable
+[22:58:41] structured-table reference_quantisation_drift: computed
+[22:59:13] structured-table f64_diagnostic: computed
+[22:59:13] structured-table: MEASURED (E2, E3 and the f64 diagnostic measured)
+[22:59:27] multilingual reference_decoded_q8_0: comparable
+[22:59:34] multilingual larql_execution: completed
+[22:59:34] multilingual ingestion: accepted
+[22:59:34] multilingual E2: comparable
+[22:59:47] multilingual reference_bf16: comparable
+[22:59:47] multilingual E3: comparable
+[22:59:47] multilingual reference_quantisation_drift: computed
+[23:00:05] multilingual f64_diagnostic: computed
+[23:00:05] multilingual: MEASURED (E2, E3 and the f64 diagnostic measured)
+[23:00:24] arithmetic reference_decoded_q8_0: comparable
+[23:00:38] arithmetic larql_execution: completed
+[23:00:39] arithmetic ingestion: accepted
+[23:00:39] arithmetic E2: comparable
+[23:00:57] arithmetic reference_bf16: comparable
+[23:00:57] arithmetic E3: comparable
+[23:00:58] arithmetic reference_quantisation_drift: computed
+[23:01:23] arithmetic f64_diagnostic: computed
+[23:01:23] arithmetic: MEASURED (E2, E3 and the f64 diagnostic measured)
+[23:01:37] chat-template reference_decoded_q8_0: comparable
+[23:01:45] chat-template larql_execution: completed
+[23:01:45] chat-template ingestion: accepted
+[23:01:46] chat-template E2: comparable
+[23:01:59] chat-template reference_bf16: comparable
+[23:01:59] chat-template E3: comparable
+[23:01:59] chat-template reference_quantisation_drift: computed
+[23:02:17] chat-template f64_diagnostic: computed
+[23:02:17] chat-template: MEASURED (E2, E3 and the f64 diagnostic measured)
+[23:02:41] kv-copy reference_decoded_q8_0: comparable
+[23:03:04] kv-copy larql_execution: completed
+[23:03:04] kv-copy ingestion: accepted
+[23:03:05] kv-copy E2: comparable
+[23:03:29] kv-copy reference_bf16: comparable
+[23:03:29] kv-copy E3: comparable
+[23:03:30] kv-copy reference_quantisation_drift: computed
+[23:04:05] kv-copy f64_diagnostic: computed
+[23:04:05] kv-copy: MEASURED (E2, E3 and the f64 diagnostic measured)
+[23:04:18] repetition reference_decoded_q8_0: comparable
+[23:04:26] repetition larql_execution: completed
+[23:04:26] repetition ingestion: accepted
+[23:04:26] repetition E2: comparable
+[23:04:39] repetition reference_bf16: comparable
+[23:04:39] repetition E3: comparable
+[23:04:39] repetition reference_quantisation_drift: computed
+[23:04:56] repetition f64_diagnostic: computed
+[23:04:56] repetition: MEASURED (E2, E3 and the f64 diagnostic measured)
+[23:05:06] short-2 reference_decoded_q8_0: comparable
+[23:05:08] short-2 larql_execution: completed
+[23:05:08] short-2 ingestion: accepted
+[23:05:08] short-2 E2: comparable
+[23:05:16] short-2 reference_bf16: comparable
+[23:05:16] short-2 E3: comparable
+[23:05:16] short-2 reference_quantisation_drift: computed
+[23:05:27] short-2 f64_diagnostic: computed
+[23:05:27] short-2: MEASURED (E2, E3 and the f64 diagnostic measured)
+[23:07:38] long-2048 reference_decoded_q8_0: comparable
+[23:12:06] long-2048 larql_execution: completed
+[23:12:09] long-2048 ingestion: accepted
+[23:12:12] long-2048 E2: comparable
+[23:14:21] long-2048 reference_bf16: comparable
+[23:14:25] long-2048 E3: comparable
+[23:14:28] long-2048 reference_quantisation_drift: computed
+[23:18:16] long-2048 f64_diagnostic: computed
+[23:18:16] long-2048: MEASURED (E2, E3 and the f64 diagnostic measured)
+
+larql-verify report  (suite suite-v1, DEVELOPMENT ONLY, D15)
+  identities: verified
+  container_integrity: verified
+  configuration: comparable
+  E1 coverage: complete
+  E1 Q8_0 (lossy, 196 tensors): max |Δw| 0.00485, worst error / T2 bound 0.952, elements over T2 0, rel. Frobenius min/median/max 0.00536 / 0.00546 / 0.00581 (worst model.layers.16.mlp.down_proj.weight), decode = gguf-py: True
+  E1 T2 by cause: zero-scale (flushed) blocks 0 with 0 elements over, max amax 0; non-zero-scale blocks over 0 of 13762560 with 0 elements over, worst ratio 0.952
+  E1 T2 counterfactual, ggml-style encoder on the same weights: 0 elements over, worst ratio 0.952, 0 zero-scale blocks
+  E1 exact storage (115 tensors, {'BF16': 115}): all bit-identical: True
+  case              kind              n     verdict   E2 max|Δ|  E2 RMS    E2 KL max  E2 top-1 ≠  E3 max|Δ|  E3 KL max  E3/drift top-1 ≠  f64: LARQL max|Δ|  f64: ref32 max|Δ|  f64 ratio med
+  prose-en          natural language  149   MEASURED  0.000116   1e-05     2.03e-10   0           2.26       0.058      6/6               0.000113           2.88e-05           4.3          
+  code-python       code              228   MEASURED  0.000134   9.93e-06  1.31e-10   0           2.31       0.0443     2/2               0.000221           9.51e-05           4.3          
+  code-rust         code              182   MEASURED  0.000121   1.12e-05  2.92e-10   0           2.7        0.0979     0/0               0.00012            3.27e-05           4.4          
+  structured-json   structured        248   MEASURED  0.000133   9.19e-06  1.59e-10   0           2.38       0.0754     1/1               9.45e-05           6.33e-05           3.9          
+  structured-table  structured        311   MEASURED  0.000741   1.02e-05  1.5e-10    0           2.09       0.0583     4/4               0.000207           0.000625           3.1          
+  multilingual      natural language  99    MEASURED  0.000175   1.21e-05  1.31e-09   0           1.96       0.0535     4/4               0.000178           2.29e-05           4.7          
+  arithmetic        numbers           220   MEASURED  0.000263   9.42e-06  9.61e-10   0           2.37       0.0833     1/1               0.00026            7.56e-05           3.6          
+  chat-template     chat              106   MEASURED  0.000196   1.39e-05  9.8e-10    0           1.74       0.0561     4/4               0.000183           6.9e-05            4.3          
+  kv-copy           KV cache          344   MEASURED  0.000169   1.13e-05  1.2e-09    0           2.21       0.0449     1/1               0.000178           0.000141           3.5          
+  repetition        KV cache          96    MEASURED  0.000975   7.98e-05  1.34e-08   0           2.68       0.0878     17/17             0.000669           0.000364           5.8          
+  short-2           edge              2     MEASURED  5.44e-05   9.79e-06  4.8e-11    0           1.89       0.0479     0/0               4.71e-05           2.18e-05           3.1          
+  long-2048         long sequence     2048  MEASURED  0.000959   3.18e-05  1.93e-08   0           2.46       0.121      47/47             0.000333           0.00102            0.96         
+  Verdict: MEASURED  (E1 and every case measured)

@@ -719,18 +719,31 @@ def render_markdown(r):
     return "\n".join(out)
 
 
+def subject_options(p):
+    """Which LARQL and which container are measured. The defaults are the L1 baseline."""
+    p.add_argument("--larql", default=LARQL, help="LARQL executable")
+    p.add_argument("--larql-commit", default=LARQL_COMMIT, help="the commit that executable was built from")
+    p.add_argument("--container", default=CONTAINER, help="Q8_0 container directory")
+    p.add_argument("--container-hashes", default=CONTAINER_HASHES, help="per-file SHA-256 list for that container")
+
+
 def main():
+    global LARQL, LARQL_COMMIT, CONTAINER, CONTAINER_HASHES
     ap = argparse.ArgumentParser(prog="larql-verify")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("compare", help="one LICENSE-prefix case, E2 and E3")
     p.add_argument("--n-tokens", type=int, required=True)
     p.add_argument("--out", default=os.path.join(HERE, "runs"))
+    subject_options(p)
     p = sub.add_parser("report", help="one model, one report: E1, then E2, E3 and f64 for every suite case")
     p.add_argument("--suite", default=DEFAULT_SUITE)
     p.add_argument("--cases", default="", help="comma-separated case ids (default: all)")
     p.add_argument("--no-f64", action="store_true", help="skip the f64 diagnostic")
     p.add_argument("--out", default=os.path.join(HERE, "runs"))
+    subject_options(p)
     a = ap.parse_args()
+    LARQL, LARQL_COMMIT = os.path.abspath(a.larql), a.larql_commit
+    CONTAINER, CONTAINER_HASHES = os.path.abspath(a.container), os.path.abspath(a.container_hashes)
     if a.cmd == "compare":
         r = compare(a.n_tokens, os.path.abspath(a.out))
     else:

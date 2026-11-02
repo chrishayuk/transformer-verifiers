@@ -1,0 +1,68 @@
+{
+ "compatibility": {
+  "short-2": {
+   "old_binary_on_new_container_equals_candidate_dump": true,
+   "new_binary_on_old_container_equals_baseline_dump": true
+  },
+  "prose-en": {
+   "old_binary_on_new_container_equals_candidate_dump": true,
+   "new_binary_on_old_container_equals_baseline_dump": true
+  },
+  "repetition": {
+   "old_binary_on_new_container_equals_candidate_dump": true,
+   "new_binary_on_old_container_equals_baseline_dump": true
+  }
+ },
+ "timing": {
+  "prose-en": {
+   "n_tokens": 149,
+   "pairs": 8,
+   "baseline_ms_per_position": [
+    60.1,
+    59.4,
+    62.2,
+    57.8,
+    64.3,
+    63.4,
+    68.9,
+    66.9
+   ],
+   "candidate_ms_per_position": [
+    60.3,
+    63.4,
+    62.6,
+    63.1,
+    63.1,
+    67.2,
+    65.1,
+    67.2
+   ],
+   "baseline_median": 62.8,
+   "candidate_median": 63.25,
+   "baseline_wall_median": 11.365209250012413,
+   "candidate_wall_median": 11.44329879200086
+  },
+  "structured-table": {
+   "n_tokens": 311,
+   "pairs": 5,
+   "baseline_ms_per_position": [
+    73.5,
+    83.3,
+    88.8,
+    74.8,
+    69.0
+   ],
+   "candidate_ms_per_position": [
+    76.4,
+    86.2,
+    78.7,
+    71.6,
+    432.4
+   ],
+   "baseline_median": 74.8,
+   "candidate_median": 78.7,
+   "baseline_wall_median": 25.302733958000317,
+   "candidate_wall_median": 26.614629207993858
+  }
+ }
+}
