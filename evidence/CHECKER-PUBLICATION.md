@@ -341,3 +341,29 @@ settings `fb08761d…`. Brief: `evidence/checker-briefs/checker-run-14-brief.md`
 - **(h)** T3 takes full (N, V) arrays, so about 24.9 GB is held in memory at N = 40,960.
 - **Strict matching** of stdout and sidecar, including the expected-not-observed 28 layers. A real-output detail could
   refuse every run, which is the safe direction. The first subject run must be checked against these choices.
+
+## Checker run 15: 2026-11-02, `8c59122` and `e505afc` (D15 clarification 1: the `representation:` line, DO-1). Audited and pinned, NOT pushed
+
+**The run:** snapshot `8b3663a` (PROTOCOL.md `927c0cb9…`; the admitted logit-dump specification `5ad44e33…` inside),
+settings `22829887…`, `--model sonnet`, `acceptEdits`, `git add`/`git commit` allowed. Brief:
+`evidence/checker-briefs/checker-run-15-brief.md`, committed before the run (`da47821`). Log: `checker-run-15.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh c2070c3`) | Clean: 2 commits, no trailers, lockfile unchanged, environment matches (20,103 RECORD files, 0 bad), no new imports |
+| Scope | `refcheck/ingest.py`: +15/−1. The `representation` entry leaves the whole-line table and goes through `representation_line_ok` (`ln == REQUIRED or ln.startswith(REQUIRED + " ")`). Code, clause and message prefix are unchanged. Every other line, every other check, T3, the reference, the gate and the metrics are untouched. The stub prints the suffix by default. 11 new tests |
+| Tests, rerun by the publisher with `-W error` | 571. Three full runs: OK, FAILED (1), OK |
+| The failure | Always `Substitution.test_a_record_from_a_different_run`: 5 of 8 runs of `test_ingest.py` at `e505afc`, and **4 of 8 at `c2070c3`** (a read-only export, run by the publisher). It predates this run. The checker's diagnosis (AMB-034 (d)): two stub sidecars sometimes coincide, because their timing fields print to three decimals. This is a defect of the test fixture, not of the verifier. The run 14 record's "560, OK" was a passing draw. It is left for a later checker run, because this brief forbade other changes |
+
+**Pin.** `e505afc` is the checker that corpus revision 9 is sealed and scored against (D15 clarification 1,
+replacing `c2070c3`).
+
+**For the owner: AMB-034.**
+- "A space" means U+0020 only. A tab, a no-break space or `\r` after `stored` is refused.
+- The checker lists the other exact-match lines that could mismatch real output, judged by the spec's text only:
+  - `runtime compile:` is the highest risk;
+  - then the two `wrote` lines, because of how paths are rendered;
+  - then `engine:` and `positions:`.
+
+  None is known to mismatch. The development runs accepted all of them on real output.
+- The flaky substitution test above.

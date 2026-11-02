@@ -1,0 +1,76 @@
+The checker now accepts the `representation:` line under D15 clarification 1, and both commits went through. The full suite went from **560 to 571 tests, all OK** (+11, all in `tests/test_ingest.py`). I checked the snapshot hashes first: `PROTOCOL.md` and `LARQL-LOGIT-DUMP-SPEC.md` both match. Nothing was pushed.
+
+## Changes, file by file
+
+- **`refcheck/ingest.py`**
+  - Adds the constant `REPRESENTATION_REQUIRED` and the function `representation_line_ok`.
+  - `_check_stdout` no longer holds `representation` in its whole-line table. It sends that kind through `representation_line_ok`.
+  - Reason code, clause and message prefix are unchanged, and the message now also says "followed by the end of the line or a space (D15 clarification 1)".
+- **`tests/stub_larql.py`**
+  - By default the line now ends with `  objects from a compiled pack: 1/4`.
+  - The config key `representation_suffix` overrides it, and `""` prints the bare line.
+- **`tests/test_ingest.py`**: 11 new tests, listed below.
+- **`README.md` §9**
+  - The `stdout_line_mismatch` and `stdout_line_repeated` rows are updated, and a new paragraph states the rule.
+  - The stub, coverage and test-count text is updated (41 → 52 tests in the file), and a pointer to AMB-034 is added.
+- **`AMBIGUITIES.md`**
+  - AMB-033 (d) is marked superseded for this one line, with the old reading kept for the record.
+  - New AMB-034 (below).
+
+## The rule as implemented
+
+```python
+REPRESENTATION_REQUIRED = "representation: Q8_0  source: stored"
+
+def representation_line_ok(ln: str) -> bool:
+    return ln == REPRESENTATION_REQUIRED or ln.startswith(REPRESENTATION_REQUIRED + " ")
+```
+
+The line is still found by its `representation: ` prefix, so presence, uniqueness and position are untouched. A mismatch gives `stdout_line_mismatch`.
+
+## New tests (all pass)
+
+- **Stub:** it prints the suffix by default and the bare line on request.
+- **Accepted:**
+  - the bare line;
+  - the suffix `  objects from a compiled pack: 1/4`, and `  objects from a compiled pack: 4/4`, ` x`, a lone trailing space, and a suffix with a tab and non-ASCII after the space.
+- **Accepted end to end:** stub run → ingest → `evaluate_t3` on synthetic references, passing with the default suffix, a second suffix and the bare line.
+- **Refused as `stdout_line_mismatch` (22 forms):**
+  - `Q4_K` and `BF16`; `synthesized` and `transient`;
+  - `storedX`, `stored2`, `stored_`;
+  - one space or three spaces before `source:`;
+  - a tab, a no-break space, a comma, a colon or a `\r` directly after `stored`;
+  - the same breaks with a suffix, lower case, and an empty value.
+- **Refused with a different code:**
+  - leading text before `representation:` gives `stdout_line_missing`;
+  - the line missing, with and without a suffix, gives `stdout_line_missing`;
+  - the line repeated gives `stdout_line_repeated`, in four mixes: suffixed twice, bare twice, bare then suffixed, and suffixed then bare;
+  - the line out of order gives `stdout_line_order`, in three positions and with or without a suffix.
+- **Scope guard:** a suffix on `engine:`, `positions:` or `wrote [` is still a mismatch.
+
+## Commits
+
+- `8c59122` — code, stub and tests.
+- `e505afc` — README and AMBIGUITIES.
+
+## Ambiguities (AMB-034)
+
+- **"A space" means U+0020 only.**
+  - That is the fail-closed choice. A tab or a no-break space after `stored` is refused.
+  - A line ending in `\r` is also refused, because the checker splits stdout on `\n` only.
+- **What follows the space is not examined.** That includes a lone trailing space and control characters. This is what clarification 1 says ("not interpreted").
+
+## Other exact-match lines at risk
+
+Judged from the specification's text only, and not changed in this run:
+
+- **Highest risk: `runtime compile: 0 tensor(s)`.** Spec §8.3.3.5 says stdout "contains" it, but the checker accepts only two whole lines: the bare one and the one with `  — served entirely from stored bytes`.
+- **Higher risk: `wrote [N, V] f32 to <OUT>` and `wrote provenance to <sidecar>`.** The spec doesn't say how the path is rendered, and the checker matches the exact path string the runner passed.
+- **Lower risk: `engine:` and `positions: N  vocab: V`.** They are literal text in §7.3, but they are still whole-line matches under a spec that says "contains".
+- **Strict only in structure: `teacher-forced` and `projection plans:`.** A suffix after `ms/position)` or a different entry separator would be refused.
+
+I have no evidence that any of these is an actual mismatch.
+
+## An existing flaky test
+
+`Substitution.test_a_record_from_a_different_run` fails intermittently, and my change did not cause it. On the unmodified commit it failed 7 of 12 isolated runs. It assumes two stub sidecars differ, but their timing fields print to three decimals and sometimes collide. The full run I counted happened to pass, so a rerun may fail on that test. I left it alone because you said to change nothing else; it is logged in AMB-034 (d).
