@@ -477,3 +477,25 @@ The coordinating session has not read the held-out contents.
 | Reading-flagged | `ing9_r_out_of_order` (reviewer question 71, order), `ing9_r_suffix_trailing_space` (question 73, what "a space" admits). Both follow the fail-closed or literal reading and are reported separately |
 | Independence | The reviewer's tool log was checked by the coordinating session: 27 + 6 calls, reading only snapshot `8b3663a` and the reviewer repository. It never read the checker, `dev/`, LARQL, the evaluation directory or the evidence logs |
 | Checker | `e505afc`, pinned before this seal (D15 clarification 1 replaces `c2070c3`) |
+
+## Scoring run 10 (2026-11-02): corpus revision 9 against checker e505afc, aggregates only
+
+- **Inputs:** checker `e505afc`, a clean clone in `~/chris-source/transformer-verifiers-eval/run-10/`; corpus `3019654`,
+  unchanged since the seal; D12 with clarifications 1–3, D13, the D14 readings and D15 clarification 1. The scorer's
+  tool log was checked by the coordinating session: 50 calls, no checker source or tests, no `dev/`, no LARQL.
+- **Order of commits:** eligibility, rules and adapter with a synthetic self-test (`6be96c1`), then the mapping and
+  probe (`d59429a`), then the run (`f5b94f9`). One pass. Tallies were recounted from `RESULTS.json`; all match.
+
+| Tally | Result |
+|---|---|
+| Refused cases, complete | **66/66**: rejection before extraction 66/66, reason 66/66, substitution resistance 14/14, `d15_c1` refusals 9/9, SHOULD-only cases from before D14 4/4 |
+| Accepted controls | **0/13, not measured.** The scorer's adapter raised after `verify_and_extract` returned (a numpy array tested against a tuple), so no status or rows were captured. They are recorded as failing, as the rules require |
+| `checker_error` / exclusions | 0 / none |
+
+- **What this shows:** that the corrected checker refuses all 66 refusal cases with the right reasons, including the
+  9 that clarification 1 must still refuse. It does **not** yet show that the checker accepts the real line form
+  (`ing9_r_suffix_*`) or the 9 earlier controls. That half needs a separate scoring run, by the owner's decision.
+- **Deviations** (disclosed in the run's `RULES.md`): the probe was run twice on non-corpus data, and the container
+  identity, the token-digest width and two H-mode translations were derived through documented interfaces.
+- **What this is:** synthetic checker-correctness evidence. Acceptance would mean `content_valid` only. No LARQL was
+  involved.
