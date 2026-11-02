@@ -68,6 +68,14 @@ separate LARQL's encoder from Q8_0 itself. It does not run LARQL or write a cont
 `--container-hashes` point them at something else, with `--out` keeping its results apart. The first use is the corrected
 Q8_0 encoder: `evidence/q8-encoder-candidate/RECORD.md`, with results in `runs/candidate-ad82acba/`.
 
+## The contract verifier
+
+`larql-verifier contract --contract Q8_0_T2 --container <dir> --source <checkpoint>` answers one question with one JSON object
+(`larql-verify-contract/1`). It is what LQL's `VERIFY REPRESENTATION` runs: set `LARQL_VERIFIER` to this file. The measurement
+is `refcheck.e1`, against a checkpoint verified by its pinned hashes, so today it can only evaluate Qwen3-0.6B. Nothing in it
+imports or runs LARQL, and it writes no file. On the two containers: the L1 baseline is `violated` with 57,634 elements over
+T2, and `q8enc-ad82acba` is `satisfied` with 0. Those match E1 in `runs/suite-v1` and `runs/candidate-ad82acba`.
+
 ## Development overrides
 
 **None are active.** The harness uses `refcheck` exactly as pinned, at checker `e505afc`.

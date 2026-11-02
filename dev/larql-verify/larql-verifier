@@ -1,0 +1,4 @@
+#!/bin/sh
+# Entry point for LQL's VERIFY REPRESENTATION: point LARQL_VERIFIER at this file.
+HERE=$(cd "$(dirname "$0")" && pwd)
+exec "$HERE/../../checker/.venv/bin/python" -I "$HERE/verify_contract.py" "$@"
