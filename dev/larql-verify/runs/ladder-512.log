@@ -1,13 +1,13 @@
-[23:30:49] identities: verified
-[23:30:51] container_integrity: verified
-[23:30:56] configuration: comparable
-[23:31:57] reference_decoded_q8_0: comparable
-[23:33:18] larql_execution: completed
-[23:33:18] ingestion: accepted
-[23:33:20] E2: comparable
-[23:34:16] reference_bf16: comparable
-[23:34:17] E3: comparable
-[23:34:18] reference_quantisation_drift: computed
+[19:30:44] identities: verified
+[19:30:45] container_integrity: verified
+[19:30:48] configuration: comparable
+[19:31:23] reference_decoded_q8_0: comparable
+[19:31:59] larql_execution: completed
+[19:32:00] ingestion: accepted
+[19:32:01] E2: comparable
+[19:33:06] reference_bf16: comparable
+[19:33:07] E3: comparable
+[19:33:08] reference_quantisation_drift: computed
 
 larql-verify compare  (n_tokens=512, DEVELOPMENT ONLY, D15)
   Identities:               verified
@@ -15,7 +15,7 @@ larql-verify compare  (n_tokens=512, DEVELOPMENT ONLY, D15)
   Configuration:            comparable
   Reference (decoded Q8_0): comparable
   LARQL execution:          completed
-  Ingestion:                accepted  (content_valid only; not execution_authenticated)  dev overrides: DO-1
+  Ingestion:                accepted  (content_valid only; not execution_authenticated)
   E2  LARQL vs reference, same decoded weights
       max |dlogit|: 0.000286102   RMS (mean over positions): 2.50923e-05
       KL ref||cand mean / max: 1.97904e-10 / 8.13958e-09 nats

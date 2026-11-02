@@ -5,8 +5,8 @@
   "model_layers": 28,
   "positions": 128,
   "vocab": 151936,
-  "prepare_s": 0.425,
-  "steps_s": 21.887,
-  "ms_per_position": 171.0,
+  "prepare_s": 0.250,
+  "steps_s": 7.354,
+  "ms_per_position": 57.5,
   "max_format_env": "bf16"
 }

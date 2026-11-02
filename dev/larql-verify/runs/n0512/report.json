@@ -1,5 +1,5 @@
 {
-  "created": "2026-11-01T23:30:44.901660+00:00",
+  "created": "2026-11-02T19:30:41.972165+00:00",
   "designation": "DEVELOPMENT ONLY (D15). Not blind acceptance evidence for LARQL-VERIFY-001. Ingestion is content_valid only, not execution_authenticated.",
   "host": {
     "machine": "arm64",
@@ -9,8 +9,8 @@
   "kl_direction": "D_KL(P_reference || P_candidate), nats; candidate is LARQL (E2, E3) or the decoded-Q8_0 reference (drift)",
   "n_tokens": 512,
   "refcheck": {
-    "checker_commit": "c2070c30ce53521becae8762c8a9e8548255d81c",
-    "refcheck_tree": "5be9d3612216ded1db99be11e9dde69380cb0a6e"
+    "checker_commit": "e505afcf2d81c0262cd1d75ac0a5dd8429a84c5a",
+    "refcheck_tree": "e82a4425ab4b57cb18212e19fdf9e0c57936b00e"
   },
   "schema": "larql-verify-dev-report/1",
   "stages": {
@@ -5796,16 +5796,7 @@
     },
     "ingestion": {
       "binding_problems": [],
-      "dev_overrides": [
-        {
-          "id": "DO-1",
-          "waived_reason": {
-            "clause": "spec \u00a77.3, \u00a78.3.3.2, \u00a78.3.3.5",
-            "code": "stdout_line_mismatch",
-            "message": "stdout line 'representation: Q8_0  source: stored  objects from a compiled pack: 1/4', required 'representation: Q8_0  source: stored'"
-          }
-        }
-      ],
+      "dev_overrides": [],
       "error": null,
       "execution_authenticated": false,
       "property": "content_valid",
@@ -5820,19 +5811,19 @@
         ]
       ],
       "record": "/Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/n0512/larql.run.json",
-      "seconds": 81.0,
+      "seconds": 36.2,
       "status": "completed"
     },
     "reference_bf16": {
       "errors": [],
       "reasons": [],
-      "seconds": 56.0,
+      "seconds": 65.2,
       "status": "comparable"
     },
     "reference_decoded_q8_0": {
       "errors": [],
       "reasons": [],
-      "seconds": 60.7,
+      "seconds": 34.6,
       "status": "comparable"
     },
     "reference_quantisation_drift": {
