@@ -1,0 +1,90 @@
+{
+  "n_tokens": 344,
+  "top1_positions_vs_bf16": {
+    "F": [
+      161
+    ],
+    "G": [
+      161
+    ],
+    "L": [
+      161
+    ],
+    "T": [
+      161
+    ]
+  },
+  "vs_bf16": {
+    "F": {
+      "kl_max": 0.044812321095945254,
+      "kl_mean": 0.0007719975102000061,
+      "kl_ratio_to_L_median": 0.9821500009933138,
+      "max_abs_diff_max": 2.1871367692947388,
+      "max_abs_diff_median": 0.3026590347290039,
+      "n": 344,
+      "n_positions_kl_lower_than_L": 198,
+      "n_top1_disagree": 1,
+      "rms_diff_mean": 0.07264605084047933
+    },
+    "G": {
+      "kl_max": 0.044864719325672195,
+      "kl_mean": 0.0007826533493899389,
+      "kl_ratio_to_L_median": 0.977903932550745,
+      "max_abs_diff_max": 2.2078875303268433,
+      "max_abs_diff_median": 0.3015563488006592,
+      "n": 344,
+      "n_positions_kl_lower_than_L": 196,
+      "n_top1_disagree": 1,
+      "rms_diff_mean": 0.07300865795923982
+    },
+    "L": {
+      "kl_max": 0.044830134995264004,
+      "kl_mean": 0.0007843160581784279,
+      "max_abs_diff_max": 2.248666763305664,
+      "max_abs_diff_median": 0.30296558141708374,
+      "n": 344,
+      "n_top1_disagree": 1,
+      "rms_diff_mean": 0.07348422345288994
+    },
+    "T": {
+      "kl_max": 0.044884545458595715,
+      "kl_mean": 0.0007955769558654809,
+      "kl_ratio_to_L_median": 0.9853634889142058,
+      "max_abs_diff_max": 2.2598934173583984,
+      "max_abs_diff_median": 0.30225586891174316,
+      "n": 344,
+      "n_positions_kl_lower_than_L": 203,
+      "n_top1_disagree": 1,
+      "rms_diff_mean": 0.0738489957061978
+    }
+  },
+  "vs_l": {
+    "F": {
+      "kl_max": 0.0003314674075159847,
+      "kl_mean": 1.0182121933854894e-05,
+      "max_abs_diff_max": 0.2601141929626465,
+      "max_abs_diff_median": 0.045604705810546875,
+      "n": 344,
+      "n_top1_disagree": 0,
+      "rms_diff_mean": 0.0126855790679615
+    },
+    "G": {
+      "kl_max": 0.00029069211239682807,
+      "kl_mean": 1.2268362825670966e-05,
+      "max_abs_diff_max": 0.24025726318359375,
+      "max_abs_diff_median": 0.050963401794433594,
+      "n": 344,
+      "n_top1_disagree": 0,
+      "rms_diff_mean": 0.013390893141181418
+    },
+    "T": {
+      "kl_max": 0.00011821945746548395,
+      "kl_mean": 2.402162648050631e-06,
+      "max_abs_diff_max": 0.08238458633422852,
+      "max_abs_diff_median": 0.018875598907470703,
+      "n": 344,
+      "n_top1_disagree": 0,
+      "rms_diff_mean": 0.004319675963523226
+    }
+  }
+}

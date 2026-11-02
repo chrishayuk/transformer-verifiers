@@ -1,0 +1,106 @@
+[21:13:50] preflight identities: verified
+[21:13:52] preflight container_integrity: verified
+[21:13:55] preflight configuration: comparable
+[21:14:09] E1: measured
+[21:14:23] rep-the-96 reference_decoded_q8_0: comparable
+[21:14:30] rep-the-96 larql_execution: completed
+[21:14:30] rep-the-96 ingestion: accepted
+[21:14:30] rep-the-96 E2: comparable
+[21:14:43] rep-the-96 reference_bf16: comparable
+[21:14:43] rep-the-96 E3: comparable
+[21:14:43] rep-the-96 reference_quantisation_drift: computed
+[21:15:00] rep-the-96 f64_diagnostic: computed
+[21:15:00] rep-the-96: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:15:14] rep-cat-96 reference_decoded_q8_0: comparable
+[21:15:21] rep-cat-96 larql_execution: completed
+[21:15:21] rep-cat-96 ingestion: accepted
+[21:15:21] rep-cat-96 E2: comparable
+[21:15:34] rep-cat-96 reference_bf16: comparable
+[21:15:34] rep-cat-96 E3: comparable
+[21:15:35] rep-cat-96 reference_quantisation_drift: computed
+[21:15:51] rep-cat-96 f64_diagnostic: computed
+[21:15:51] rep-cat-96: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:16:05] rep-seven-96 reference_decoded_q8_0: comparable
+[21:16:12] rep-seven-96 larql_execution: completed
+[21:16:12] rep-seven-96 ingestion: accepted
+[21:16:13] rep-seven-96 E2: comparable
+[21:16:25] rep-seven-96 reference_bf16: comparable
+[21:16:25] rep-seven-96 E3: comparable
+[21:16:26] rep-seven-96 reference_quantisation_drift: computed
+[21:16:42] rep-seven-96 f64_diagnostic: computed
+[21:16:42] rep-seven-96: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:16:56] rep-zh-96 reference_decoded_q8_0: comparable
+[21:17:03] rep-zh-96 larql_execution: completed
+[21:17:03] rep-zh-96 ingestion: accepted
+[21:17:04] rep-zh-96 E2: comparable
+[21:17:16] rep-zh-96 reference_bf16: comparable
+[21:17:17] rep-zh-96 E3: comparable
+[21:17:17] rep-zh-96 reference_quantisation_drift: computed
+[21:17:34] rep-zh-96 f64_diagnostic: computed
+[21:17:34] rep-zh-96: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:17:47] rep-dash-96 reference_decoded_q8_0: comparable
+[21:17:54] rep-dash-96 larql_execution: completed
+[21:17:55] rep-dash-96 ingestion: accepted
+[21:17:55] rep-dash-96 E2: comparable
+[21:18:07] rep-dash-96 reference_bf16: comparable
+[21:18:08] rep-dash-96 E3: comparable
+[21:18:08] rep-dash-96 reference_quantisation_drift: computed
+[21:18:25] rep-dash-96 f64_diagnostic: computed
+[21:18:25] rep-dash-96: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:18:38] cycle-2 reference_decoded_q8_0: comparable
+[21:18:46] cycle-2 larql_execution: completed
+[21:18:46] cycle-2 ingestion: accepted
+[21:18:46] cycle-2 E2: comparable
+[21:18:59] cycle-2 reference_bf16: comparable
+[21:18:59] cycle-2 E3: comparable
+[21:18:59] cycle-2 reference_quantisation_drift: computed
+[21:19:16] cycle-2 f64_diagnostic: computed
+[21:19:16] cycle-2: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:19:29] cycle-8 reference_decoded_q8_0: comparable
+[21:19:37] cycle-8 larql_execution: completed
+[21:19:37] cycle-8 ingestion: accepted
+[21:19:37] cycle-8 E2: comparable
+[21:19:50] cycle-8 reference_bf16: comparable
+[21:19:50] cycle-8 E3: comparable
+[21:19:50] cycle-8 reference_quantisation_drift: computed
+[21:20:07] cycle-8 f64_diagnostic: computed
+[21:20:07] cycle-8: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:20:20] the-then-prose reference_decoded_q8_0: comparable
+[21:20:27] the-then-prose larql_execution: completed
+[21:20:27] the-then-prose ingestion: accepted
+[21:20:28] the-then-prose E2: comparable
+[21:20:40] the-then-prose reference_bf16: comparable
+[21:20:40] the-then-prose E3: comparable
+[21:20:41] the-then-prose reference_quantisation_drift: computed
+[21:20:57] the-then-prose f64_diagnostic: computed
+[21:20:57] the-then-prose: MEASURED (E2, E3 and the f64 diagnostic measured)
+[21:21:24] rep-the-384 reference_decoded_q8_0: comparable
+[21:21:50] rep-the-384 larql_execution: completed
+[21:21:50] rep-the-384 ingestion: accepted
+[21:21:51] rep-the-384 E2: comparable
+[21:22:16] rep-the-384 reference_bf16: comparable
+[21:22:17] rep-the-384 E3: comparable
+[21:22:18] rep-the-384 reference_quantisation_drift: computed
+[21:22:56] rep-the-384 f64_diagnostic: computed
+[21:22:56] rep-the-384: MEASURED (E2, E3 and the f64 diagnostic measured)
+
+larql-verify report  (suite repetition-probe-v1, DEVELOPMENT ONLY, D15)
+  identities: verified
+  container_integrity: verified
+  configuration: comparable
+  E1 coverage: complete
+  E1 Q8_0 (lossy, 196 tensors): max |Δw| 0.00772, worst error / T2 bound 2.04e+03, elements over T2 57634, rel. Frobenius min/median/max 0.00537 / 0.00549 / 0.00818 (worst model.layers.21.self_attn.k_proj.weight), decode = gguf-py: True
+  E1 T2 by cause: zero-scale (flushed) blocks 1118 with 35735 elements over, max amax 0.00772; non-zero-scale blocks over 21295 of 13761442 with 21899 elements over, worst ratio 1.05
+  E1 T2 counterfactual, ggml-style encoder on the same weights: 0 elements over, worst ratio 0.952, 0 zero-scale blocks
+  E1 exact storage (115 tensors, {'BF16': 115}): all bit-identical: True
+  case            kind         n    verdict   E2 max|Δ|  E2 RMS    E2 KL max  E2 top-1 ≠  E3 max|Δ|  E3 KL max  E3/drift top-1 ≠  f64: LARQL max|Δ|  f64: ref32 max|Δ|  f64 ratio med
+  rep-the-96      control      96   MEASURED  0.00183    0.000113  4.62e-08   0           2.82       0.108      16/16             0.0016             0.000233           6.6          
+  rep-cat-96      other word   96   MEASURED  4.67e-05   7.44e-06  2.83e-11   0           1.97       0.0563     1/1               4.82e-05           1.94e-05           4.7          
+  rep-seven-96    other word   96   MEASURED  0.000399   5.02e-05  8.61e-10   0           2.23       0.0705     0/0               0.000547           0.000213           3.1          
+  rep-zh-96       other word   96   MEASURED  4.21e-05   7.7e-06   2.62e-11   0           1.63       0.0366     0/0               3.64e-05           2.27e-05           2.3          
+  rep-dash-96     other word   96   MEASURED  0.000154   9.5e-06   3.55e-10   0           1.96       0.0502     1/1               0.000175           2.51e-05           5.5          
+  cycle-2         longer unit  96   MEASURED  0.000177   7.12e-06  4.87e-10   0           1.98       0.0528     0/0               0.000186           1.19e-05           4.6          
+  cycle-8         longer unit  96   MEASURED  0.000177   8.17e-06  4.87e-10   0           1.98       0.0528     1/1               0.000186           5.68e-05           4.4          
+  the-then-prose  persistence  93   MEASURED  0.00183    7.55e-05  4.62e-08   0           1.98       0.0557     9/9               0.0016             0.000233           5.2          
+  rep-the-384     length       384  MEASURED  0.00183    0.000102  4.62e-08   0           3.09       0.11       87/87             0.0016             0.000233           5.6          
+  Verdict: MEASURED  (E1 and every case measured)

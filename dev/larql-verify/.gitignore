@@ -2,3 +2,4 @@ vendor/
 runs/**/*.f32
 runs/**/*.npy
 __pycache__/
+build/

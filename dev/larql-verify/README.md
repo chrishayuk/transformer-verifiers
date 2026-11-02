@@ -55,6 +55,13 @@ E3 only, in `runs/nNNNN/`.
 LARQL is built at `2536bb79` in `~/chris-source/larql-l1-2536bb79` with `cargo build --release --locked -p larql-cli`.
 The rebuild on 2026-11-01 reproduced the L1 baseline binary exactly: `4d80dd42…`.
 
+## Encoder attribution
+
+`attribute_encoder.py`, after `ggml_shim/build.sh`, runs the f32 reference on four encodings of the same weights, to
+separate LARQL's encoder from Q8_0 itself. It does not run LARQL or write a container, and it does not change
+`runs/suite-v1`. Results are in `runs/attribution-v1/REPORT.md`, along with the repeated-word probe, which is
+`report --suite prompts/repetition-probe-v1.json`.
+
 ## Development overrides
 
 **None are active.** The harness uses `refcheck` exactly as pinned, at checker `e505afc`.

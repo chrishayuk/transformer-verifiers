@@ -1,0 +1,12 @@
+{
+  "engine": "vindex3-production-larql-compute",
+  "draft_depth": null,
+  "executed_layers": [0, 28],
+  "model_layers": 28,
+  "positions": 96,
+  "vocab": 151936,
+  "prepare_s": 0.253,
+  "steps_s": 5.320,
+  "ms_per_position": 55.4,
+  "max_format_env": "bf16"
+}

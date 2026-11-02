@@ -1,0 +1,24 @@
+{
+  "schema": "larql-verify-prompt-suite/1",
+  "suite": "repetition-probe-v1",
+  "designation": "DEVELOPMENT ONLY (D15). A probe of why the repeated-word case of suite-v1 has the largest E2 difference. Written after seeing that result, so it is exploratory.",
+  "tokenisation": "tokenizer.json of the pinned upstream snapshot; add_special_tokens=false",
+  "questions": [
+    "Is it this word, or any repeated word?",
+    "How does it change as the repeated unit gets longer?",
+    "Does it persist after the repetition stops?",
+    "Does it grow with the length of the repeat?",
+    "Do LARQL and the f32 reference rise together?"
+  ],
+  "cases": [
+    {"id": "rep-the-96", "kind": "control", "purpose": "the suite-v1 repetition case: the LARQL dump must be bit-identical to the baseline", "repeat": 96, "separator": " ", "text": "the"},
+    {"id": "rep-cat-96", "kind": "other word", "purpose": "another common word", "repeat": 96, "separator": " ", "text": "cat"},
+    {"id": "rep-seven-96", "kind": "other word", "purpose": "a number word", "repeat": 96, "separator": " ", "text": "seven"},
+    {"id": "rep-zh-96", "kind": "other word", "purpose": "a CJK character with no separator", "repeat": 96, "separator": "", "text": "的"},
+    {"id": "rep-dash-96", "kind": "other word", "purpose": "punctuation, separated so that it does not merge into one long token", "repeat": 96, "separator": " ", "text": "-"},
+    {"id": "cycle-2", "kind": "longer unit", "purpose": "a two-word cycle", "repeat": 48, "separator": " ", "text": "the cat"},
+    {"id": "cycle-8", "kind": "longer unit", "purpose": "a sentence-long cycle", "repeat": 12, "separator": " ", "text": "the cat sat on the old mat."},
+    {"id": "the-then-prose", "kind": "persistence", "purpose": "48 repeats, then ordinary prose: does the error fall when the repetition stops?", "repeat": 1, "text": "the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the The lighthouse keeper had kept a logbook for thirty-one years, and in all that time he had never missed an entry. Most days the entries were short: the direction of the wind, the height of the swell."},
+    {"id": "rep-the-384", "kind": "length", "purpose": "four times as long: does the error grow, or saturate?", "repeat": 384, "separator": " ", "text": "the"}
+  ]
+}

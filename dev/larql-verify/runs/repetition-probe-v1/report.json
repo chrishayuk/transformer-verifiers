@@ -1,0 +1,830 @@
+{
+  "cases": {
+    "cycle-2": {
+      "E2": {
+        "kl_max": 4.866190591509484e-10,
+        "kl_mean": 7.629808742682266e-12,
+        "max_abs_diff_max": 0.0001773834228515625,
+        "max_abs_diff_median": 2.9325485229492188e-05,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 3.271432993409554e-05,
+        "rms_diff_mean": 7.124489929288336e-06,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.052835464109856956,
+        "kl_mean": 0.0008151242654288266,
+        "max_abs_diff_max": 1.9771552085876465,
+        "max_abs_diff_median": 0.2308192253112793,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3483874003423582,
+        "rms_diff_mean": 0.05222488997475994,
+        "top1_agreement": 1.0
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 5.290543871689945e-10,
+            "mean": 8.31620538955778e-12
+          },
+          "max_abs_diff": {
+            "max": 0.00018566814685527788,
+            "median": 2.9729748931117683e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 7.1296738100546965e-06
+        },
+        "ratio_larql_over_ref32": {
+          "max": 19.526494984180836,
+          "median": 4.565625787385953,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 4.278482801944624e-12,
+            "mean": 2.56153007125461e-13
+          },
+          "max_abs_diff": {
+            "max": 1.1935107970373338e-05,
+            "median": 6.833380421511492e-06
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.5254024659095732e-06
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "longer unit",
+      "larql_seconds": 7.3,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.052836698999285024,
+        "kl_mean": 0.0008151339664619208,
+        "max_abs_diff_max": 1.9772050380706787,
+        "max_abs_diff_median": 0.23084402084350586,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.34838786802587235,
+        "rms_diff_mean": 0.05222490286507917,
+        "top1_agreement": 1.0
+      },
+      "token_ids_sha256": "a0b111157ab04733465cbf45ab2b118f396863ab38af3db23366cb7a3939e326",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "cycle-8": {
+      "E2": {
+        "kl_max": 4.866190591509484e-10,
+        "kl_mean": 8.721960559143846e-12,
+        "max_abs_diff_max": 0.0001773834228515625,
+        "max_abs_diff_median": 3.2901763916015625e-05,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 3.271432993409554e-05,
+        "rms_diff_mean": 8.168857604983358e-06,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.052835464109856956,
+        "kl_mean": 0.0007354764507392094,
+        "max_abs_diff_max": 1.9771552085876465,
+        "max_abs_diff_median": 0.23762035369873047,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 1,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3483874003423582,
+        "rms_diff_mean": 0.05477171079462747,
+        "top1_agreement": 0.9895833333333334
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 5.290543871689945e-10,
+            "mean": 9.091324404821396e-12
+          },
+          "max_abs_diff": {
+            "max": 0.00018566814685527788,
+            "median": 3.193065914874893e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 8.00660904842092e-06
+        },
+        "ratio_larql_over_ref32": {
+          "max": 19.526494984180836,
+          "median": 4.447981045623809,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 1.6322347056294286e-12,
+            "mean": 1.8382363875124255e-13
+          },
+          "max_abs_diff": {
+            "max": 5.675747944344778e-05,
+            "median": 7.106314614979681e-06
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.92499677199774e-06
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "longer unit",
+      "larql_seconds": 7.2,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.052836698999285024,
+        "kl_mean": 0.0007354907064244282,
+        "max_abs_diff_max": 1.9772050380706787,
+        "max_abs_diff_median": 0.2376108169555664,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 1,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.34838786802587235,
+        "rms_diff_mean": 0.05477172093510052,
+        "top1_agreement": 0.9895833333333334
+      },
+      "token_ids_sha256": "2934591b631b56269b962969ca13c20939797d414c25fa2820fc3b7385c5b66e",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "rep-cat-96": {
+      "E2": {
+        "kl_max": 2.8305752175183264e-11,
+        "kl_mean": 1.6149911834050457e-12,
+        "max_abs_diff_max": 4.673004150390625e-05,
+        "max_abs_diff_median": 3.218650817871094e-05,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 1.1769872918083991e-05,
+        "rms_diff_mean": 7.435944199236811e-06,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.05631681201961703,
+        "kl_mean": 0.0006905158707114831,
+        "max_abs_diff_max": 1.9691818952560425,
+        "max_abs_diff_median": 0.26767539978027344,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 1,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.35048388927120466,
+        "rms_diff_mean": 0.062224389321938224,
+        "top1_agreement": 0.9895833333333334
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 2.4967362011017097e-11,
+            "mean": 1.5130242962658355e-12
+          },
+          "max_abs_diff": {
+            "max": 4.81689687852338e-05,
+            "median": 3.279596583682931e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 7.722918774201788e-06
+        },
+        "ratio_larql_over_ref32": {
+          "max": 7.739140587724879,
+          "median": 4.684757932118201,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 5.292950896424521e-12,
+            "mean": 1.8293770125073408e-13
+          },
+          "max_abs_diff": {
+            "max": 1.9366620726657402e-05,
+            "median": 6.711933564496064e-06
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.5960577185645286e-06
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "other word",
+      "larql_seconds": 7.2,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.05631783747710471,
+        "kl_mean": 0.000690521812347127,
+        "max_abs_diff_max": 1.9691890478134155,
+        "max_abs_diff_median": 0.26769208908081055,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 1,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3504863905907154,
+        "rms_diff_mean": 0.06222597169751062,
+        "top1_agreement": 0.9895833333333334
+      },
+      "token_ids_sha256": "980c0de11d916070c9f7cb98b0d72ced3b65b89115080e6dee9918b08e78ad3e",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "rep-dash-96": {
+      "E2": {
+        "kl_max": 3.553201123048708e-10,
+        "kl_mean": 5.172297395490601e-12,
+        "max_abs_diff_max": 0.00015354156494140625,
+        "max_abs_diff_median": 4.38690185546875e-05,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 3.0180952657636177e-05,
+        "rms_diff_mean": 9.502493917689305e-06,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.050158773227947824,
+        "kl_mean": 0.0005560669027898758,
+        "max_abs_diff_max": 1.9640517830848694,
+        "max_abs_diff_median": 0.2711063623428345,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 1,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3478291266099802,
+        "rms_diff_mean": 0.05795375904511013,
+        "top1_agreement": 0.9895833333333334
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 4.823224110683392e-10,
+            "mean": 6.532523599971237e-12
+          },
+          "max_abs_diff": {
+            "max": 0.0001752186384944565,
+            "median": 4.3764177528382575e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 9.48612887294496e-06
+        },
+        "ratio_larql_over_ref32": {
+          "max": 8.8283733406263,
+          "median": 5.492408423865443,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 1.1759464644144795e-11,
+            "mean": 1.6142119567075722e-13
+          },
+          "max_abs_diff": {
+            "max": 2.5080542327415856e-05,
+            "median": 7.99693214559305e-06
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.7479364830134093e-06
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "other word",
+      "larql_seconds": 7.3,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.05015891120340026,
+        "kl_mean": 0.0005560691443059891,
+        "max_abs_diff_max": 1.9640176892280579,
+        "max_abs_diff_median": 0.2710912227630615,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 1,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3478269880726703,
+        "rms_diff_mean": 0.05795513225240889,
+        "top1_agreement": 0.9895833333333334
+      },
+      "token_ids_sha256": "69ac93ac1050475ae6df7d35b6fd73b52c464fef6232b19287ba50f7edd583c1",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "rep-seven-96": {
+      "E2": {
+        "kl_max": 8.609437771549545e-10,
+        "kl_mean": 1.506211708091459e-10,
+        "max_abs_diff_max": 0.0003991127014160156,
+        "max_abs_diff_median": 0.000247955322265625,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 8.701761326102693e-05,
+        "rms_diff_mean": 5.018969219587124e-05,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.07054954095052897,
+        "kl_mean": 0.0021159118883841937,
+        "max_abs_diff_max": 2.2310723066329956,
+        "max_abs_diff_median": 0.623570442199707,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3941811656031921,
+        "rms_diff_mean": 0.1287915180152154,
+        "top1_agreement": 1.0
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 1.7096409313242112e-09,
+            "mean": 3.1495675989069176e-10
+          },
+          "max_abs_diff": {
+            "max": 0.0005469689480612772,
+            "median": 0.0003536299217286043
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 7.212322952156109e-05
+        },
+        "ratio_larql_over_ref32": {
+          "max": 4.337091726001188,
+          "median": 3.1426867786685557,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 4.786007240631313e-10,
+            "mean": 3.539149832893103e-11
+          },
+          "max_abs_diff": {
+            "max": 0.00021302269568668208,
+            "median": 0.00011093717457111296
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 2.332020769678346e-05
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "other word",
+      "larql_seconds": 7.3,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.07054929390219537,
+        "kl_mean": 0.002116688832545039,
+        "max_abs_diff_max": 2.2310800552368164,
+        "max_abs_diff_median": 0.6237549781799316,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3941835606206321,
+        "rms_diff_mean": 0.12883265422852197,
+        "top1_agreement": 1.0
+      },
+      "token_ids_sha256": "b0ec7743c02c44e1d1501eb5cde8024e64466118c7922602b4a2ed2fa2c52dad",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "rep-the-384": {
+      "E2": {
+        "kl_max": 4.615566765224023e-08,
+        "kl_mean": 3.711024610680528e-09,
+        "max_abs_diff_max": 0.0018339157104492188,
+        "max_abs_diff_median": 0.0004467964172363281,
+        "n_comparable_positions": 384,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.0004901198995137146,
+        "rms_diff_mean": 0.00010151055343988406,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.11038350719847069,
+        "kl_mean": 0.0627323066199298,
+        "max_abs_diff_max": 3.0853317379951477,
+        "max_abs_diff_median": 2.4273442029953003,
+        "n_comparable_positions": 384,
+        "n_top1_disagree": 87,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.6363488956370753,
+        "rms_diff_mean": 0.46319531902919636,
+        "top1_agreement": 0.7734375
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 3.3591779906174184e-08,
+            "mean": 2.6155469703563904e-09
+          },
+          "max_abs_diff": {
+            "max": 0.00160066813615245,
+            "median": 0.0003816240267093818
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 8.616180636257086e-05
+        },
+        "ratio_larql_over_ref32": {
+          "max": 19.526494984180836,
+          "median": 5.580151086597154,
+          "n_infinite": 0,
+          "n_positions": 384,
+          "n_positions_larql_further": 384
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 9.98862943659614e-10,
+            "mean": 1.1252720171747568e-10
+          },
+          "max_abs_diff": {
+            "max": 0.0002332475742967688,
+            "median": 6.583723129427455e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.6416297220766113e-05
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "length",
+      "larql_seconds": 25.7,
+      "n_tokens": 384,
+      "reference_quantisation_drift": {
+        "kl_max": 0.11044313356881583,
+        "kl_mean": 0.06275204534317876,
+        "max_abs_diff_max": 3.0853336453437805,
+        "max_abs_diff_median": 2.427694320678711,
+        "n_comparable_positions": 384,
+        "n_top1_disagree": 87,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.6364307582067911,
+        "rms_diff_mean": 0.4632662024830822,
+        "top1_agreement": 0.7734375
+      },
+      "token_ids_sha256": "5cc6430615dceeb3782f959dd0fb368ebc97782928c3f129403e1e5494908463",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "rep-the-96": {
+      "E2": {
+        "kl_max": 4.615566765224023e-08,
+        "kl_mean": 3.3687766295254673e-09,
+        "max_abs_diff_max": 0.0018339157104492188,
+        "max_abs_diff_median": 0.0004353523254394531,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.0004901198995137146,
+        "rms_diff_mean": 0.00011253428972281493,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.10769032314755957,
+        "kl_mean": 0.03391037253676573,
+        "max_abs_diff_max": 2.816934108734131,
+        "max_abs_diff_median": 1.3175864219665527,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 16,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.6032877473876984,
+        "rms_diff_mean": 0.2899315869144434,
+        "top1_agreement": 0.8333333333333334
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 3.3591779906174184e-08,
+            "mean": 2.478446680737024e-09
+          },
+          "max_abs_diff": {
+            "max": 0.00160066813615245,
+            "median": 0.00037702358502933464
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 9.817101416697568e-05
+        },
+        "ratio_larql_over_ref32": {
+          "max": 19.526494984180836,
+          "median": 6.564740587565477,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 9.98862943659614e-10,
+            "mean": 7.981479573963022e-11
+          },
+          "max_abs_diff": {
+            "max": 0.0002332475742967688,
+            "median": 5.869359993959655e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.5247351845181821e-05
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "control",
+      "larql_seconds": 7.3,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.10774185970934608,
+        "kl_mean": 0.0339250724476982,
+        "max_abs_diff_max": 2.8173298835754395,
+        "max_abs_diff_median": 1.3179497718811035,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 16,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.6033783893535006,
+        "rms_diff_mean": 0.2900223117214676,
+        "top1_agreement": 0.8333333333333334
+      },
+      "token_ids_sha256": "0a7e0428698b44f3620f22a4108cddc44e3e973559976009586048d45be75e82",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "rep-zh-96": {
+      "E2": {
+        "kl_max": 2.6206318069748192e-11,
+        "kl_mean": 2.093282725542573e-11,
+        "max_abs_diff_max": 4.208087921142578e-05,
+        "max_abs_diff_median": 3.701448440551758e-05,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 9.469442460285572e-06,
+        "rms_diff_mean": 7.69604890683503e-06,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.036557534265072036,
+        "kl_mean": 0.036557404597376934,
+        "max_abs_diff_max": 1.6269147396087646,
+        "max_abs_diff_median": 1.6269111037254333,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.28809843046457534,
+        "rms_diff_mean": 0.2880973880438775,
+        "top1_agreement": 1.0
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 1.9037482291477975e-11,
+            "mean": 1.5843266697647917e-11
+          },
+          "max_abs_diff": {
+            "max": 3.6372971017772926e-05,
+            "median": 3.102561992796016e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 5.7650496549647246e-06
+        },
+        "ratio_larql_over_ref32": {
+          "max": 5.4470238016838755,
+          "median": 2.3225092516323507,
+          "n_infinite": 0,
+          "n_positions": 96,
+          "n_positions_larql_further": 96
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 6.110750102634837e-12,
+            "mean": 2.4351928306443552e-12
+          },
+          "max_abs_diff": {
+            "max": 2.266842006015679e-05,
+            "median": 1.3280689937111845e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 3.132659727227094e-06
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "other word",
+      "larql_seconds": 7.2,
+      "n_tokens": 96,
+      "reference_quantisation_drift": {
+        "kl_max": 0.03655716960492685,
+        "kl_mean": 0.0365570519331816,
+        "max_abs_diff_max": 1.6269131898880005,
+        "max_abs_diff_median": 1.6269091367721558,
+        "n_comparable_positions": 96,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.288095157478347,
+        "rms_diff_mean": 0.2880942757317693,
+        "top1_agreement": 1.0
+      },
+      "token_ids_sha256": "20254a09c2577fcb3f5ab143ea7dc1ec5cd6db932e2f91b29611c50a93353544",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    },
+    "the-then-prose": {
+      "E2": {
+        "kl_max": 4.615566765224023e-08,
+        "kl_mean": 1.6872727665169712e-09,
+        "max_abs_diff_max": 0.0018339157104492188,
+        "max_abs_diff_median": 0.00019598007202148438,
+        "n_comparable_positions": 93,
+        "n_top1_disagree": 0,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.0004901198995137146,
+        "rms_diff_mean": 7.545996259513851e-05,
+        "top1_agreement": 1.0
+      },
+      "E3": {
+        "kl_max": 0.05567565645070845,
+        "kl_mean": 0.007510248431957787,
+        "max_abs_diff_max": 1.9771552085876465,
+        "max_abs_diff_median": 0.478424072265625,
+        "n_comparable_positions": 93,
+        "n_top1_disagree": 9,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.3954998811243663,
+        "rms_diff_mean": 0.14344403044510873,
+        "top1_agreement": 0.9032258064516129
+      },
+      "f64": {
+        "larql_vs_f64": {
+          "kl": {
+            "max": 3.3591779906174184e-08,
+            "mean": 1.2519972929348053e-09
+          },
+          "max_abs_diff": {
+            "max": 0.00160066813615245,
+            "median": 0.00018566814685527788
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 6.533751661830761e-05
+        },
+        "ratio_larql_over_ref32": {
+          "max": 19.526494984180836,
+          "median": 5.239149446484231,
+          "n_infinite": 0,
+          "n_positions": 93,
+          "n_positions_larql_further": 93
+        },
+        "ref32_vs_f64": {
+          "kl": {
+            "max": 9.98862943659614e-10,
+            "mean": 3.856995607839637e-11
+          },
+          "max_abs_diff": {
+            "max": 0.0002332475742967688,
+            "median": 3.656310229960269e-05
+          },
+          "n_top1_disagree": 0,
+          "rms_diff_mean": 1.0894890281359822e-05
+        }
+      },
+      "ingestion": "accepted",
+      "kind": "persistence",
+      "larql_seconds": 7.1,
+      "n_tokens": 93,
+      "reference_quantisation_drift": {
+        "kl_max": 0.0557019129364905,
+        "kl_mean": 0.007513234241990778,
+        "max_abs_diff_max": 1.9772050380706787,
+        "max_abs_diff_median": 0.4785652160644531,
+        "n_comparable_positions": 93,
+        "n_top1_disagree": 9,
+        "non_comparable_indices": [],
+        "rms_diff_max": 0.39598397029205484,
+        "rms_diff_mean": 0.143497006660391,
+        "top1_agreement": 0.9032258064516129
+      },
+      "token_ids_sha256": "730e230f5b32dddfea344c5dd8cd909b380cd6284c987ba10de156f20caa4aa5",
+      "verdict": "MEASURED",
+      "verdict_reason": "E2, E3 and the f64 diagnostic measured"
+    }
+  },
+  "created": "2026-11-02T21:13:48.626930+00:00",
+  "designation": "DEVELOPMENT ONLY (D15). Not blind acceptance evidence for LARQL-VERIFY-001. Ingestion is content_valid only, not execution_authenticated.",
+  "e1": {
+    "coverage": {
+      "extra_in_container": [],
+      "missing_from_container": [],
+      "ok": true,
+      "shape_mismatch": {}
+    },
+    "exact_storage": {
+      "all_bit_identical": true,
+      "dtypes": {
+        "BF16": 115
+      },
+      "n_tensors": 115,
+      "not_bit_identical": [],
+      "what": "tensors the container stores unquantised: expected bit-identical to the checkpoint"
+    },
+    "full_report": "e1.json",
+    "lossy_q8_0": {
+      "decode_matches_gguf_py": true,
+      "max_abs_error": 0.007720947265625,
+      "n_blocks_exceeding_t2": 22413,
+      "n_elements_exceeding_t2": 57634,
+      "n_tensors": 196,
+      "n_tensors_bit_identical": 0,
+      "rel_frobenius": {
+        "max": 0.008179978022729843,
+        "median": 0.005487777471661679,
+        "min": 0.005368401685907873
+      },
+      "t2_attribution": {
+        "ggml_style_counterfactual": {
+          "blocks_over_t2": 0,
+          "elements_over_t2": 0,
+          "worst_error_over_t2_bound": 0.9524769974780087,
+          "zero_scale_blocks": 0
+        },
+        "nonzero_scale": {
+          "blocks": 13761442,
+          "blocks_over_t2": 21295,
+          "elements_over_t2": 21899,
+          "worst_error_over_t2_bound": 1.0455747027105053
+        },
+        "zero_scale": {
+          "blocks": 1118,
+          "blocks_over_t2": 1118,
+          "elements_over_t2": 35735,
+          "max_amax": 0.007720947265625
+        }
+      },
+      "what": "Q8_0 reconstruction of BF16 weights: lossy by design, reported against T2, which PROTOCOL.md expects this encoder to exceed (a model-acceptability finding; the bound is not widened)",
+      "worst_error_over_t2_bound": 2039.9370078740158,
+      "worst_rel_frobenius_tensor": "model.layers.21.self_attn.k_proj.weight",
+      "zero_scale_blocks": 1118
+    },
+    "seconds": 8.1,
+    "status": "measured",
+    "upstream_nonfinite": 0
+  },
+  "f64_diagnostic": true,
+  "host": {
+    "machine": "arm64",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.12.11"
+  },
+  "kl_direction": "D_KL(P_reference || P_candidate), nats; candidate is LARQL (E2, E3, f64 LARQL) or the f32 reference (drift: decoded-Q8_0 against BF16; f64 ref32: f32 against f64)",
+  "refcheck": {
+    "checker_commit": "e505afcf2d81c0262cd1d75ac0a5dd8429a84c5a",
+    "refcheck_tree": "e82a4425ab4b57cb18212e19fdf9e0c57936b00e"
+  },
+  "schema": "larql-verify-dev-suite-report/1",
+  "stages": {
+    "configuration": {
+      "mismatched_fields": [],
+      "reasons": [],
+      "status": "comparable",
+      "unresolved_assumptions": [],
+      "unresolved_fields": []
+    },
+    "container_integrity": {
+      "executed_tensors": 311,
+      "quantised_tensors": 196,
+      "status": "verified",
+      "warnings": []
+    },
+    "identities": {
+      "container_files": {
+        "files": 11,
+        "ok": true,
+        "problems": []
+      },
+      "container_sha256": "7309e6054bf2939396b0f9cdfa944fc0a32bbb1fa50c5bae285c030c230fcadf",
+      "executable": {
+        "larql_commit": "2536bb79b199b1115445678e3e82c400b0b3fd07",
+        "matches_l1_baseline_binary": true,
+        "path": "/Users/christopherhay/chris-source/larql-l1-2536bb79/target/release/larql",
+        "sha256": "4d80dd42c4b50dd83c35d4a3c2d273e12a95d31dd4816c51ca2323dfc8462322"
+      },
+      "snapshot": {
+        "files": 9,
+        "status": "verified"
+      },
+      "status": "verified"
+    }
+  },
+  "suite": {
+    "cases_run": [
+      "rep-the-96",
+      "rep-cat-96",
+      "rep-seven-96",
+      "rep-zh-96",
+      "rep-dash-96",
+      "cycle-2",
+      "cycle-8",
+      "the-then-prose",
+      "rep-the-384"
+    ],
+    "name": "repetition-probe-v1",
+    "path": "prompts/repetition-probe-v1.json",
+    "sha256": "6151d9a117fea040eaf3f452ba50f0d52f4fc2d4c77eb58b611afa447cdef0ce"
+  },
+  "verdict": "MEASURED",
+  "verdict_reason": "E1 and every case measured"
+}

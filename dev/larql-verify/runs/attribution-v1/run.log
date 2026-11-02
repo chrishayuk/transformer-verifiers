@@ -1,0 +1,187 @@
+[20:55:14] preflight identities: verified
+[20:55:16] preflight container_integrity: verified
+[20:55:20] preflight configuration: comparable
+[20:55:33] encodings built in 12s: {"larql_reimplementation_tensors_differing": [], "ggml_c_vs_gguf_py_tensors_differing": [], "n_q8_tensors": 196, "n_blocks": 13762560, "n_blocks_flushed_by_larql": 1118, "n_blocks_codes_differ_l_vs_g": 0, "n_blocks_scale_differs_l_vs_g": 6701025}
+{
+ "L": {
+  "elements_over_t2": 57634,
+  "blocks_over_t2": 22413,
+  "zero_scale_blocks": 1118,
+  "worst_error_over_t2_bound": 2039.9370078740158,
+  "max_abs_error": 0.007720947265625,
+  "rel_frobenius_all_q8": 0.005560445686372344
+ },
+ "F": {
+  "elements_over_t2": 21899,
+  "blocks_over_t2": 21295,
+  "zero_scale_blocks": 0,
+  "worst_error_over_t2_bound": 1.0455747027105053,
+  "max_abs_error": 0.00487518310546875,
+  "rel_frobenius_all_q8": 0.0054840063818898015
+ },
+ "T": {
+  "elements_over_t2": 35735,
+  "blocks_over_t2": 1118,
+  "zero_scale_blocks": 1118,
+  "worst_error_over_t2_bound": 2039.9370078740158,
+  "max_abs_error": 0.007720947265625,
+  "rel_frobenius_all_q8": 0.00555265198645129
+ },
+ "G": {
+  "elements_over_t2": 0,
+  "blocks_over_t2": 0,
+  "zero_scale_blocks": 0,
+  "worst_error_over_t2_bound": 0.9524769974780087,
+  "max_abs_error": 0.004852294921875,
+  "rel_frobenius_all_q8": 0.005476103893111663
+ }
+}
+[20:55:53] arithmetic F: KL mean 0.001194 (L 0.001198), top-1 1 (L 1)
+[20:56:12] arithmetic T: KL mean 0.001203 (L 0.001198), top-1 0 (L 1)
+[20:56:31] arithmetic G: KL mean 0.001197 (L 0.001198), top-1 1 (L 1)
+[20:56:44] chat-template F: KL mean 0.002024 (L 0.002095), top-1 4 (L 4)
+[20:56:58] chat-template T: KL mean 0.002113 (L 0.002095), top-1 4 (L 4)
+[20:57:11] chat-template G: KL mean 0.002032 (L 0.002095), top-1 4 (L 4)
+[20:57:31] code-python F: KL mean 0.0006636 (L 0.0006414), top-1 2 (L 1)
+[20:57:50] code-python T: KL mean 0.0006621 (L 0.0006414), top-1 1 (L 1)
+[20:58:10] code-python G: KL mean 0.0006856 (L 0.0006414), top-1 2 (L 1)
+[20:58:27] code-rust F: KL mean 0.001111 (L 0.001113), top-1 1 (L 1)
+[20:58:44] code-rust T: KL mean 0.001114 (L 0.001113), top-1 0 (L 1)
+[20:59:01] code-rust G: KL mean 0.001113 (L 0.001113), top-1 0 (L 1)
+[20:59:27] kv-copy F: KL mean 0.000772 (L 0.0007843), top-1 1 (L 1)
+[20:59:52] kv-copy T: KL mean 0.0007956 (L 0.0007843), top-1 1 (L 1)
+[21:00:17] kv-copy G: KL mean 0.0007827 (L 0.0007843), top-1 1 (L 1)
+[21:02:39] long-2048 F: KL mean 0.004777 (L 0.004868), top-1 43 (L 41)
+[21:04:57] long-2048 T: KL mean 0.004852 (L 0.004868), top-1 43 (L 41)
+[21:07:50] long-2048 G: KL mean 0.004759 (L 0.004868), top-1 47 (L 41)
+[21:08:04] multilingual F: KL mean 0.001766 (L 0.001816), top-1 4 (L 6)
+[21:08:18] multilingual T: KL mean 0.001854 (L 0.001816), top-1 6 (L 6)
+[21:08:31] multilingual G: KL mean 0.00179 (L 0.001816), top-1 4 (L 6)
+[21:08:46] prose-en control: path on L reproduces the baseline: True
+[21:09:02] prose-en F: KL mean 0.001681 (L 0.001702), top-1 6 (L 7)
+[21:09:18] prose-en T: KL mean 0.001711 (L 0.001702), top-1 7 (L 7)
+[21:09:33] prose-en G: KL mean 0.001693 (L 0.001702), top-1 6 (L 7)
+[21:09:46] repetition control: path on L reproduces the baseline: True
+[21:09:59] repetition F: KL mean 0.03431 (L 0.03393), top-1 16 (L 16)
+[21:10:12] repetition T: KL mean 0.02887 (L 0.03393), top-1 18 (L 16)
+[21:10:25] repetition G: KL mean 0.02912 (L 0.03393), top-1 17 (L 16)
+[21:10:34] short-2 control: path on L reproduces the baseline: True
+[21:10:43] short-2 F: KL mean 0.02489 (L 0.02489), top-1 0 (L 0)
+[21:10:51] short-2 T: KL mean 0.02491 (L 0.02489), top-1 0 (L 0)
+[21:11:00] short-2 G: KL mean 0.0249 (L 0.02489), top-1 0 (L 0)
+[21:11:21] structured-json F: KL mean 0.0007869 (L 0.0007885), top-1 1 (L 1)
+[21:11:41] structured-json T: KL mean 0.0007861 (L 0.0007885), top-1 1 (L 1)
+[21:12:01] structured-json G: KL mean 0.000783 (L 0.0007885), top-1 1 (L 1)
+[21:12:25] structured-table F: KL mean 0.0004936 (L 0.000489), top-1 4 (L 4)
+[21:12:49] structured-table T: KL mean 0.0004856 (L 0.000489), top-1 5 (L 4)
+[21:13:12] structured-table G: KL mean 0.0004905 (L 0.000489), top-1 4 (L 4)
+{
+ "controls": {
+  "larql_reimplementation_tensors_differing": [],
+  "ggml_c_vs_gguf_py_tensors_differing": [],
+  "n_q8_tensors": 196,
+  "n_blocks": 13762560,
+  "n_blocks_flushed_by_larql": 1118,
+  "n_blocks_codes_differ_l_vs_g": 0,
+  "n_blocks_scale_differs_l_vs_g": 6701025
+ },
+ "logit_controls": {
+  "prose-en": true,
+  "repetition": true,
+  "short-2": true
+ },
+ "weights": {
+  "L": {
+   "elements_over_t2": 57634,
+   "blocks_over_t2": 22413,
+   "zero_scale_blocks": 1118,
+   "worst_error_over_t2_bound": 2039.9370078740158,
+   "max_abs_error": 0.007720947265625,
+   "rel_frobenius_all_q8": 0.005560445686372344
+  },
+  "F": {
+   "elements_over_t2": 21899,
+   "blocks_over_t2": 21295,
+   "zero_scale_blocks": 0,
+   "worst_error_over_t2_bound": 1.0455747027105053,
+   "max_abs_error": 0.00487518310546875,
+   "rel_frobenius_all_q8": 0.0054840063818898015
+  },
+  "T": {
+   "elements_over_t2": 35735,
+   "blocks_over_t2": 1118,
+   "zero_scale_blocks": 1118,
+   "worst_error_over_t2_bound": 2039.9370078740158,
+   "max_abs_error": 0.007720947265625,
+   "rel_frobenius_all_q8": 0.00555265198645129
+  },
+  "G": {
+   "elements_over_t2": 0,
+   "blocks_over_t2": 0,
+   "zero_scale_blocks": 0,
+   "worst_error_over_t2_bound": 0.9524769974780087,
+   "max_abs_error": 0.004852294921875,
+   "rel_frobenius_all_q8": 0.005476103893111663
+  }
+ },
+ "pooled_vs_bf16": {
+  "L": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 2.8173298835754395,
+   "rms_diff_mean": 0.11976259413919141,
+   "kl_mean": 0.003759509876007134,
+   "kl_max": 0.14042954805697036,
+   "n_top1_disagree": 83
+  },
+  "F": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 2.823530673980713,
+   "rms_diff_mean": 0.1191245346095522,
+   "kl_mean": 0.0037189235348997545,
+   "kl_max": 0.12805972984435327,
+   "n_top1_disagree": 83
+  },
+  "T": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 2.706173837184906,
+   "rms_diff_mean": 0.11951841498300356,
+   "kl_mean": 0.0036345270980339514,
+   "kl_max": 0.13365453055659768,
+   "n_top1_disagree": 86
+  },
+  "G": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 2.7045852541923523,
+   "rms_diff_mean": 0.11886575544332585,
+   "kl_mean": 0.0035893768625981323,
+   "kl_max": 0.121423019516621,
+   "n_top1_disagree": 87
+  }
+ },
+ "pooled_vs_l": {
+  "F": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 0.4399127960205078,
+   "rms_diff_mean": 0.018064146699307844,
+   "kl_mean": 7.612650069783704e-05,
+   "kl_max": 0.010514365632962958,
+   "n_top1_disagree": 8
+  },
+  "T": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 0.6751213073730469,
+   "rms_diff_mean": 0.007476270310767352,
+   "kl_mean": 2.2622424217790634e-05,
+   "kl_max": 0.00457936900371992,
+   "n_top1_disagree": 8
+  },
+  "G": {
+   "n_positions": 4033,
+   "max_abs_diff_max": 0.49075889587402344,
+   "rms_diff_mean": 0.019604332868932615,
+   "kl_mean": 9.38806918359704e-05,
+   "kl_max": 0.009259065761161034,
+   "n_top1_disagree": 16
+  }
+ }
+}
