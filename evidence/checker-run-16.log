@@ -1,0 +1,64 @@
+Waiting on the baseline to finish (4 of 24 done, 2 failures so far).
+
+The baseline is still running. I'll continue once the monitor reports it complete.
+
+The 24 repaired runs are in progress, and I'm waiting for them to finish.
+
+The after-repair loop is at 22 of 24 runs, 0 failures. Once it finishes I'll run the full suite and write the records.
+
+Both items are done and committed. `refcheck/` is unchanged: `git rev-parse HEAD:refcheck` prints `e82a4425ab4b57cb18212e19fdf9e0c57936b00e`. The pinned code accepted all three real fixtures, so no reading changed and nothing needed reporting. Nothing was pushed, and no commit was refused.
+
+## Commits
+- `b88757e`: repair of the intermittent test.
+- `078d384`: real-stdout fixture, its tests, and the records.
+
+## Changes, file by file
+- **`tests/test_ingest.py`:** `Substitution.two_runs` and `test_a_record_from_a_different_run` now give each run its own `prepare_s` (1.25, 7.5, 9.5) through the stub's existing `sidecar_override`. The test also asserts that the dump and sidecar hashes of the first and second runs differ.
+- **`tests/fixtures/real_stdout.json`:** copied unchanged from the snapshot (`cmp` identical, sha256 `b68901ab…`).
+- **`tests/test_real_stdout.py`:** new file, 13 tests.
+- **`AMBIGUITIES.md`:** the AMB-034 (c) update, and a dated note after AMB-034 (d), which is kept as written.
+- **`README.md`:** one coverage line for the repair, and a paragraph on the new tests.
+
+## Cause of the flake (reproduced)
+The failure message was: `'sidecar_sha256_mismatch' not found in {'dump_sha256_mismatch', 'modified_before_run_start'}`.
+
+- The test offers the second run's record for the first run's files and requires the sidecar hashes to differ.
+- Both stub sidecars held `prepare_s`, `steps_s` and `ms_per_position` printed to three decimals, so two fast runs could write identical sidecars.
+- AMB-034 (d)'s diagnosis was correct.
+
+## Failure counts
+| | Runs | Failures |
+|---|---|---|
+| Before | 24 | 17, all in this test with the same message |
+| After | 24 | 0 |
+
+## Other tests checked for the same weakness
+- The other `Substitution` tests that use `two_runs()` now get distinct sidecars for both runs. They already relied on an override for the second run.
+- `test_ignored_but_accepted_flags_…` and `test_non_canonical_tokens_…` assert equal dump hashes of same-seed runs, which is deterministic.
+- The stale-file tests, the missing, repeated and out-of-order line tests, `test_a_dump_altered_…` and the `EndToEnd` class build a fresh record per verification.
+- Those tests need an earlier run's file modification times to be strictly before a later run's start marker. That depends on file-system timestamp resolution, which is nanoseconds on this machine, so I recorded it but changed nothing.
+
+## New tests (`tests/test_real_stdout.py`, all pass)
+- **Fixture integrity:** the file digest matches the pinned one, a tampered copy is refused, and the three runs are N = 2, 1024 and 2048 with V = 151936.
+- **Per fixture:** each stdout matches its `stdout_sha256`.
+- **Per fixture, pinned check:** `_check_stdout` raises no reason.
+- **Per fixture, line structure:** the eight acceptance lines each appear once, in order.
+- **Per fixture, one line changed at a time:**
+  - `engine:`, `positions:`, both `wrote` lines and `runtime compile:` each give `stdout_line_mismatch`.
+  - The real `runtime compile:` suffix is accepted.
+  - A different tensor count is refused.
+  - A path from another fixture is refused.
+- **Per fixture, neighbouring checks:** a dropped or repeated line gives the existing code.
+
+## Test counts
+- **Before:** 571. I derived this as 584 minus the 13 new tests, rather than running the old tree.
+- **After:** 584, all OK.
+- `test_ingest.py` has 52 tests both before and after.
+
+## What the real fixtures do and do not show
+They show no mismatch on any line AMB-034 (c) listed. The suffix on `runtime compile:` matches the accepted form exactly, and the `wrote` paths are printed as given. They do not show anything beyond three runs of one binary on one machine, with output paths that have no spaces or unusual characters. This is recorded in AMB-034 (c).
+
+## New ambiguity
+None. I made no new reading, and the fail-closed readings stand.
+
+I also ran `git stash` by mistake mid-run, which briefly set aside the test edit. I restored it with `git stash pop` straight away, after both timing loops had finished, so the evidence is unaffected.

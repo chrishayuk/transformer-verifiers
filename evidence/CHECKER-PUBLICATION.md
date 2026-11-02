@@ -367,3 +367,27 @@ replacing `c2070c3`).
 
   None is known to mismatch. The development runs accepted all of them on real output.
 - The flaky substitution test above.
+
+## Checker run 16: 2026-11-02, `b88757e` and `078d384` (D15 clarification 2: tests and records only). Audited and pinned, NOT pushed
+
+**The run:** snapshot `5d1b1f1` (PROTOCOL.md `411a6922…`; `REAL-STDOUT-FIXTURES.json` `b68901ab…`), settings `d9a158e9…`,
+`--model sonnet`, `acceptEdits`, `git add`/`git commit` allowed. Brief: `evidence/checker-briefs/checker-run-16-brief.md`,
+committed before the run (`06d9ffb`). Log: `checker-run-16.log`.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh e505afc`) | 2 commits, no trailers, lockfile unchanged, worktree clean |
+| `refcheck` tree | `e82a4425…`, identical to `e505afc`. The verifier did not change, so corpus revision 9's 79/79 still applies to it and is not rescored, and `dev/larql-verify` keeps its code (D15 clarification 2) |
+| Scope | `tests/test_ingest.py` (the fixture repair), new `tests/test_real_stdout.py` (13 tests), `tests/fixtures/real_stdout.json`, `AMBIGUITIES.md`, `README.md` |
+| The flake | The checker's own count: 17 of 24 runs of `test_ingest.py` before the repair, 0 of 24 after. Failure message: `'sidecar_sha256_mismatch' not found in {'dump_sha256_mismatch', 'modified_before_run_start'}`. The test requires every code it required before, and adds assertions of its fixture's premises |
+| Tests, rerun by the publisher with `-W error` | 584. Five full runs, all OK. `test_ingest.py` 30 more runs, 0 failures |
+| Mutation check, in a scratch export | With the sidecar hash check off, or the dump hash check off, the repaired test fails. With either modification-time check off alone it passes, because each gives the same code; with both off it fails (see below). Each of the `engine:`, `positions:` and two `wrote` readings altered: `test_real_stdout.py` fails |
+| Real fixtures | All three accepted by the pinned code. No reading changed |
+
+**Earlier records stay as written.** The run 15 entry, the failure counts at `c2070c3` and `e505afc`, and AMB-034 (d) are
+unchanged. The run 14 record's "560, OK" remains what it was: a passing draw.
+
+**A slip in the run.** The agent ran `git stash` by mistake, after both timing loops had finished, and restored it with
+`git stash pop`. It disclosed this. The worktree and the committed result are consistent with its report.
+
+**What the fixtures do not show.** Three runs of one binary on one machine, with ordinary output paths. AMB-034 (c) says so.
