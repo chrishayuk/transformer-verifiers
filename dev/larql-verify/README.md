@@ -6,32 +6,49 @@ never `execution_authenticated`. There are no acceptance thresholds, and T3 is n
 
 ## What it does
 
-`larql_verify.py compare --n-tokens N` takes one real model through the whole verifier and writes
-`runs/nNNNN/report.json`:
+`larql_verify.py report` is the single command: one model, one report. It writes `runs/<suite>/REPORT.md` and
+`report.json`, `e1.json`, and one directory per case.
 
 1. **Identities.** The upstream snapshot is checked against its pinned hashes. The container is checked file by file
    against `evidence/L1/container-q8_0.sha256`. The LARQL binary's hash is recorded and compared with the L1 baseline
    binary.
 2. **Container integrity.** The validating reader opens the container, with every digest checked.
 3. **Configuration.** The pinned `config.json` is compared with the container, using the comparator and gate.
-4. **Reference.** A f32 reference runs on the decoded Q8_0 weights, gated by the read-back and the pins.
-5. **LARQL.** LARQL runs `vindex3 exec --backend production-q8 --representation-source stored --logit-dump` through
-   `refcheck.ingest`, which runs, verifies and extracts in the pinned environment.
-6. **Metrics, per comparison.** Each comparison reports max |Δlogit|, RMS, D_KL(P_ref ‖ P_cand) in nats, top-1
-   agreement and the non-comparable positions:
-   - **E2:** LARQL against the reference on the same decoded weights;
+4. **E1, once per model.** Every executed tensor of the container against the BF16 checkpoint, through `refcheck.e1`:
+   - **exact storage:** unquantised tensors, reported as bit identity;
+   - **lossy Q8_0:** max |Δw|, relative Frobenius error and the counts against T2. PROTOCOL.md expects this encoder to
+     exceed T2, and the bound is not widened;
+   - **T2 attribution:** exceedances split into flushed (zero-scale) and non-zero-scale blocks, and T2 applied to a
+     simulated ggml-style encoding of the same weights. The simulation is not a run of ggml and changes no weight used
+     anywhere else.
+5. **Per case.** References and LARQL as below, then:
+   - **E2:** LARQL against the f32 reference on the same decoded weights;
    - **E3:** LARQL against the f32 reference on the BF16 checkpoint;
-   - **drift (context only):** the decoded-Q8_0 reference against the BF16 reference, with no LARQL involved.
+   - **drift (context only):** the decoded-Q8_0 reference against the BF16 reference, with no LARQL involved;
+   - **f64 diagnostic:** LARQL and the f32 reference, each against a native-f64 reference on the decoded weights,
+     computed in the harness in binary64 because `refcheck.metrics` compares float32 only. It is descriptive: no
+     threshold, and T3 is not used.
 
-The verdict is `MEASURED`, `INCOMPLETE` or `EXECUTION_ERROR`.
+   LARQL runs `vindex3 exec --backend production-q8 --representation-source stored --logit-dump` through
+   `refcheck.ingest`, which runs, verifies and extracts in the pinned environment.
 
-Tokens are the first N tokens of the snapshot's pinned `LICENSE`, with no special tokens. The ladder therefore uses
-nested prefixes.
+Each comparison reports max |Δlogit|, RMS, D_KL(P_ref ‖ P_cand) in nats, top-1 disagreements and, for E2, E3 and drift,
+the non-comparable positions. The verdict is `MEASURED`, `INCOMPLETE` or `EXECUTION_ERROR`.
+
+Cases come from `prompts/suite-v1.json`: prose, code, structured data, several scripts, digits, the chat format with
+special tokens, a repeated passage and a repeated word (long-range and degenerate attention over the KV cache), a
+two-token edge case and a 2,048-token sequence. The suite was written for coverage of input kinds. It is not a
+held-out or adversarial set.
+
+`larql_verify.py compare --n-tokens N` is the diagnostic ladder: the first N tokens of the snapshot's `LICENSE`, E2 and
+E3 only, in `runs/nNNNN/`.
 
 ## Running it
 
 ```sh
 ./vendor.sh                     # export refcheck from checker/ at e505afc (read-only; checker/ is never modified)
+../../checker/.venv/bin/python -I larql_verify.py report                         # about 35 minutes
+../../checker/.venv/bin/python -I larql_verify.py report --cases short-2,prose-en  # a subset
 ../../checker/.venv/bin/python -I larql_verify.py compare --n-tokens 16
 ```
 

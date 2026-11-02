@@ -1,0 +1,85 @@
+{
+  "schema": "larql-verify-prompt-suite/1",
+  "suite": "suite-v1",
+  "designation": "DEVELOPMENT ONLY (D15). Authored for coverage of input kinds, not drawn from any held-out or evaluation set.",
+  "tokenisation": "tokenizer.json of the pinned upstream snapshot; add_special_tokens=false; special-token strings written in a text (the chat case) are matched as special tokens",
+  "cases": [
+    {
+      "id": "prose-en",
+      "kind": "natural language",
+      "purpose": "ordinary English prose",
+      "text": "The lighthouse keeper had kept a logbook for thirty-one years, and in all that time he had never missed an entry. Most days the entries were short: the direction of the wind, the height of the swell, the ships that passed and the hour they passed. On the morning the supply boat failed to arrive, he wrote the same things he always wrote, and then, after a long pause, he added a line he had never written before. He wrote that he was not sure whether anyone would read the book again. Then he closed it, wound the clockwork that turned the lamp, and went down the spiral stairs to check the oil, because whatever happened to the boat, the light would still need to burn that night."
+    },
+    {
+      "id": "code-python",
+      "kind": "code",
+      "purpose": "Python source with indentation, identifiers and operators",
+      "text": "import heapq\nfrom collections import defaultdict\n\n\ndef shortest_paths(edges, source):\n    \"\"\"Dijkstra's algorithm over a list of (u, v, weight) edges.\"\"\"\n    graph = defaultdict(list)\n    for u, v, w in edges:\n        if w < 0:\n            raise ValueError(f\"negative weight on edge {u}->{v}: {w}\")\n        graph[u].append((v, w))\n    dist = {source: 0}\n    queue = [(0, source)]\n    while queue:\n        d, u = heapq.heappop(queue)\n        if d > dist.get(u, float(\"inf\")):\n            continue\n        for v, w in graph[u]:\n            nd = d + w\n            if nd < dist.get(v, float(\"inf\")):\n                dist[v] = nd\n                heapq.heappush(queue, (nd, v))\n    return dist\n\n\nif __name__ == \"__main__\":\n    print(shortest_paths([(\"a\", \"b\", 1), (\"b\", \"c\", 2), (\"a\", \"c\", 5)], \"a\"))\n"
+    },
+    {
+      "id": "code-rust",
+      "kind": "code",
+      "purpose": "Rust source with generics, lifetimes and braces",
+      "text": "use std::collections::HashMap;\n\n/// Counts how often each word appears, ignoring case.\npub fn word_counts<'a>(text: &'a str) -> HashMap<String, usize> {\n    let mut counts: HashMap<String, usize> = HashMap::new();\n    for word in text.split_whitespace() {\n        let key = word\n            .trim_matches(|c: char| !c.is_alphanumeric())\n            .to_lowercase();\n        if key.is_empty() {\n            continue;\n        }\n        *counts.entry(key).or_insert(0) += 1;\n    }\n    counts\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn counts_repeated_words() {\n        let c = word_counts(\"The cat and THE dog.\");\n        assert_eq!(c[\"the\"], 2);\n        assert_eq!(c.get(\"bird\"), None);\n    }\n}\n"
+    },
+    {
+      "id": "structured-json",
+      "kind": "structured",
+      "purpose": "JSON with nesting, numbers, booleans and null",
+      "text": "{\n  \"order_id\": \"A-20931\",\n  \"created\": \"2026-03-14T09:26:53Z\",\n  \"customer\": {\"name\": \"R. Okafor\", \"tier\": \"gold\", \"verified\": true},\n  \"items\": [\n    {\"sku\": \"KB-104\", \"description\": \"mechanical keyboard\", \"qty\": 1, \"unit_price\": 89.50},\n    {\"sku\": \"MS-220\", \"description\": \"wireless mouse\", \"qty\": 2, \"unit_price\": 24.99},\n    {\"sku\": \"CB-007\", \"description\": \"USB-C cable, 2 m\", \"qty\": 3, \"unit_price\": 7.25}\n  ],\n  \"discount\": null,\n  \"shipping\": {\"method\": \"standard\", \"cost\": 4.95, \"address\": {\"city\": \"Leeds\", \"postcode\": \"LS1 4AP\"}},\n  \"total\": 165.18,\n  \"notes\": []\n}\n"
+    },
+    {
+      "id": "structured-table",
+      "kind": "structured",
+      "purpose": "a Markdown table followed by CSV, column alignment and repeated delimiters",
+      "text": "| Station | Date | Max temp (C) | Min temp (C) | Rain (mm) |\n|---|---|---:|---:|---:|\n| Aberdeen | 2025-07-01 | 17.4 | 9.8 | 0.0 |\n| Aberdeen | 2025-07-02 | 15.1 | 10.2 | 6.4 |\n| Cardiff | 2025-07-01 | 22.9 | 13.5 | 0.2 |\n| Cardiff | 2025-07-02 | 21.3 | 14.0 | 1.8 |\n\nstation,date,max_c,min_c,rain_mm\nYork,2025-07-01,24.6,12.1,0.0\nYork,2025-07-02,23.8,13.3,0.0\nYork,2025-07-03,19.2,12.7,11.6\nTruro,2025-07-01,20.4,14.9,3.1\nTruro,2025-07-02,18.7,14.2,9.0\n"
+    },
+    {
+      "id": "multilingual",
+      "kind": "natural language",
+      "purpose": "several scripts in one sequence: Latin with diacritics, CJK, Cyrillic, Arabic, and emoji",
+      "text": "Bonjour à tous ! Le café est prêt, et la réunion commence à neuf heures. 今天的天气很好，我们下午去公园散步吧。Привет! Как дела? Сегодня мы обсудим новый проект. مرحبا بكم في الاجتماع، سنبدأ بعد قليل. Danke schön für die schnelle Antwort. 東京駅で午後三時に会いましょう。🙂🚀 ¿Dónde está la estación de tren más cercana?"
+    },
+    {
+      "id": "arithmetic",
+      "kind": "numbers",
+      "purpose": "digit-heavy text: worked arithmetic, decimals and a long number",
+      "text": "Worked example. A tank holds 1,250 litres and drains at 3.75 litres per minute. After 47 minutes it has lost 47 x 3.75 = 176.25 litres, leaving 1,250 - 176.25 = 1,073.75 litres. At that rate it empties after 1,250 / 3.75 = 333.33 minutes, about 5 hours 33 minutes. Check: 333 x 3.75 = 1,248.75 and 334 x 3.75 = 1,252.50. The first 30 digits of pi are 3.14159265358979323846264338327, and 2^20 = 1048576."
+    },
+    {
+      "id": "chat-template",
+      "kind": "chat",
+      "purpose": "the Qwen3 chat format, with <|im_start|> and <|im_end|> special tokens, as a deployed prompt would look",
+      "text": "<|im_start|>system\nYou are a careful assistant. Answer briefly and say when you are unsure.<|im_end|>\n<|im_start|>user\nWhy does ice float on water? One paragraph, please.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nIce floats because water expands when it freezes. As the molecules lock into a hexagonal lattice held by hydrogen bonds, they sit further apart than in the liquid, so ice is about nine percent less dense than liquid water.<|im_end|>\n<|im_start|>user\nDoes the same happen with other liquids?<|im_end|>\n<|im_start|>assistant\n"
+    },
+    {
+      "id": "kv-copy",
+      "kind": "KV cache",
+      "purpose": "an arbitrary passage and then an exact repeat: in the second copy each prediction depends on attending back across the first, so the cached keys and values of early positions are exercised at long range",
+      "repeat": 2,
+      "separator": "\n\n",
+      "text": "Keys: ORCHID-7, basalt, 1984, Quillon, marrow, 0x3F2A, Vesper Lane, tincture, 52.4N, ledger-b, Halloran, sixteen, cobalt drift, Ytterby, pewter, 77-K, lantern moth, Szczecin, 9 3 1 4, umbra, kestrel, Ofelia, brine, 2.718, Corvid Row, ashlar, Nkemelu, threnody, 4096, saffron, Tal-Ula, gimbal, Marchetti, 18:42, quince, Rhodes, felspar, 11b, Ardnamurchan, wicket."
+    },
+    {
+      "id": "repetition",
+      "kind": "KV cache",
+      "purpose": "a degenerate sequence of one repeated word: near-uniform attention over many identical keys",
+      "repeat": 96,
+      "separator": " ",
+      "text": "the"
+    },
+    {
+      "id": "short-2",
+      "kind": "edge",
+      "purpose": "a two-token sequence: position 0 and the first attention over a cache of one",
+      "text": "Hello world"
+    },
+    {
+      "id": "long-2048",
+      "kind": "long sequence",
+      "purpose": "the longest case: the first 2,048 tokens of the snapshot's LICENSE, extending the ladder's nested prefixes past 1,024",
+      "source": "LICENSE",
+      "n_tokens": 2048
+    }
+  ]
+}
