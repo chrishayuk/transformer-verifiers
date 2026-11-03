@@ -252,3 +252,19 @@ Settings are now sha256 `d9a158e9…`; the only change is the snapshot path.
 - **Allowed:** the new snapshot, its specification copy and the fixture file; the pinned ggml source in `inputs/`, as before.
 - **Blocked:** everything blocked in part 14, with the previous snapshot now blocked too, and writing to the new snapshot.
 - **Blocked, new probes:** the development baseline `runs/suite-v1` and the attribution results `runs/attribution-v1`.
+
+## Part 16: protocol snapshot d544bf1 (2026-11-03)
+
+The snapshot moves to `isolation/snapshots/d544bf1/`. It holds:
+- D1–D15, with D15 clarification 3 (checker maintenance 17): `PROTOCOL.md` `f53e2451…`, `draft.json` `6e97a9cb…`;
+- the admitted logit-dump specification and real stdout fixtures, unchanged;
+- **new:** `Q8_0-GEMV-SPEC.md` `c3b439c0…`, revision 1 of the numerical specification, which contains nothing about LARQL's code.
+
+Settings are now sha256 `3d8aab1f…`; the only change is the snapshot path.
+
+**Re-test** (`isolation-test-16.log`):
+- **Allowed:** the new snapshot, its specification copy, and the pinned ggml source in `inputs/`.
+- **Blocked:** the previous snapshot, the live protocol, the live specification, writing to the new snapshot, the reviewer, audit and evaluation
+  repositories, both real containers, the development harness, publication records, and the network.
+- **Blocked, new probes:** the matvec design and bound spike, which describe LARQL's kernels, and the LARQL worktrees `larql`, `larql-q8-encoder`,
+  `larql-lql-read`, `larql-verifier` and `larql-contract-verifier`.

@@ -1,0 +1,26 @@
+1. ALLOWED `f53e24513835a49f26eb81376280b2b90059263f8101c7611ea153d7b143661a  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/d544bf1/PROTOCOL.md`
+2. ALLOWED `c3b439c011a50ce06d04ba92bc5458f05863123b409045b1be2d555a19468e78  /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/d544bf1/Q8_0-GEMV-SPEC.md`
+3. ALLOWED `include`
+4. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/5d1b1f1/PROTOCOL.md: Operation not permitted`
+5. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/protocols/LARQL-VERIFY-001/PROTOCOL.md: Operation not permitted`
+6. BLOCKED `touch: /Users/christopherhay/chris-source/transformer-verifiers/isolation/snapshots/d544bf1/x: Operation not permitted`
+7. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/specs/q8_0-gemv/SPEC.md: Operation not permitted`
+8. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/MATVEC-DESIGN.md: Operation not permitted`
+9. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/matvec_bound_spike.py: Operation not permitted`
+10. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify: Operation not permitted`
+11. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/dev/larql-verify/runs/suite-v1/report.json: Operation not permitted`
+12. BLOCKED `head: /Users/christopherhay/chris-source/transformer-verifiers/evidence/CHECKER-PUBLICATION.md: Operation not permitted`
+13. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers-reviewer: Operation not permitted`
+14. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers-refaudit: Operation not permitted`
+15. BLOCKED `ls: /Users/christopherhay/chris-source/transformer-verifiers-eval: Operation not permitted`
+16. BLOCKED `ls: /Users/christopherhay/chris-models/q8enc-ad82acba: Operation not permitted`
+17. BLOCKED `ls: /Users/christopherhay/chris-models/l1-2536bb79: Operation not permitted`
+18. BLOCKED `ls: /Users/christopherhay/chris-source/larql: Operation not permitted`
+19. BLOCKED `ls: /Users/christopherhay/chris-source/larql-l1-2536bb79: Operation not permitted`
+20. BLOCKED `ls: /Users/christopherhay/chris-source/larql-q8-encoder: Operation not permitted`
+21. BLOCKED `ls: /Users/christopherhay/chris-source/larql-lql-read: Operation not permitted`
+22. BLOCKED `ls: /Users/christopherhay/chris-source/larql-verifier: Operation not permitted`
+23. BLOCKED `ls: /Users/christopherhay/chris-source/larql-contract-verifier: Operation not permitted`
+24. BLOCKED `ls: /Users/christopherhay/chris-source/logit-dump-check: Operation not permitted`
+25. BLOCKED `ls: /Users/christopherhay/chris-source/t3-calibration-review: Operation not permitted`
+26. BLOCKED `curl: (56) CONNECT tunnel failed, response 403`
