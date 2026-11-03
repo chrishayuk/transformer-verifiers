@@ -1,0 +1,6 @@
+{"fault": "reverse_blocks", "b1_all": {"satisfied": 196}, "rows": 344064, "rows_violating": 0, "worst": 0.01277387342327, "worst_tensor": "3.self_attn.o_proj.weight"}
+{"fault": "hoist_scale", "b1_all": {"satisfied": 196}, "rows": 344064, "rows_violating": 0, "worst": 0.01125278698836, "worst_tensor": "27.mlp.up_proj.weight"}
+{"fault": "binary64_acc", "b1_all": {"satisfied": 196}, "rows": 344064, "rows_violating": 0, "worst": 0.0008623929133748, "worst_tensor": "8.self_attn.k_proj.weight"}
+{"fault": "flush_subnormal_scale", "b1_all": {"satisfied": 151, "violated": 45}, "rows": 344064, "rows_violating": 203, "worst": 10618.20035581, "worst_tensor": "25.self_attn.q_proj.weight"}
+{"fault": "unsigned_codes", "b1_all": {"violated": 196}, "rows": 344064, "rows_violating": 344063, "worst": 108349.7556952, "worst_tensor": "19.mlp.up_proj.weight"}
+{"fault": "wrong_last_element", "b1_all": {"violated": 196}, "rows": 344064, "rows_violating": 341831, "worst": 3081.050192208, "worst_tensor": "25.self_attn.v_proj.weight"}
