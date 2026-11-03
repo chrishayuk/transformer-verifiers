@@ -1454,6 +1454,20 @@ Any of:
 - an E2 discrepancy beyond T3 is left untraced
 - a tolerance, or the pilot rule for c and k, is changed after measurements on the subject have been seen
 
+- **Clarification 3 (2026-11-03): checker maintenance 17, the Q8_0 GEMV reference.**
+  - **What it adds.** The checker implements `specs/q8_0-gemv/SPEC.md` revision 1, admitted in the snapshot, in a new module with new
+    tests. That covers `Q8_0_GEMV_SEQ`, and `Q8_0_GEMV_B1` as an **experimental** contract whose guarantee is pending.
+  - **What must not change.** Every existing `refcheck/` file stays byte-identical. The `refcheck` tree changes only by the new
+    module, so clarification 2's "unchanged tree" paragraph does not apply, but corpus revision 9's result still applies to the
+    unchanged modules, which aren't rescored. `dev/larql-verify/` keeps its pin.
+  - **This is not Stage B.** It is development work under D15, on the development reference model, and closes no gate. Stage B and
+    G7 stay open. Its results are measurements. Section 5 of the specification is a paper derivation, and nothing may be called
+    proved until a proof system has checked it.
+  - **Tests are synthetic only.** The agent must not read LARQL, its source, its kernels, development outputs or real logits.
+    Clarification 2's exception doesn't extend to this work.
+  - **Counterexamples.** Recorded, not fixed: the agent does not change the bound, the constants, the domain or the program. Only the
+    protocol owner can issue a new revision.
+
 ## Stage B: certified numerical error bounds
 
 ### Order of operations
