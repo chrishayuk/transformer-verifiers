@@ -95,3 +95,18 @@ Alternating runs, first pair discarded (`compat-and-timing.json`). Median ms per
 The ranges overlap, and these are few runs on a machine that is not otherwise controlled. One candidate run was an outlier at
 432.4, which the median sets aside; it was not investigated. **No difference is resolved, and a difference of a few percent
 would not be.** Peak memory was not measured. Tensor sizes are unchanged.
+
+## Review follow-up: `a23b37b8` (2026-11-03)
+
+An independent review of `ad82acba` found no defect in the conversion or on the decode side. `a23b37b8` adds what it raised: the
+recipe revision (`kquant-larql-native` 1 to 2, because LARQL's rule gives a fix that changes chosen values a new identity), a
+narrower statement of where Q8_0 matches ggml, a million seeded blocks against pinned ggml, and overflow-range tests. No encoder
+logic changed.
+
+**The measurements above stay those of `ad82acba`, and this is why they carry over.** Re-encoding at `a23b37b8`:
+- `segments/target.decoder_stack@Q8_0.bin` and every other segment are byte-identical to the candidate container;
+- `index.json` differs only in `"revision"`; `candidate.json` also differs and was not diffed;
+- the verifier's report digest is the same, `dcf60b8f…`, and the result is `satisfied` with 0 violations.
+
+**Known divergences from ggml, unchanged:** a NaN in a block (ggml's running maximum resets on it, LARQL's ignores it), and `amax`
+so small that `1/d` overflows f32, where ggml's codes are undefined behaviour in C.
