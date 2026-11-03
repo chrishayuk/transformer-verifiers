@@ -425,3 +425,10 @@ Snapshot and settings as run 17. Brief: `evidence/checker-briefs/checker-run-18-
 | The same 11 mutations, in a scratch export | 11 of 11 caught, including the two that survived run 17 |
 
 Both boundaries were reachable. Equality between error and bound is `satisfied`, one ulp past is `violated`. Rows in the window `(1+γ)S < Ω ≤ (1+γ)(S+kη)` are `could_not_evaluate`. The agent's "631 before" is derived, because its baseline output was lost.
+
+## Findings for a later checker run (from a fresh-context review of LARQL #695, 2026-11-03)
+
+Not changed in the copies, which must stay exact. The verifier catches the first group around the call.
+
+- `refcheck/container.py` raises uncaught `TypeError`, `NotADirectoryError`, `PermissionError` or `ValueError` on some malformed `index.json` values, where a `ContainerError` would be expected: `compiled_from: []`, `system_graph: "index.json/x"`, and a NUL in `system_graph` or `segment`.
+- `refcheck/gemv.py:215`: a worst ratio of exactly 0 prints as `0.000000000000e+12`. The value is right. It's cosmetic.
