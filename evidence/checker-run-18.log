@@ -1,0 +1,44 @@
+Both boundaries were reachable and are now tested. I changed nothing in `refcheck/`. The suite went from 631 to 640 tests, all passing; the 631 is derived from the 640 run, because my baseline run's output was lost.
+
+I verified the spec hash first: `c3b439c011a50ce06d04ba92bc5458f05863123b409045b1be2d555a19468e78` matches.
+
+## Constructions
+
+I worked both out on paper first. The test file only confirms them with `Fraction`, using `tests/_gemv_oracle.py`, which shares no code with `gemv.py`.
+
+1. **Error exactly equal to B** (k = 32). Scale `d = 2^-24` (0x0001), code `q₀ = 1`, all other codes and all other `x` zero, `x₀ = 16776672·2^-149` (0x00FFFDE0). That gives `y* = S = 16776672·2^-173`. In units of 2^-173 the equality reads `(Y−T)(2^19−1) = T + 2^47`, and `y = 17·2^-149` (0x00000011) satisfies it exactly. The output is a subnormal, and it is not what section 3's program would produce.
+   - One ulp up (0x00000012) is `violated`.
+   - One ulp down (0x00000010) is `satisfied`.
+   - The negated mirror (0x80FFFDE0 with 0x80000011) is equal, and 0x80000012 is `violated`.
+2. **Domain window** (k = 64).
+   - **The window:** `(1+γ)S < Ω ≤ (1+γ)(S+kη)` is equivalent to `M−2^29 ≤ S < M` in units of 2^-173, where `M = Ω(1−ku) = 2^258(2^25−1)(2^18−1)`.
+   - **How S is reached:** block 0 has scale 65504 and all codes 127, block 1 has scale 2^-24 and all codes 1, and every `x` is positive. A greedy choice of `x` makes `S` hit any target exactly. The builder asserts a zero remainder, and every `x` is finite.
+
+## What each new test asserts
+
+- **Equality tests**
+  - **Error equal to B:** `check_b1` returns `satisfied`, with ratio exactly 1.
+  - **One ulp past:** `check_b1` returns `violated` with a `b1_exceeded` reason.
+  - **Mirror and second row:** the negative-value mirror behaves the same, and the equality is not masked when it sits in a second row.
+  - **Construction:** the exact equality (and the sides either way) is confirmed independently by the oracle.
+- **Domain tests**
+  - **Window rows:** `S = M−1` and `S = M−2^29` give `could_not_evaluate` with an `outside_domain` reason, for both `check_b1` and `check_seq`.
+  - **Outside either way:** `S = M` and `S = M+1` also give `could_not_evaluate`.
+  - **Just inside:** `S = M−2^29−1` is evaluated and gives no domain refusal, so the refusals above aren't caused by something else.
+  - **Exact inequalities:** the window's two inequalities are checked in `Fraction` for each window row.
+
+## Mutation results
+
+I ran these in a scratch copy under the git-ignored `.tmp/`, which is now removed. My first scratch attempt under `/tmp/claude-501` failed with "Operation not permitted", which is why I used `.tmp/`.
+
+| Change | New tests that fail |
+|---|---|
+| `lhs >= rhs` | 3 of 9: error equal to bound, mirror, second row |
+| `k·η` dropped from the domain condition | 1 of 9: the window test |
+
+## Counts and hashes
+
+- Suite: 631 before, 640 after, OK (`.venv/bin/python -I -m unittest discover -s tests`).
+- `git rev-parse f599589:refcheck`: `435ab23a819a8f5f9552a88a6644b9480307fa4f`
+- `git rev-parse HEAD:refcheck`: `435ab23a819a8f5f9552a88a6644b9480307fa4f`
+- Commit: `f2788f0`, a single commit with no attribution trailers, not pushed. It holds `tests/test_gemv_boundaries.py`, a dated note under AMB-035 in `AMBIGUITIES.md` (both constructions, the mutation results, and that neither input is unreachable), and a README coverage line.

@@ -412,3 +412,16 @@ allowed. Brief: `evidence/checker-briefs/checker-run-17-brief.md`, committed bef
 The reference's code is correct on both by reading. A tests-only follow-up, run 18, targets them.
 
 **A finding.** The agent's "ties in underflow" family reaches 0.99999 of the bound, so the `k·η` term is close to tight. Its search found no counterexample in about 80,000 cases, which doesn't establish the bound.
+
+## Checker run 18: 2026-11-03, `f2788f0` (tests only: the two boundaries run 17's audit found). Audited, NOT pushed
+
+Snapshot and settings as run 17. Brief: `evidence/checker-briefs/checker-run-18-brief.md`, committed before the run (`fa3b565`). Log: `checker-run-18.log`.
+
+| Check | Result |
+|---|---|
+| `refcheck` tree | `435ab23a…`, identical to `f599589` |
+| Commits | 1, no trailers, worktree clean |
+| GEMV tests, rerun by the publisher with `-W error` | 56, OK |
+| The same 11 mutations, in a scratch export | 11 of 11 caught, including the two that survived run 17 |
+
+Both boundaries were reachable. Equality between error and bound is `satisfied`, one ulp past is `violated`. Rows in the window `(1+γ)S < Ω ≤ (1+γ)(S+kη)` are `could_not_evaluate`. The agent's "631 before" is derived, because its baseline output was lost.
