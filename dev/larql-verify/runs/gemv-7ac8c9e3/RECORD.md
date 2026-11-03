@@ -35,3 +35,7 @@ The two worst rows were recomputed exactly by separate code that doesn't use `re
 - A witness is the engine's report: `y` is right for that `x` and those bytes, not shown to have come from the production kernel.
 - `SEQ`'s order comes from LARQL's kernel. Passing it shows the kernel does what it declares.
 - `B1`'s derivation is on paper, and the 196 satisfied results don't establish the bound.
+
+## After two fresh-context reviews: the final capture code, 2026-11-03
+
+**LARQL `140916ae` (PR #693), same model, tokens and machine.** Capture on vs off: logits bit-identical, and identical to the `7ac8c9e3` run. All 196 records' `blocks`, `x` and `y` digests equal the preserved witness's. Through `larql-verifier operator` at `a8508875` (PR #695): `SEQ` satisfied on 196 of 196, `B1` satisfied on 196 of 196, 344,064 rows, worst ratio 0.0461. `be04905b` then changes only Windows behaviour and documentation. The preserved witness stays at `~/chris-models/gemv-7ac8c9e3/`. The faulty-kernel results in `gemv-negative-controls/` were captured with `7ac8c9e3`, not rerun with this code.
