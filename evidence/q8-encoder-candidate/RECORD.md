@@ -33,7 +33,7 @@ kept. `half::f32_to_f16` is unchanged, because Q4_0 and `encode_f16` also use it
 | LARQL's existing llama.cpp golden fixture | Q8_0 went from 10/544 bytes differing to 0. The test now asserts this for Q8_0 |
 | Candidate container against ggml's encoder on the real weights (`bytes-vs-ggml.json`) | 196 of 196 Q8_0 tensors byte-identical |
 | Other 115 tensors against the baseline container | All byte-identical |
-| LARQL tests: `larql-models`, `larql-compute`, `larql-vindex`, `--lib` | 1,109, 904 and 5,423 passed, 0 failed |
+| LARQL tests: `larql-compute`, `larql-models`, `larql-vindex`, `--lib` | 1,109, 904 and 5,423 passed, 0 failed |
 
 **Excluded from the golden blocks:** non-finite inputs, and amax so small that 1/d overflows f32, where ggml casts NaN to int8.
 That is undefined behaviour in C, so there is no single ggml answer to conform to. LARQL's behaviour there is unchanged.
