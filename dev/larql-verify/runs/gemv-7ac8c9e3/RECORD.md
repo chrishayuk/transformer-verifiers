@@ -39,3 +39,7 @@ The two worst rows were recomputed exactly by separate code that doesn't use `re
 ## After two fresh-context reviews: the final capture code, 2026-11-03
 
 **LARQL `140916ae` (PR #693), same model, tokens and machine.** Capture on vs off: logits bit-identical, and identical to the `7ac8c9e3` run. All 196 records' `blocks`, `x` and `y` digests equal the preserved witness's. Through `larql-verifier operator` at `a8508875` (PR #695): `SEQ` satisfied on 196 of 196, `B1` satisfied on 196 of 196, 344,064 rows, worst ratio 0.0461. `be04905b` then changes only Windows behaviour and documentation. The preserved witness stays at `~/chris-models/gemv-7ac8c9e3/`. The faulty-kernel results in `gemv-negative-controls/` were captured with `7ac8c9e3`, not rerun with this code.
+
+## Fresh-clone reproduction, 2026-11-03
+
+From a new clone of LARQL branch `feat/reproduce-gemv` at `024869c6`, `verifier/reproduce.sh` printed `Reproduced.` in 1,933 s, on the first run. LARQL under test `bb15f826`, checker `f2788f0`, verifier `code_sha256` `0137ed7a…`, macOS 27.0.1 on arm64. The two representation results, the clean capture, 3 operators under both contracts, and 2 faulty kernels all matched. Both faults' logits differed from clean. Tests rerun with `-W error`: 297, 1 skipped, OK.
