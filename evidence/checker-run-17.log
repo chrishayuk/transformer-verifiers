@@ -1,0 +1,87 @@
+The Q8_0 GEMV reference is built and committed, with `refcheck/gemv.py`, the positive tests, the fault table, the diagnostics and the counterexample search. I found no counterexample to `B1`, and no fault escaped. That is a measurement on tried inputs, not evidence that the bound holds, and nothing here is described as proved. Both hashes verified before I started: protocol `f53e2451…`, spec `c3b439c0…`.
+
+## Changes, file by file
+- **`refcheck/gemv.py`** (new): `seq_bits` runs section 3's program in strictly ascending order, one numpy float32 `*` and one `+` per step, with no library sum. `check_seq` and `check_b1` return `GemvResult`; `check_b1` adds `worst_ratio` and `worst_ratio_row`. All `y*`, `S`, `B` and domain arithmetic is exact integers, so the `B1` verdict is the exact-rational verdict and there is no faster path to justify. Refusals cover malformed input, `n = 0`, non-finite scale or `x`, and rows outside the domain. All return `could_not_evaluate`.
+- **`tests/_gemv_oracle.py`, `tests/_gemv_gen.py`** (new): an independent oracle (`struct` decode, `Fraction` arithmetic, its own binary32 rounding) and seeded generators.
+- **`tests/test_gemv.py`** (new, 30 tests): the positive tests, including hand-worked bits:
+  - ties to even give `0x3F800000`;
+  - a product tie in the subnormal range gives `0x00000002`;
+  - sign of zero;
+  - an FMA that would differ gives `0x37800000`;
+  - sequential versus pairwise (numpy's `sum` differs, and the test asserts it).
+- **`tests/_gemv_faults.py`, `tests/test_gemv_faults.py`** (new, 13 tests): the ten faults, in `tests/` only.
+- **`tests/test_gemv_diagnostics.py`** (new, 1 test) and **`tests/test_gemv_search.py`** (new, 3 tests).
+- **`README.md`**: section 10 and status row 11. **`AMBIGUITIES.md`**: AMB-035.
+
+## Fault table (what happened)
+| Fault | `SEQ` | `B1` |
+|---|---|---|
+| Wrong stride | fails | fails (worst ratio 3.3e4, 3 of 4 rows) |
+| Last block dropped | fails | fails (3.8e4, 4 of 4) |
+| Subnormal scales flushed | fails | fails (8.7e4, 3 of 3), on a subnormal-scale input |
+| One flipped code | fails | fails (4.96e2, 1 of 4) |
+| Sign of one row flipped | fails | fails (3.8e4, 1 of 4) |
+| Lowest bit of one output | fails on every input | accepted on a 20-input sweep; violated on one crafted input (ratio 1.0625) |
+| Reverse order | fails | passes on all 76 inputs where it differs (worst 0.077) |
+| Scale factored out | fails | passes on all 91 (worst 0.121) |
+| Pairwise | fails | passes on all 76 (worst 0.055) |
+| Binary64 accumulate | fails | passes on all 91 (worst 0.030) |
+
+- **Escapes:** none.
+- **The three "must pass if it does" cases:** these are observations on the inputs tried. Section 5 covers only section 3's program.
+- **The lowest-bit flip:** the crafted input is tie products in the underflow range, where the program's own error is already `k·η`, so one flipped bit pushes it over.
+
+## Diagnostics: worst |y − y*| / B (3 rows each, seeded)
+| Family | k=32 | k=1024 | k=3072 |
+|---|---|---|---|
+| typical | 7.95e-3 | 3.99e-4 | 2.51e-4 |
+| all positive | 1.01e-1 | 1.56e-2 | 1.07e-2 |
+| exact cancellation (y* = 0) | 5.15e-3 | 2.08e-4 | 1.47e-4 |
+| wide exponents | 5.06e-2 | 5.96e-4 | 1.21e-3 |
+| subnormal x | 4.92e-2 | 9.72e-4 | 2.79e-4 |
+| underflowing products | 8.15e-2 | 5.44e-4 | 3.91e-4 |
+| extreme scales, codes ±128/127 | 6.62e-2 | 1.19e-3 | 8.02e-4 |
+| absorption | 1.07e-1 | 1.04e-1 | 8.91e-2 |
+| ties in underflow | 0.999996 | 0.999878 | 0.999634 |
+| near Ω (S within 0.1% of the limit) | 8.95e-3 | 1.27e-3 | 4.03e-3 |
+
+The tie family sits near 1 by construction: the program's error is exactly `k·η`, so that term is nearly tight.
+
+## Counterexample search
+Four regions: products near 2⁻¹²⁶, many underflow-range terms (including aligned ties), large cancellation, and the top of the domain. Each starts from seeded random inputs, then hill-climbs on the measured ratio.
+
+| Run | Cases | Violations | Largest ratios |
+|---|---|---|---|
+| Default (in the suite) | 2,026 | 0 | — |
+| 40× (`python -I tests/test_gemv_search.py 40`) | 80,650 | 0 | 0.24 (subnormal boundary), 0.99987 (aligned ties), 0.064 (cancellation), 0.15 (top of domain) |
+
+In the 40× run, 5,005 of the top-of-domain cases landed outside the domain (answered `could_not_evaluate`).
+
+## Tests
+- **Before:** 584 tests pass.
+- **After:** 631 tests pass (47 new).
+- **Runtime:** the full suite took 172 s against 72 s before. The new tests account for only about 6 s of that, so I read the difference as machine load, but I didn't investigate it.
+
+## Existing `refcheck/` files
+Byte-identical to `078d384`:
+- `git diff --name-status 078d384 HEAD -- refcheck` lists only `A refcheck/gemv.py`.
+- `git diff --stat 078d384 -- refcheck` was empty before the commits.
+
+## Commits
+- `95ef6d4` — module, oracle, generators and positive tests.
+- `0813709` — faults.
+- `8e21fd5` — diagnostics and search.
+- `f599589` — README and AMB-035.
+
+No attribution trailers, nothing pushed.
+
+## New ambiguity
+AMB-035 records the fail-closed readings:
+- Counts on `could_not_evaluate` are zero.
+- Malformed input is refused (`seq_bits` raises, the checks return `could_not_evaluate`).
+- `n = 0` is not `satisfied`.
+- A non-finite scale is outside the domain even when its codes are zero.
+- `worst_ratio` is `"inf"` for a non-finite `y`.
+- `SEQ` distinguishes the sign of zero but `B1` reads values.
+- `seq_bits` depends on numpy float32 behaving as IEEE (no FMA, no flushing) on the host. This is checked on arm64 with numpy 2.4.2, and the hand-worked tests fail loudly if another host differs.
+- How I defined "wrong stride", "scale factored out" and "pairwise".

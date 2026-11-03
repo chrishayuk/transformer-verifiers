@@ -391,3 +391,24 @@ unchanged. The run 14 record's "560, OK" remains what it was: a passing draw.
 `git stash pop`. It disclosed this. The worktree and the committed result are consistent with its report.
 
 **What the fixtures do not show.** Three runs of one binary on one machine, with ordinary output paths. AMB-034 (c) says so.
+
+## Checker run 17: 2026-11-03, `95ef6d4` to `f599589` (D15 clarification 3: the Q8_0 GEMV reference). Audited, NOT pushed
+
+**The run:** snapshot `d544bf1` (PROTOCOL.md `f53e2451…`; `Q8_0-GEMV-SPEC.md` `c3b439c0…`), settings `3d8aab1f…`, `--model sonnet`, `acceptEdits`, `git add`/`git commit`
+allowed. Brief: `evidence/checker-briefs/checker-run-17-brief.md`, committed before the run (`514acea`). Log: `checker-run-17.log`.
+
+**A failed first launch.** `--allowedTools` is variadic and took the brief as tool names, so no agent ran and the checker didn't change (`checker-run-17-failed-launch.log`). The brief went on stdin the second time, unchanged.
+
+| Check | Result |
+|---|---|
+| Audit (`tools/audit_checker.sh 078d384`) | 4 commits, no trailers, lockfile unchanged, worktree clean |
+| Existing `refcheck/` | Byte-identical. The only change is the new `refcheck/gemv.py` |
+| The agent's own count | 584 before, 631 after |
+| GEMV tests, rerun by the publisher with `-W error` | 47, OK |
+| `B1` integer form | Checked by hand against section 4: multiplying through by `2²⁴ − k` gives the code's inequality, in units of 2⁻¹⁷³ |
+| Mutations of `gemv.py`, in a scratch export | 9 of 11 caught |
+
+**Two mutations survived, so these are gaps in the tests.** Using `>=` in place of `>`: no test has an error exactly equal to the bound. Dropping `k·η` from the domain's third condition: no test is close enough to `Ω` for that term to matter.
+The reference's code is correct on both by reading. A tests-only follow-up, run 18, targets them.
+
+**A finding.** The agent's "ties in underflow" family reaches 0.99999 of the bound, so the `k·η` term is close to tight. Its search found no counterexample in about 80,000 cases, which doesn't establish the bound.
