@@ -1,0 +1,302 @@
+--- a/crates/larql-compute/src/cpu/kquant_gemv.rs
++++ b/crates/larql-compute/src/cpu/kquant_gemv.rs
+@@ -45,6 +45,8 @@
+ //! kernel library-owned and calls it once.
+ 
+ use larql_models::quant::half::f16_to_f32;
++use std::sync::atomic::{AtomicUsize, Ordering};
++use std::sync::Arc;
+ 
+ /// Elements described by one Q8_0 block.
+ pub const Q8_0_BLOCK_ELEMS: usize = 32;
+@@ -56,6 +58,9 @@
+ /// kernels use, for the same reason: a bandwidth-bound row loop wants
+ /// few, large units rather than one task per row.
+ const CHUNK_ROWS: usize = 32;
++
++/// How long the caller spins on the last chunks before it starts yielding.
++const SPINS_BEFORE_YIELD: u32 = 1 << 14;
+ 
+ /// `out[n] = W[n, k] · x[k]`, with `W` read straight from the stored
+ /// Q8_0 pack.
+@@ -69,22 +74,270 @@
+         return None;
+     }
+     let per_row = k / Q8_0_BLOCK_ELEMS;
+-    if blocks.len() != n * per_row * Q8_0_BLOCK_BYTES {
++    let expected = n.checked_mul(per_row)?.checked_mul(Q8_0_BLOCK_BYTES)?;
++    if blocks.len() != expected {
+         return None;
+     }
+ 
+     let mut out = vec![0.0f32; n];
++    let threads = rayon::current_num_threads();
++    if threads <= 1 || n <= CHUNK_ROWS {
++        run_rows(blocks, x, 0, per_row, &mut out);
++    } else {
++        let job = Arc::new(Job {
++            blocks: blocks.as_ptr(),
++            blocks_len: blocks.len(),
++            x: x.as_ptr(),
++            out: out.as_mut_ptr(),
++            n,
++            per_row,
++            chunks: n.div_ceil(CHUNK_ROWS),
++            next: AtomicUsize::new(0),
++            done: AtomicUsize::new(0),
++        });
++        launch(&job, threads - 1);
++        job.work();
++        let mut spins = 0u32;
++        while job.done.load(Ordering::Acquire) != job.chunks {
++            spins += 1;
++            if spins < SPINS_BEFORE_YIELD {
++                std::hint::spin_loop();
++            } else {
++                std::thread::yield_now();
++            }
++        }
++    }
++    Some(out)
++}
++
++/// One gemv's shared state. Chunks are claimed by counter, so whichever
++/// threads turn up do the work, and the caller — which never sleeps on a
++/// latch — can return without waiting for a helper that arrives too late.
++struct Job {
++    blocks: *const u8,
++    blocks_len: usize,
++    x: *const f32,
++    out: *mut f32,
++    n: usize,
++    per_row: usize,
++    chunks: usize,
++    next: AtomicUsize,
++    done: AtomicUsize,
++}
++
++// SAFETY: the pointers are only dereferenced under a successful claim in
++// `Job::work`, and each claim addresses a disjoint part of `out`.
++unsafe impl Send for Job {}
++// SAFETY: as for `Send`; the counters are atomic.
++unsafe impl Sync for Job {}
++
++impl Job {
++    /// Claim and run chunks until none are left.
++    fn work(&self) {
++        loop {
++            let chunk = self.next.fetch_add(1, Ordering::Relaxed);
++            if chunk >= self.chunks {
++                return;
++            }
++            let first = chunk * CHUNK_ROWS;
++            let len = CHUNK_ROWS.min(self.n - first);
++            // SAFETY: the caller of `q8_0_gemv` waits for `done == chunks`
++            // before its borrows end, and this chunk has not been counted
++            // yet, so the pointers are live. `fetch_add` hands each chunk to
++            // one thread, so the `out` range is exclusive. The lengths are
++            // the ones `q8_0_gemv` validated. Nothing below can panic: the
++            // geometry was checked before the job was built.
++            let (blocks, x, slots) = unsafe {
++                (
++                    std::slice::from_raw_parts(self.blocks, self.blocks_len),
++                    std::slice::from_raw_parts(self.x, self.per_row * Q8_0_BLOCK_ELEMS),
++                    std::slice::from_raw_parts_mut(self.out.add(first), len),
++                )
++            };
++            run_rows(blocks, x, first, self.per_row, slots);
++            self.done.fetch_add(1, Ordering::Release);
++        }
++    }
++}
++
++/// Bring up to `helpers` more threads onto `job`, as a tree: a helper starts
++/// the next two, so the caller pays for only one wake-up.
++fn launch(job: &Arc<Job>, helpers: usize) {
++    if helpers == 0 || job.next.load(Ordering::Relaxed) >= job.chunks {
++        return;
++    }
++    let job = Arc::clone(job);
++    rayon::spawn(move || {
++        let rest = helpers - 1;
++        launch(&job, rest / 2);
++        launch(&job, rest - rest / 2);
++        job.work();
++    });
++}
++
++/// Fill `slots` with the dots of consecutive rows starting at `first`.
++/// Whole groups go through the interleaved kernel where there is one;
++/// what is left goes through [`row_dot`], the same program a row at a time.
++#[inline]
++fn run_rows(blocks: &[u8], x: &[f32], first: usize, per_row: usize, slots: &mut [f32]) {
++    #[allow(unused_mut)]
++    let mut done = 0;
++    #[cfg(target_arch = "aarch64")]
+     {
+-        use rayon::prelude::*;
+-        out.par_chunks_mut(CHUNK_ROWS)
+-            .enumerate()
+-            .for_each(|(chunk, slots)| {
+-                for (i, slot) in slots.iter_mut().enumerate() {
+-                    *slot = row_dot(blocks, x, chunk * CHUNK_ROWS + i, per_row);
++        let mut groups = slots.chunks_exact_mut(neon::ROWS);
++        for group in &mut groups {
++            let group: &mut [f32; neon::ROWS] =
++                group.try_into().expect("chunks_exact_mut yields ROWS");
++            neon::rows(blocks, x, first + done, per_row, group);
++            done += neon::ROWS;
++        }
++    }
++    for (i, slot) in slots[done..].iter_mut().enumerate() {
++        *slot = row_dot(blocks, x, first + done + i, per_row);
++    }
++}
++
++#[cfg(target_arch = "aarch64")]
++mod neon {
++    use super::{Q8_0_BLOCK_BYTES, Q8_0_BLOCK_ELEMS};
++    use core::arch::aarch64::*;
++    use core::arch::asm;
++
++    pub(super) const ROWS: usize = 16;
++    const GROUPS: usize = ROWS / 4;
++    const HALF: usize = Q8_0_BLOCK_ELEMS / 2;
++
++    /// Each 32-bit lane takes one byte of a column as its TOP byte, so a
++    /// fixed-point conversion with 24 fraction bits yields the code itself.
++    const TOP_BYTE: [[u8; 16]; GROUPS] = {
++        const Z: u8 = 0xff;
++        [
++            [Z, Z, Z, 0, Z, Z, Z, 1, Z, Z, Z, 2, Z, Z, Z, 3],
++            [Z, Z, Z, 4, Z, Z, Z, 5, Z, Z, Z, 6, Z, Z, Z, 7],
++            [Z, Z, Z, 8, Z, Z, Z, 9, Z, Z, Z, 10, Z, Z, Z, 11],
++            [Z, Z, Z, 12, Z, Z, Z, 13, Z, Z, Z, 14, Z, Z, Z, 15],
++        ]
++    };
++
++    /// `ROWS` consecutive rows, one per lane. Each lane's accumulator sees
++    /// exactly its row's additions in ascending column order; only the
++    /// assignment of rows to lanes is new.
++    pub(super) fn rows(
++        blocks: &[u8],
++        x: &[f32],
++        first: usize,
++        per_row: usize,
++        out: &mut [f32; ROWS],
++    ) {
++        let stride = per_row * Q8_0_BLOCK_BYTES;
++        assert!((first + ROWS) * stride <= blocks.len() && x.len() == per_row * Q8_0_BLOCK_ELEMS);
++        // SAFETY: the assert above puts `ROWS` whole rows at `first` inside
++        // `blocks` and `per_row` whole blocks in `x`; NEON is baseline on
++        // aarch64.
++        unsafe {
++            rows_inner(
++                blocks.as_ptr().add(first * stride),
++                x.as_ptr(),
++                stride,
++                per_row,
++                out,
++            )
++        }
++    }
++
++    /// binary16 to binary32 for four lanes in one instruction.
++    #[inline(always)]
++    fn f16_to_f32_lanes(h: uint16x4_t) -> float32x4_t {
++        let out: float32x4_t;
++        // SAFETY: a register-to-register conversion on baseline NEON; it
++        // touches no memory and no flags.
++        unsafe {
++            asm!("fcvtl {o:v}.4s, {h:v}.4h", o = lateout(vreg) out, h = in(vreg) h,
++                 options(pure, nomem, nostack, preserves_flags));
++        }
++        out
++    }
++
++    /// One perfect shuffle of 16 registers; four of them transpose.
++    #[inline(always)]
++    fn shuffle16(a: [uint8x16_t; 16]) -> [uint8x16_t; 16] {
++        // SAFETY: NEON is baseline on aarch64.
++        unsafe {
++            [
++                vzip1q_u8(a[0], a[8]),
++                vzip2q_u8(a[0], a[8]),
++                vzip1q_u8(a[1], a[9]),
++                vzip2q_u8(a[1], a[9]),
++                vzip1q_u8(a[2], a[10]),
++                vzip2q_u8(a[2], a[10]),
++                vzip1q_u8(a[3], a[11]),
++                vzip2q_u8(a[3], a[11]),
++                vzip1q_u8(a[4], a[12]),
++                vzip2q_u8(a[4], a[12]),
++                vzip1q_u8(a[5], a[13]),
++                vzip2q_u8(a[5], a[13]),
++                vzip1q_u8(a[6], a[14]),
++                vzip2q_u8(a[6], a[14]),
++                vzip1q_u8(a[7], a[15]),
++                vzip2q_u8(a[7], a[15]),
++            ]
++        }
++    }
++
++    /// # Safety
++    /// `p` addresses `ROWS` rows of `stride` bytes and `x` `per_row` blocks.
++    #[inline(never)]
++    unsafe fn rows_inner(
++        p: *const u8,
++        x: *const f32,
++        stride: usize,
++        per_row: usize,
++        out: &mut [f32; ROWS],
++    ) {
++        // SAFETY: bounds per this function's contract; loads are unaligned.
++        unsafe {
++            let tb = [
++                vld1q_u8(TOP_BYTE[0].as_ptr()),
++                vld1q_u8(TOP_BYTE[1].as_ptr()),
++                vld1q_u8(TOP_BYTE[2].as_ptr()),
++                vld1q_u8(TOP_BYTE[3].as_ptr()),
++            ];
++            let mut acc = [vdupq_n_f32(0.0); GROUPS];
++            for b in 0..per_row {
++                let base = p.add(b * Q8_0_BLOCK_BYTES);
++                let xs = x.add(b * Q8_0_BLOCK_ELEMS);
++                let mut d = [vdupq_n_f32(0.0); GROUPS];
++                for (g, dv) in d.iter_mut().enumerate() {
++                    let mut h = [0u16; 4];
++                    for (l, hl) in h.iter_mut().enumerate() {
++                        let at = base.add((g * 4 + l) * stride) as *const u16;
++                        *hl = u16::from_le(at.read_unaligned());
++                    }
++                    *dv = f16_to_f32_lanes(vld1_u16(h.as_ptr()));
+                 }
+-            });
+-    }
+-    Some(out)
++                for half in 0..2 {
++                    let off = 2 + half * HALF;
++                    let mut r = [vdupq_n_u8(0); 16];
++                    for (i, ri) in r.iter_mut().enumerate() {
++                        *ri = vld1q_u8(base.add(i * stride + off));
++                    }
++                    let cols = shuffle16(shuffle16(shuffle16(shuffle16(r))));
++                    let xh = xs.add(half * HALF);
++                    for (j, &c) in cols.iter().enumerate() {
++                        let xj = vld1q_dup_f32(xh.add(j));
++                        for g in 0..GROUPS {
++                            let code = vreinterpretq_s32_u8(vqtbl1q_u8(c, tb[g]));
++                            let q = vcvtq_n_f32_s32::<24>(code);
++                            acc[g] = vaddq_f32(acc[g], vmulq_f32(vmulq_f32(q, d[g]), xj));
++                        }
++                    }
++                }
++            }
++            for (g, a) in acc.iter().enumerate() {
++                vst1q_f32(out.as_mut_ptr().add(g * 4), *a);
++            }
++        }
++    }
+ }
+ 
+ /// One row's dot in the decoder's association — `(q * d) * x`, element

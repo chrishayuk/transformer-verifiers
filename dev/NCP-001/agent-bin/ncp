@@ -1,0 +1,31 @@
+#!/bin/sh
+# Submit the kernel to the NCP-001 evaluator. This copies one file to a queue the evaluator reads. It can't judge anything.
+set -eu
+W=/Users/christopherhay/chris-source/ncp001-candidate
+Q=$W/.ncp
+await() {
+  while [ ! -f "$Q/results/$1.txt" ]; do sleep 5; done
+  cat "$Q/results/$1.txt"
+}
+case "${1:-}" in
+  evaluate)
+    [ $# -eq 2 ] && [ -n "$2" ] || { echo 'usage: ncp evaluate "what you changed and why you expect it to be faster"' >&2; exit 64; }
+    if [ -f "$Q/last" ] && [ ! -f "$Q/results/$(cat "$Q/last").txt" ]; then
+      echo "Your previous submission is still being evaluated. Waiting for it, and this call submits nothing." >&2
+      await "$(cat "$Q/last")"
+      exit 0
+    fi
+    id=$(date +%s)-$$
+    mkdir -p "$Q/incoming/.$id"
+    cat "$W/crates/larql-compute/src/cpu/kquant_gemv.rs" > "$Q/incoming/.$id/kernel.rs"
+    printf '%s' "$2" > "$Q/incoming/.$id/message.txt"
+    mv "$Q/incoming/.$id" "$Q/incoming/$id"
+    echo "$id" > "$Q/last"
+    await "$id"
+    ;;
+  result)
+    [ -f "$Q/last" ] || { echo "nothing submitted yet" >&2; exit 1; }
+    await "$(cat "$Q/last")"
+    ;;
+  *) echo 'usage: ncp evaluate "message" | ncp result' >&2; exit 64 ;;
+esac

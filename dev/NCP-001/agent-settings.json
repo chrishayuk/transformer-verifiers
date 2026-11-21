@@ -1,0 +1,84 @@
+{
+ "env": {
+  "BASH_MAX_TIMEOUT_MS": "14400000"
+ },
+ "permissions": {
+  "blockReadsOutsideWorkingDirectories": true,
+  "additionalDirectories": [
+   "/Users/christopherhay/.rustup/toolchains/1.98.0-aarch64-apple-darwin"
+  ],
+  "deny": [
+   "WebFetch",
+   "WebSearch",
+   "Bash(gh *)",
+   "Bash(git push *)",
+   "Bash(git remote *)",
+   "Edit(//Users/christopherhay/.cargo/**)",
+   "Edit(//Users/christopherhay/.rustup/**)"
+  ],
+  "disableBypassPermissionsMode": "disable"
+ },
+ "sandbox": {
+  "enabled": true,
+  "failIfUnavailable": true,
+  "allowUnsandboxedCommands": false,
+  "autoAllowBashIfSandboxed": true,
+  "network": {
+   "allowedDomains": [],
+   "strictAllowlist": true
+  },
+  "filesystem": {
+   "denyRead": [
+    "/Users/christopherhay",
+    "/private/tmp",
+    "/private/var/folders",
+    "/Volumes"
+   ],
+   "allowRead": [
+    "/Users/christopherhay/chris-source/ncp001-candidate",
+    "/Users/christopherhay/.rustup/toolchains/1.98.0-aarch64-apple-darwin",
+    "/Users/christopherhay/.rustup/settings.toml",
+    "/Users/christopherhay/.cargo/bin",
+    "/Users/christopherhay/.gitconfig",
+    "/private/tmp/claude-501/-Users-christopherhay-chris-source-ncp001-candidate",
+    "/Users/christopherhay/.config/git"
+   ],
+   "denyWrite": [
+    "/Users/christopherhay/.cargo",
+    "/Users/christopherhay/.rustup",
+    "/Users/christopherhay/chris-source/ncp001-candidate/.git/hooks"
+   ],
+   "allowWrite": [
+    "/Users/christopherhay/chris-source/ncp001-candidate",
+    "/private/tmp/claude-501/-Users-christopherhay-chris-source-ncp001-candidate"
+   ]
+  },
+  "credentials": {
+   "files": [
+    {
+     "path": "/Users/christopherhay/.config/gh",
+     "mode": "deny"
+    }
+   ],
+   "envVars": [
+    {
+     "name": "GH_TOKEN",
+     "mode": "deny"
+    },
+    {
+     "name": "GITHUB_TOKEN",
+     "mode": "deny"
+    },
+    {
+     "name": "HF_TOKEN",
+     "mode": "deny"
+    }
+   ]
+  }
+ },
+ "disableClaudeAiConnectors": true,
+ "attribution": {
+  "commit": "",
+  "pr": ""
+ }
+}

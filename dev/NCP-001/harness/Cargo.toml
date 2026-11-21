@@ -1,0 +1,14 @@
+[package]
+name = "ncp001-harness"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+larql-compute = { path = "../build/crates/larql-compute" }
+
+# The workspace's own release profile, so the kernel is compiled as production compiles it.
+[profile.release]
+debug = "line-tables-only"
+split-debuginfo = "packed"
